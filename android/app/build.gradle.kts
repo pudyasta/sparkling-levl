@@ -30,11 +30,11 @@ android {
         }
 
         compileOptions {
-            sourceCompatibility = JavaVersion.VERSION_11
-            targetCompatibility = JavaVersion.VERSION_11
+            sourceCompatibility = JavaVersion.VERSION_17
+            targetCompatibility = JavaVersion.VERSION_17
         }
         kotlinOptions {
-            jvmTarget = "11"
+            jvmTarget = "17"
         }
 
         // Default integrate assets from dist; switch to native assets when env is set
@@ -70,11 +70,12 @@ android {
         implementation(libs.fresco.webp.support)
         implementation(libs.fresco.animated.base)
 
-//    kapt(libs.lynx.processor)
+        kapt(libs.lynx.processor)
 
         // BEGIN SPARKLING AUTOLINK
         listOf(
-            project(":sparkling-navigation")
+            project(":sparkling-navigation"),
+            project(":sparkling-storage")
         ).forEach { dep -> add("implementation", dep) }
         // END SPARKLING AUTOLINK
     }

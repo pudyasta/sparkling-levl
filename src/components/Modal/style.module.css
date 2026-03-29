@@ -1,0 +1,42 @@
+.overlay {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 1);
+  justify-content: center;
+  align-items: center;
+  z-index: 50;
+}
+.dialog {
+  width: 90%;
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 28px 20px;
+  z-index: 60;
+  margin-bottom: 15vh;
+}
+
+.mascot {
+  width: 50vw;
+  height: 15vh;
+  margin: auto;
+}
+
+.title {
+  text-align: center;
+}
+
+.body {
+  text-align: center;
+}
+
+.modal-body {
+  width: 100%;
+  justify-content: center;
+  gap: 12px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}

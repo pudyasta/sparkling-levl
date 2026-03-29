@@ -7,6 +7,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.tiktok.sparkling.Sparkling
 import com.tiktok.sparkling.SparklingContext
+import com.tiktok.sparkling.method.registry.api.SparklingBridge
 import com.tiktok.sparkling.method.registry.core.utils.JsonUtils
 
 class SplashActivity : AppCompatActivity() {

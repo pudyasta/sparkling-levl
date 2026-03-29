@@ -1,0 +1,53 @@
+.tiktok-loader {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.tiktok-ball {
+  position: absolute;
+  border-radius: 50%;
+}
+/* 这里用相对位移，和原来“0 → amplitude → 2*amplitude+gap”是同样节奏 */
+@keyframes tiktok-left {
+  0% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(50%);
+  }
+  50% {
+    transform: translateX(100%);
+  }
+  75% {
+    transform: translateX(50%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+@keyframes tiktok-right {
+  0% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-50%);
+  }
+  50% {
+    transform: translateX(-100%);
+  }
+  75% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+.tiktok-ball-left {
+  animation: tiktok-left 1.2s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  z-index: 2;
+}
+.tiktok-ball-right {
+  animation: tiktok-right 1.2s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  z-index: 1;
+}

@@ -11,7 +11,7 @@ plugins {
 }
 
 // Enforce a shared JDK version for all Android subprojects
-val targetJavaVersion = JavaLanguageVersion.of(11)
+val targetJavaVersion = JavaLanguageVersion.of(17)
 val forcedKotlinVersion = "1.8.10"
 
 subprojects {
@@ -28,7 +28,7 @@ subprojects {
 
     plugins.withId("org.jetbrains.kotlin.android") {
         extensions.configure<KotlinAndroidProjectExtension> {
-            jvmToolchain(11)
+            jvmToolchain(17)
         }
     }
 

@@ -1,9 +1,6 @@
-import { root } from '@lynx-js/react'
+import { root } from '@lynx-js/react';
 
-import { App } from './App.js'
+import { App } from './App.js';
+import { initComponent } from '@/context/AppProvider/initComponent.js';
 
-root.render(<App />)
-
-if (import.meta.webpackHot) {
-  import.meta.webpackHot.accept()
-}
+initComponent(App);

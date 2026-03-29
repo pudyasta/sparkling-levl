@@ -1,16 +1,17 @@
 {
   "compilerOptions": {
     "jsx": "react-jsx",
-    "jsxImportSource": "@lynx-js/react",
-
-    "module": "node18",
-    "moduleResolution": "node16",
+    "jsxImportSource": "@lynx-js/react",    
+    
 
     "baseUrl": ".",
     "paths": {
       "sparkling-navigation": [
         "node_modules/sparkling-navigation"
-      ]
+      ],
+      "@/*": ["./src/*"],
+      "@login/*": ["./src/pages/Login/*"]
+      
     },
 
     "strict": true,
@@ -19,6 +20,18 @@
 
     "esModuleInterop": true,
     "skipLibCheck": true,
+
+    "composite": true,
+
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": false,
+    "erasableSyntaxOnly": false,
+
+    "lib": ["es2023"],
+    "target": "es2022",
+
+    "noEmit": true,
   },
   "exclude": ["dist/"],
 }

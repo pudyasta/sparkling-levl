@@ -1,0 +1,101 @@
+@layer utilities {
+  @keyframes press-bounce {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(0.95);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  .animate-press-bounce {
+    animation: press-bounce 0.3s ease-out;
+  }
+}
+
+@font-face {
+  font-family: inter;
+  src: url('../assets/fonts/inter.ttf');
+}
+
+@font-face {
+  font-family: jakarta;
+  src: url('../assets/fonts/Jakarta.ttf');
+}
+
+:root {
+  --font-inter: 'inter', sans-serif;
+  --font-jakarta: 'jakarta', sans-serif;
+
+  --primary: #1a73e8;
+  --secondary: #ffc107;
+  --accent: #e8f0fe;
+  --success: #28a745;
+  --error: #dc3545;
+  --neutral: #202124;
+  --background: #ffffff;
+  --disabled: #9aa0a6;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --primary: #8ab4f8;
+    --secondary: #fdd663;
+    --accent: #2d2e31;
+    --success: #81c995;
+    --error: #f28b82;
+    --neutral: #e8eaed;
+    --background: #121212;
+    --disabled: #5f6368;
+  }
+}
+
+* {
+  font-family: var(--font-inter);
+
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+page {
+  background-color: var(--background);
+  color: var(--neutral);
+}
+
+.font-inter {
+  font-family: var(--font-inter);
+}
+
+.font-jakarta {
+  font-family: var(--font-jakarta);
+}
+
+.text-primary {
+  color: var(--primary);
+}
+.text-secondary {
+  color: var(--secondary);
+}
+
+.bg-primary {
+  background-color: var(--primary);
+}
+.bg-secondary {
+  background-color: var(--secondary);
+}
+
+.border-primary {
+  border-color: var(--primary);
+}
+
+.border-secondary {
+  border-color: var(--secondary);
+}
+
+.border-neutral {
+  border-color: var(--neutral);
+}

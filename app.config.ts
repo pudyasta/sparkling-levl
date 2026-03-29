@@ -1,36 +1,13 @@
 // @ts-nocheck
-import { defineConfig } from '@lynx-js/rspeedy'
-import { pluginQRCode } from '@lynx-js/qrcode-rsbuild-plugin'
-import { pluginReactLynx } from '@lynx-js/react-rsbuild-plugin'
-import type { AppConfig } from 'sparkling-app-cli'
-
-const lynxConfig = defineConfig({
-  source: {
-    entry: {
-      main: './src/pages/main/index.tsx',
-      second: './src/pages/second/index.tsx',
-    },
-  },
-  output: {
-    assetPrefix: 'asset:///',
-    filename: {
-      bundle: '[name].lynx.bundle'
-    },
-  },
-  plugins: [
-    pluginQRCode({
-      schema(url: string): string {
-        // We use `?fullscreen=true` to open the page in LynxExplorer in full screen mode
-        return `${url}?fullscreen=true`
-      },
-    }),
-    pluginReactLynx(),
-  ],
-})
+import { defineConfig } from '@lynx-js/rspeedy';
+import { pluginQRCode } from '@lynx-js/qrcode-rsbuild-plugin';
+import { pluginReactLynx } from '@lynx-js/react-rsbuild-plugin';
+import type { AppConfig } from 'sparkling-app-cli';
+import lynxConfig from './lynx.config.ts';
 
 const config: AppConfig = {
-  lynxConfig,
-  appName: 'sparkling-levl',
+  lynxConfig: lynxConfig,
+  appName: 'Levl',
   platform: {
     android: {
       packageName: 'com.example.sparkling.go',
@@ -51,6 +28,9 @@ const config: AppConfig = {
     second: {
       path: './lynxPages/second',
     },
+    login: {
+      path: './src/pages/Login/index.tsx',
+    },
   },
   plugin: [
     [
@@ -68,4 +48,4 @@ const config: AppConfig = {
   ],
 };
 
-export default config
+export default config;

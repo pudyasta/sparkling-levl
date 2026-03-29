@@ -22,6 +22,15 @@ import com.tiktok.sparkling.method.router.open.RouterOpenMethod
 import com.tiktok.sparkling.method.router.utils.RouterProvider
 import com.example.sparkling.go.LynxInputComponent
 import com.example.sparkling.go.BuiltinTemplateProvider
+import com.lynx.service.devtool.LynxDevToolService
+import com.lynx.service.http.LynxHttpService
+import com.lynx.service.image.LynxImageService
+import com.lynx.service.log.LynxLogService
+import com.lynx.tasm.LynxEnv
+import com.lynx.tasm.service.LynxServiceCenter
+import com.tiktok.sparkling.method.storage.getItem.StorageGetItemMethod
+import com.tiktok.sparkling.method.storage.removeItem.StorageRemoveItemMethod
+import com.tiktok.sparkling.method.storage.setItem.StorageSetItemMethod
 
 
 class SparklingApplication : Application() {
@@ -36,13 +45,17 @@ class SparklingApplication : Application() {
         val factory = PoolFactory(PoolConfig.newBuilder().build())
         val builder = ImagePipelineConfig.newBuilder(applicationContext).setPoolFactory(factory)
         Fresco.initialize(applicationContext, builder.build())
+        LynxServiceCenter.inst().registerService(LynxImageService.getInstance())
+        LynxServiceCenter.inst().registerService(LynxLogService)
+        LynxServiceCenter.inst().registerService(LynxHttpService)
+        // register devtool service
+        LynxServiceCenter.inst().registerService(LynxDevToolService())
     }
 
     private fun initSparkling() {
         initHybridKit()
         initSparklingMethods()
     }
-
 
     private fun initHybridKit() {
         HybridKit.init(this)
@@ -62,11 +75,21 @@ class SparklingApplication : Application() {
         }
         HybridKit.setHybridConfig(hybridConfig, this)
         HybridKit.initLynxKit()
+        LynxEnv.inst().enableLynxDebug(true)
+        // Turn on Lynx DevTool
+        LynxEnv.inst().enableDevtool(true)
+        LynxEnv.inst().enableLogBox(true)
+
     }
+
 
     private fun initSparklingMethods() {
         SparklingBridgeManager.registerIDLMethod(RouterOpenMethod::class.java)
         SparklingBridgeManager.registerIDLMethod(RouterCloseMethod::class.java)
         RouterProvider.hostRouterDepend = SparklingHostRouterDepend()
+
+        SparklingBridgeManager.registerIDLMethod(StorageSetItemMethod::class.java)
+        SparklingBridgeManager.registerIDLMethod(StorageGetItemMethod::class.java)
+        SparklingBridgeManager.registerIDLMethod(StorageRemoveItemMethod::class.java)
     }
 }

@@ -1,0 +1,33 @@
+const SIGNIN_ROUTE = '/login';
+const SIGNUP_ROUTE = '/signup';
+const HOME_ROUTE = '/';
+const FORGOT_PASSWORD_ROUTE = '/forgot-password';
+
+// Auth route
+const AUTH_LOGIN_ENDPOINT = '/auth/login';
+const AUTH_REGISTER_ENDPOINT = '/auth/register';
+const AUTH_REFRESH_ENDPOINT = '/auth/refresh';
+const AUTH_VERIFY_EMAIL_ENDPOINT = '/auth/email/verify';
+const AUTH_RESEND_VERIFY_EMAIL_ENDPOINT = '/auth/email/verify/send';
+
+// Dashboard route
+const DASHBOARD_SUMMARY_ENDPOINT = '/dashboard';
+const DASHBOARD_RECENT_LEARNING_ENDPOINT = '/dashboard/recent-learning';
+const DASHBOARD_RECOMMENDED_COURSES_ENDPOINT = '/dashboard/recommended-courses';
+const DASHBOARD_RECENT_ACHIEVEMENTS_ENDPOINT = '/dashboard/recent-achievements';
+
+export {
+  SIGNIN_ROUTE,
+  SIGNUP_ROUTE,
+  HOME_ROUTE,
+  FORGOT_PASSWORD_ROUTE,
+  AUTH_LOGIN_ENDPOINT,
+  AUTH_REGISTER_ENDPOINT,
+  AUTH_REFRESH_ENDPOINT,
+  AUTH_VERIFY_EMAIL_ENDPOINT,
+  AUTH_RESEND_VERIFY_EMAIL_ENDPOINT,
+  DASHBOARD_SUMMARY_ENDPOINT,
+  DASHBOARD_RECENT_LEARNING_ENDPOINT,
+  DASHBOARD_RECOMMENDED_COURSES_ENDPOINT,
+  DASHBOARD_RECENT_ACHIEVEMENTS_ENDPOINT,
+};
