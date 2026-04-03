@@ -94,7 +94,6 @@ const Input = forwardRef<InputRef, InputProps>(({ title, variant, icon, bindChan
           bindinput={(res: any) => {
             handleInput(res.detail.value);
           }}
-          placeholder="test"
           style={{
             color: Colors.Neutral,
             width: '100%',

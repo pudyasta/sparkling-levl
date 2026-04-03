@@ -10,6 +10,8 @@ export default defineConfig({
       main: './src/pages/Login/index.tsx',
       second: './src/pages/Main/index.tsx',
       login: './src/pages/Login/index.tsx',
+      register: './src/pages/Register/index.tsx',
+      emailConfirmation: './src/pages/EmailConfirmation/index.tsx',
     },
   },
   output: {

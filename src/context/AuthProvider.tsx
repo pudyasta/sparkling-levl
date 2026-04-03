@@ -28,7 +28,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     getItem({ key: PrefKey.Token, biz: 'auth' }, (res) => {
       if (res.data && isTokenValid(res.data.access_token)) {
-        console.log('Token loaded from storage', res.data);
         _setAccessToken(res.data);
       } else if (res.data && res.data.refresh_token) {
         refreshTokenApi(res.data.refresh_token)
@@ -44,7 +43,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     getItem({ key: PrefKey.User, biz: 'auth' }, (res) => {
       if (res.data) {
-        console.log(res.data);
         _setUser(res.data);
       }
     });
@@ -55,10 +53,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     if (!token) return;
     token.expires_in = token.expires_in + Math.floor(Date.now() / 1000);
     _setAccessToken(token);
-    setItem(
-      { key: PrefKey.Token, data: token, biz: 'auth', validDuration: token.expires_in },
-      () => {}
-    );
+    setItem({ key: PrefKey.Token, data: token, biz: 'auth' }, (res) => {
+      console.log(res.code, res.msg);
+    });
   };
 
   const setUser = (user: User | null) => {
@@ -77,6 +74,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     _setIsAuthenticated(Boolean(accessToken && isTokenValid(accessToken)));
   }, [accessToken, user]);
 
+  if (!hydrate) {
+    return null;
+  }
   return (
     <AuthContext.Provider
       value={{

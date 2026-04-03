@@ -12,9 +12,9 @@ interface ButtonProps {
 }
 
 const colorStyles: Record<NonNullable<ButtonProps['color']>, string> = {
-  blue: `bg-primary`,
-  yellow: `bg-secondary`,
-  white: 'bg-white',
+  blue: `${Colors.Primary}`,
+  yellow: `${Colors.Secondary}`,
+  white: `${Colors.Accent}`,
 };
 
 const borderColorStyles: Record<NonNullable<ButtonProps['color']>, string> = {
@@ -50,18 +50,42 @@ const Button: React.FC<ButtonProps> = ({
 
   return (
     <text
-      className={`
-        w-full text-center font-semibold rounded-xl ${size === 'small' ? 'py-3' : size === 'medium' ? 'py-4' : 'py-6'} font-bold transition-all duration-500 ease-out border-[1px] 
-        ${animate ? 'animate-press-bounce' : ''}  
-        ${
-          disabled
-            ? 'cursor-not-allowed !bg-gray-400/20 border-gray-400/20 text-gray-700/50 '
-            : variant === 'solid'
-              ? color == 'blue'
-                ? ' text-white border-neutral ' + colorStyles[color]
-                : ' text-black border-neutral ' + colorStyles[color]
-              : ` bg-transparent  ${borderColorStyles[color]} ${textColorStyles[color]}`
-        } ${className}`}
+      style={{
+        display: 'block',
+        width: '100%',
+        textAlign: 'center',
+        fontWeight: '700',
+        borderRadius: '12px',
+        borderWidth: '1px',
+        borderStyle: 'solid',
+        transition: 'all 500ms ease-out',
+        boxSizing: 'border-box',
+
+        // Dynamic Padding (Size)
+        paddingTop: size === 'small' ? '12px' : size === 'medium' ? '16px' : '24px',
+        paddingBottom: size === 'small' ? '12px' : size === 'medium' ? '16px' : '24px',
+
+        // Disabled State vs Active State
+        ...(disabled
+          ? {
+              cursor: 'not-allowed',
+              backgroundColor: 'rgba(156, 163, 175, 0.2)',
+              borderColor: 'rgba(156, 163, 175, 0.2)',
+              color: 'rgba(55, 65, 81, 0.5)',
+            }
+          : variant === 'solid'
+            ? {
+                backgroundColor: colorStyles[color], // Must be a Hex/RGB value
+                color: color === 'blue' ? '#ffffff' : '#000000',
+                borderColor: 'transparent',
+              }
+            : {
+                backgroundColor: 'transparent',
+                borderColor: borderColorStyles[color], // Must be a Hex/RGB value
+                color: textColorStyles[color], // Must be a Hex/RGB value
+              }),
+      }}
+      className={animate ? 'animate-press-bounce' : ''}
       bindtap={handleTap}
     >
       {children}

@@ -24,7 +24,8 @@ import { MAIN_ACTIVITY, REGISTER_ACTIVITY } from '@/constant/activity';
 import * as storage from 'sparkling-storage';
 import * as router from 'sparkling-navigation';
 import { open } from 'sparkling-navigation';
-import { debugLog } from '@/lib/helper/logger';
+import { options } from '@lynx-js/react/internal';
+import { logger } from '@/lib/logger';
 
 export default function LoginPage() {
   const emailRef = useRef<InputRef>(null);
@@ -63,9 +64,8 @@ export default function LoginPage() {
   };
 
   useEffect(() => {
-    debugLog('LoginPage mounted', { tes: 'ok' });
     storage.setItem({ key: 'token', data: 'abc123', biz: 'demo', validDuration: 3600 }, (res) => {
-      console.log('res', res);
+      logger.debug('Storage setItem response:', res);
     });
   });
 
@@ -119,10 +119,25 @@ export default function LoginPage() {
             'Sign In'
           )}
         </Button>
-        <text bindtap={loginUser}>Sign In</text>
 
         {/* Signup */}
-        <Text typeof={TextType.b1}>
+        <Text
+          typeof={TextType.b1}
+          onClick={() => {
+            router.navigate(
+              {
+                path: 'register.lynx.bundle',
+                options: {
+                  params: {
+                    title: 'Home',
+                    hide_nav_bar: 1,
+                  },
+                },
+              },
+              (result: router.OpenResponse) => {}
+            );
+          }}
+        >
           Udah punya akun?{' '}
           <Text typeof={TextType.b1} style={{ color: Colors.Primary }}>
             Daftar disini

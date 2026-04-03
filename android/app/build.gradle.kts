@@ -64,6 +64,11 @@ android {
         implementation("com.tiktok.sparkling:sparkling-method:2.0.1")
         implementation("com.squareup.okhttp3:okhttp:4.9.0")
 
+//        SVG Package
+        implementation("com.caverock:androidsvg-aar:1.4")
+        implementation("io.coil-kt:coil:2.6.0")
+        implementation("io.coil-kt:coil-svg:2.6.0")
+
         implementation(libs.fresco)
         implementation(libs.fresco.animated.gif)
         implementation(libs.fresco.animated.webp)

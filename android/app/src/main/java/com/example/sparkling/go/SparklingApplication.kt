@@ -22,6 +22,7 @@ import com.tiktok.sparkling.method.router.open.RouterOpenMethod
 import com.tiktok.sparkling.method.router.utils.RouterProvider
 import com.example.sparkling.go.LynxInputComponent
 import com.example.sparkling.go.BuiltinTemplateProvider
+import com.example.sparkling.go.components.NativeSvgView
 import com.lynx.service.devtool.LynxDevToolService
 import com.lynx.service.http.LynxHttpService
 import com.lynx.service.image.LynxImageService
@@ -46,7 +47,7 @@ class SparklingApplication : Application() {
         val builder = ImagePipelineConfig.newBuilder(applicationContext).setPoolFactory(factory)
         Fresco.initialize(applicationContext, builder.build())
         LynxServiceCenter.inst().registerService(LynxImageService.getInstance())
-        LynxServiceCenter.inst().registerService(LynxLogService)
+        // LynxServiceCenter.inst().registerService(LynxLogService)
         LynxServiceCenter.inst().registerService(LynxHttpService)
         // register devtool service
         LynxServiceCenter.inst().registerService(LynxDevToolService())
@@ -66,6 +67,11 @@ class SparklingApplication : Application() {
                     override fun createUI(context: LynxContext?): LynxUI<*>? {
                         return LynxInputComponent(context)
                     }
+                },
+                object : Behavior("native-svg") {
+                    override fun createUI(context: LynxContext): LynxUI<*> {
+                        return NativeSvgView(context)
+                    }
                 }
             ))
             setTemplateProvider(BuiltinTemplateProvider(this@SparklingApplication))
@@ -78,7 +84,7 @@ class SparklingApplication : Application() {
         LynxEnv.inst().enableLynxDebug(true)
         // Turn on Lynx DevTool
         LynxEnv.inst().enableDevtool(true)
-        LynxEnv.inst().enableLogBox(true)
+        // LynxEnv.inst().enableLogBox(true)
 
     }
 

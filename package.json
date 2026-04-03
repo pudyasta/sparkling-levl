@@ -42,7 +42,7 @@
     "test": "vitest run --passWithNoTests",
     "run:android": "sparkling-app-cli run:android",
     "run:ios": "sparkling-app-cli run:ios --copy",
-    "dev": "sparkling-app-cli dev",
+    "dev": "rspeedy dev",
     "doctor": "sparkling-app-cli doctor"
   }
 }
