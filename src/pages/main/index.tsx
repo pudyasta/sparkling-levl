@@ -1,4 +1,4 @@
-import { App } from './App.js';
-import { initComponent } from '@/context/AppProvider/initComponent.js';
+import { initComponent } from '@/context/AppProvider/initComponent';
+import MainPage from './MainPage';
 
-initComponent(App);
+initComponent(MainPage);

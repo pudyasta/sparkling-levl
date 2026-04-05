@@ -16,6 +16,9 @@ const DASHBOARD_RECENT_LEARNING_ENDPOINT = '/dashboard/recent-learning';
 const DASHBOARD_RECOMMENDED_COURSES_ENDPOINT = '/dashboard/recommended-courses';
 const DASHBOARD_RECENT_ACHIEVEMENTS_ENDPOINT = '/dashboard/recent-achievements';
 
+// Course route
+const COURSE_DETAIL_ENDPOINT = '/courses/SLUG?include=units,category,elements,tags';
+
 export {
   SIGNIN_ROUTE,
   SIGNUP_ROUTE,
@@ -30,4 +33,5 @@ export {
   DASHBOARD_RECENT_LEARNING_ENDPOINT,
   DASHBOARD_RECOMMENDED_COURSES_ENDPOINT,
   DASHBOARD_RECENT_ACHIEVEMENTS_ENDPOINT,
+  COURSE_DETAIL_ENDPOINT,
 };

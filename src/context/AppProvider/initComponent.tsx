@@ -11,6 +11,7 @@ declare module '@lynx-js/types' {
     deviceType: string;
     deviceModel: string;
     osVersion: string;
+    containerID: string;
   }
 }
 export function initComponent<P extends object>(Component: React.ComponentType<P>) {

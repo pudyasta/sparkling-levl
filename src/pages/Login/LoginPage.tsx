@@ -6,7 +6,7 @@ import Text from '@/components/Text';
 
 import { FontFamily, TextType } from '@/components/Text/types';
 
-import { useAuth } from '@/context/AuthProvider';
+import { useNativeBridge } from '@/context/NativeBridgeProvider';
 import { useLogin } from '@/pages/Login/usecase/useLogin';
 import { useKeyboardShift } from '@/hooks/useKeyboardShift';
 
@@ -16,21 +16,15 @@ import { hiMascot } from '@/assets/images/mascot';
 import style from './LoginPage.module.css';
 import { Colors } from '@/constant/style';
 
-import { FORGOT_PASSWORD_ROUTE, HOME_ROUTE, SIGNUP_ROUTE } from '@/constant/route';
 import { Loading } from '@/components/Loading/Loading';
 import { Modal, ModalTemplate } from '@/components/Modal/Modal.view';
-import { navigate } from '@/lib/native/nativeNavigate';
-import { MAIN_ACTIVITY, REGISTER_ACTIVITY } from '@/constant/activity';
-import * as storage from 'sparkling-storage';
 import * as router from 'sparkling-navigation';
-import { open } from 'sparkling-navigation';
-import { options } from '@lynx-js/react/internal';
-import { logger } from '@/lib/logger';
 
 export default function LoginPage() {
   const emailRef = useRef<InputRef>(null);
   const passwordRef = useRef<InputRef>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { navigateTo } = useNativeBridge();
 
   const { kbHeight } = useKeyboardShift('panel');
 
@@ -40,12 +34,7 @@ export default function LoginPage() {
       if (errors.password) passwordRef.current?.setError(errors.password);
     },
     onSuccess: () => {
-      router.open(
-        { scheme: 'hybrid://lynxview_page?bundle=second.lynx.bundle&title=Sparkling' },
-        (result: router.OpenResponse) => {
-          console.log('opening');
-        }
-      );
+      navigateTo('main.lynx.bundle', { title: 'Home', hide_nav_bar: 1, close: true });
     },
     onError: (error) => {
       if (error.type !== 'VALIDATION_ERROR') {
@@ -62,12 +51,6 @@ export default function LoginPage() {
       password: passwordRef.current?.getValue() || '',
     });
   };
-
-  useEffect(() => {
-    storage.setItem({ key: 'token', data: 'abc123', biz: 'demo', validDuration: 3600 }, (res) => {
-      logger.debug('Storage setItem response:', res);
-    });
-  });
 
   return (
     <scroll-view
@@ -110,7 +93,7 @@ export default function LoginPage() {
         >
           Forgot Password?
         </Text>
-        <Button color="blue" variant="solid" onPress={loginUser} disabled={isLoading}>
+        <Button color="primary" onPress={loginUser} disabled={isLoading}>
           {isLoading ? (
             <>
               <Loading size={32} />
@@ -132,9 +115,12 @@ export default function LoginPage() {
                     title: 'Home',
                     hide_nav_bar: 1,
                   },
+                  replcae: true,
                 },
               },
-              (result: router.OpenResponse) => {}
+              (result: router.OpenResponse) => {
+                router.close({ containerID: lynx.__globalProps.containerID });
+              }
             );
           }}
         >

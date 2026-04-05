@@ -12,6 +12,7 @@ import style from './RegisterPage.module.css';
 import { Modal, ModalTemplate } from '@/components/Modal/Modal.view';
 import { Loading } from '@/components/Loading/Loading';
 import * as router from 'sparkling-navigation';
+import { useEffect } from 'react';
 
 export default function RegisterPage() {
   const emailRef = useRef<InputRef>(null);
@@ -33,9 +34,12 @@ export default function RegisterPage() {
               title: 'Email Confirmation',
               hide_nav_bar: 1,
             },
+            replace: true,
           },
         },
-        (result: router.OpenResponse) => {}
+        (result: router.OpenResponse) => {
+          router.close({ containerID: lynx.__globalProps.containerID });
+        }
       );
     },
     onValidationError: (errors) => {
@@ -115,7 +119,7 @@ export default function RegisterPage() {
         <Input title="Password" variant="password" icon="lock" ref={passwordRef} />
         <Input title="Confirm Password" variant="password" icon="lock" ref={confirmPasswordRef} />
 
-        <Button color="blue" variant="solid" onPress={autoFillForm} disabled={isLoading}>
+        <Button onPress={autoFillForm} disabled={isLoading}>
           {isLoading ? <Loading size={32} /> : 'Sign Up'}
         </Button>
         {/* Signup */}
@@ -132,7 +136,9 @@ export default function RegisterPage() {
                   },
                 },
               },
-              (result: router.OpenResponse) => {}
+              (result: router.OpenResponse) => {
+                router.close({ containerID: lynx.__globalProps.containerID });
+              }
             )
           }
         >

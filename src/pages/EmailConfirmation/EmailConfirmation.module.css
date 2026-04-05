@@ -7,7 +7,7 @@
   gap: 12px;
   align-items: center;
   justify-content: center;
-  padding: 60px 30px;
+  padding: 32px 20px;
 }
 
 .illustrationWrapper {
@@ -89,5 +89,5 @@
 }
 
 .backToLoginButton {
-  margin-top: 12px;
+  margin: 12px 0;
 }

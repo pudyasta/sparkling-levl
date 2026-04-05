@@ -2,6 +2,12 @@ export enum PrefKey {
   Theme = 'theme',
   Token = 'token',
   User = 'user',
+  params = 'params',
+}
+
+export enum BizKey {
+  Authorization = 'authorization',
+  Other = 'other',
 }
 
 export function getPref<T>(key: PrefKey): Promise<T | null> {

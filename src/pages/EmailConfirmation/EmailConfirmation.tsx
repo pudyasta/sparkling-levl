@@ -8,9 +8,7 @@ import { Colors } from '@/constant/style';
 import { docsMascot } from '@/assets/images/mascot';
 import { useResendVerificationEmail } from './usecase/useResendVerificationEmail';
 import { Loading } from '@/components/Loading/Loading';
-import { navigate } from '@/lib/native/nativeNavigate';
-import { DETAIL_COURSE_ACTIVITY, MAIN_ACTIVITY } from '@/constant/activity';
-import { useAuth } from '@/context/AuthProvider';
+import { useNativeBridge } from '@/context/NativeBridgeProvider';
 
 interface EmailConfirmationProps {
   // Original props
@@ -30,14 +28,8 @@ export const EmailConfirmation: FC<EmailConfirmationProps> = (props) => {
   const [timer, setTimer] = useState(59);
   const [canResend, setCanResend] = useState(false);
   const { email } = props;
-  const { isAuthenticated, user, accessToken, hydrate } = useAuth();
+  const { isAuthenticated, user, accessToken, hydrate } = useNativeBridge();
   const { execute: resendVerificationEmail, isLoading } = useResendVerificationEmail();
-
-  useEffect(() => {
-    console.log(isAuthenticated);
-    console.log(user);
-    console.log(accessToken);
-  }, [hydrate]);
 
   useEffect(() => {
     let interval: any;
@@ -79,7 +71,7 @@ export const EmailConfirmation: FC<EmailConfirmationProps> = (props) => {
         We have sent a confirmation email to
       </Text>
       <Text className={styles.emailText} size={TextType.h2} color={Colors.Primary}>
-        {email}
+        {user.email}
       </Text>
       <Text className={styles.instruction}>
         Check your email and click on the confirmation link to continue
@@ -94,12 +86,7 @@ export const EmailConfirmation: FC<EmailConfirmationProps> = (props) => {
         <Button disabled={!canResend} onPress={handleResend}>
           {isLoading ? <Loading size={32} /> : 'Resend'}
         </Button>
-        <Button
-          variant="outline"
-          color="blue"
-          className={styles.backToLoginButton}
-          onPress={() => navigate(MAIN_ACTIVITY)}
-        >
+        <Button color="primary" variant="outlined" className={styles.backToLoginButton}>
           Skip for now
         </Button>
       </view>

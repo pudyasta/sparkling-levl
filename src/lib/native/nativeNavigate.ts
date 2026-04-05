@@ -1,13 +1,14 @@
+import { useRouterParams } from '@/context/RouterParamsProvider';
+import * as router from 'sparkling-navigation';
+
 export const navigate = (
   activity: string,
   params: Record<string, any> = {},
-  isFinishCurrent = false,
+  isFinishCurrent = false
 ) => {
-  console.log('ok');
   NativeModules.NavigationModule.navigateTo(activity, params, isFinishCurrent);
 };
 
 export const navigateBack = () => {
-  console.log('ok');
   NativeModules.NavigationModule.navigateBack();
 };

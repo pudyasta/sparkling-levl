@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { loginSchema, type LoginSchema } from './loginValidation';
-import { useAuth } from '@/context/AuthProvider';
+import { useNativeBridge } from '@/context/NativeBridgeProvider';
 import { validateSafely } from '@/lib/helper/validate';
 import { useLoginRepo } from '../repository/useLoginRepo';
 import type { LoginRequest } from '../repository/type';
@@ -13,7 +13,7 @@ interface UseLoginOptions {
 
 export const useLogin = (options?: UseLoginOptions) => {
   const { loginApi } = useLoginRepo();
-  const { setAccessToken, setUser } = useAuth();
+  const { setAccessToken, setUser } = useNativeBridge();
 
   const mutation = useMutation({
     mutationFn: async (rawValues: LoginRequest) => {

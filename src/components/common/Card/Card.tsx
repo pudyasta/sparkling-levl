@@ -1,4 +1,5 @@
-import { useState } from '@lynx-js/react';
+import style from './Card.module.css';
+
 interface CardProps {
   children: React.ReactNode;
   bindTap?: (e: any) => void;
@@ -6,10 +7,7 @@ interface CardProps {
 }
 const Card: React.FC<CardProps> = ({ children, bindTap, className }) => {
   return (
-    <view
-      className={`mb-3 px-6 py-5 rounded-2xl border border-gray-200 bg-white ${className}`}
-      bindtap={bindTap}
-    >
+    <view className={`${style.cardContainer} ${className}`} bindtap={bindTap}>
       {children}
     </view>
   );

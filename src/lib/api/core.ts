@@ -1,5 +1,5 @@
 import axios, { type AxiosRequestConfig, type AxiosResponse } from 'axios';
-import { useAuth } from '@/context/AuthProvider';
+import { useNativeBridge } from '@/context/NativeBridgeProvider';
 import { API_BASE_URL, POST_METHOD } from '@/constant/api';
 import { useEffect } from '@lynx-js/react';
 import { AUTH_REFRESH_ENDPOINT } from '@/constant/route';
@@ -37,7 +37,7 @@ export const guestAPIClient = async (url: string, config: AxiosRequestConfig = {
 };
 
 export const useApiClient = () => {
-  const { accessToken, setAccessToken } = useAuth();
+  const { accessToken, setAccessToken } = useNativeBridge();
 
   const api = async (url: string, config: AxiosRequestConfig = {}) => {
     const headers = {

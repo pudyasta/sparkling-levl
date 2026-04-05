@@ -7,5 +7,6 @@ import date from './date.svg?inline';
 import xp from './xp.svg?inline';
 import courses from './course.svg?inline';
 import time from './time.svg?inline';
+import back from './back.svg?inline';
 
-export { eye, eyeClose, dummy, fire, thropy, date, xp, courses, time };
+export { eye, eyeClose, dummy, fire, thropy, date, xp, courses, time, back };

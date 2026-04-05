@@ -19,14 +19,10 @@ export const StyleProvider = ({ children }: { children: React.ReactNode }) => {
     setPref(PrefKey.Theme, theme);
   };
 
-  return (
-    <StyleContext.Provider value={{ theme, setTheme }}>
-      {children}
-    </StyleContext.Provider>
-  );
+  return <StyleContext.Provider value={{ theme, setTheme }}>{children}</StyleContext.Provider>;
 };
 export const useStyleContext = () => {
   const ctx = useContext(StyleContext);
-  if (!ctx) throw new Error('useAuth must be used within AuthProvider');
+  if (!ctx) throw new Error('useNativeBridge must be used within AuthProvider');
   return ctx;
 };

@@ -1,0 +1,62 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #f6f8fa;
+}
+
+.scrollView {
+  flex: 1;
+  margin-bottom: 72px; /* Space for the fixed tab bar */
+}
+
+.tabBar {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  background-color: #ffffff;
+  position: fixed;
+  bottom: 0;
+  border-top-width: 1px;
+  border-top-style: solid;
+  border-top-color: #eeeeee;
+}
+
+.tabItem {
+  padding-top: 20px;
+  padding-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  border-bottom-width: 2px;
+  border-bottom-style: solid;
+  border-bottom-color: transparent;
+}
+
+/* Modifier for Active State */
+.tabItemActive {
+  border-bottom-color: #1a73e8; /* Primary Color */
+}
+
+.tabIcon {
+  width: 32px;
+  height: 32px;
+  opacity: 0.8;
+}
+
+.tabIconActive {
+  opacity: 1;
+}
+
+.tabLabel {
+  font-size: 14px;
+  font-weight: 600;
+  margin-top: 4px;
+  color: #9aa0a6; /* Disabled/Neutral Color */
+}
+
+.tabLabelActive {
+  color: #1a73e8; /* Primary Color */
+}

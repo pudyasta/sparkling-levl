@@ -1,55 +1,82 @@
-import { Colors } from '../../constant/style';
+import { Colors } from '@/constant/style';
 import { useState, type ReactNode } from '@lynx-js/react';
+// Assuming your palette is exported from here
 
 interface ButtonProps {
   children: ReactNode;
-  color?: 'blue' | 'yellow' | 'white';
+  color?: 'primary' | 'secondary' | 'white';
   onPress?: () => void;
   disabled?: boolean;
-  variant?: 'solid' | 'outline';
+  variant?: 'filled' | 'outlined';
   size?: 'small' | 'medium' | 'large';
   className?: string;
 }
 
-const colorStyles: Record<NonNullable<ButtonProps['color']>, string> = {
-  blue: `${Colors.Primary}`,
-  yellow: `${Colors.Secondary}`,
-  white: `${Colors.Accent}`,
-};
-
-const borderColorStyles: Record<NonNullable<ButtonProps['color']>, string> = {
-  blue: `border-primary`,
-  yellow: `border-secondary`,
-  white: 'border-black',
-};
-
-const textColorStyles: Record<NonNullable<ButtonProps['color']>, string> = {
-  blue: `text-primary`,
-  yellow: `text-black`,
-  white: 'text-black',
-};
-
-const Button: React.FC<ButtonProps> = ({
+const Button = ({
   children,
-  color = 'blue',
-  variant = 'solid',
+  color = 'primary',
+  variant = 'filled',
   onPress,
   disabled = false,
   size = 'medium',
   className = '',
-}) => {
+}: ButtonProps) => {
   const [animate, setAnimate] = useState(false);
+
+  const theme = {
+    primary: Colors.Primary, // #1A73E8
+    secondary: Colors.Secondary, // #FFC107
+    white: '#FFFFFF',
+    neutral: Colors.Neutral, // #202124
+    disabled: Colors.Disabled, // #9AA0A6
+  };
+  const borderColorStyles = {
+    primary: Colors.Neutral,
+    secondary: Colors.Neutral,
+    white: Colors.Neutral,
+    neutral: Colors.Accent,
+    disabled: Colors.Disabled,
+  };
 
   const handleTap = () => {
     if (disabled) return;
     setAnimate(true);
     onPress?.();
-
-    setTimeout(() => setAnimate(false), 500);
+    setTimeout(() => setAnimate(false), 200);
   };
+
+  const getStyles = () => {
+    if (disabled) {
+      return {
+        backgroundColor: '#F5F5F5',
+        borderColor: theme.disabled,
+        color: theme.disabled,
+      };
+    }
+
+    const baseColor = theme[color];
+    const isWhite = color === 'white';
+
+    if (variant === 'filled') {
+      return {
+        backgroundColor: baseColor,
+        borderColor: borderColorStyles[color],
+        color: color === 'primary' ? '#FFFFFF' : '#000000',
+      };
+    } else {
+      return {
+        backgroundColor: 'transparent',
+        borderColor: baseColor,
+        color: isWhite ? '#FFFFFF' : baseColor,
+      };
+    }
+  };
+
+  const { backgroundColor, borderColor, color: textColor } = getStyles();
 
   return (
     <text
+      bindtap={handleTap}
       style={{
         display: 'block',
         width: '100%',
@@ -58,35 +85,20 @@ const Button: React.FC<ButtonProps> = ({
         borderRadius: '12px',
         borderWidth: '1px',
         borderStyle: 'solid',
-        transition: 'all 500ms ease-out',
         boxSizing: 'border-box',
-
-        // Dynamic Padding (Size)
-        paddingTop: size === 'small' ? '12px' : size === 'medium' ? '16px' : '24px',
-        paddingBottom: size === 'small' ? '12px' : size === 'medium' ? '16px' : '24px',
-
-        // Disabled State vs Active State
-        ...(disabled
-          ? {
-              cursor: 'not-allowed',
-              backgroundColor: 'rgba(156, 163, 175, 0.2)',
-              borderColor: 'rgba(156, 163, 175, 0.2)',
-              color: 'rgba(55, 65, 81, 0.5)',
-            }
-          : variant === 'solid'
-            ? {
-                backgroundColor: colorStyles[color], // Must be a Hex/RGB value
-                color: color === 'blue' ? '#ffffff' : '#000000',
-                borderColor: 'transparent',
-              }
-            : {
-                backgroundColor: 'transparent',
-                borderColor: borderColorStyles[color], // Must be a Hex/RGB value
-                color: textColorStyles[color], // Must be a Hex/RGB value
-              }),
+        // Layout/Sizing
+        paddingTop: size === 'small' ? '8px' : size === 'medium' ? '14px' : '20px',
+        paddingBottom: size === 'small' ? '8px' : size === 'medium' ? '14px' : '20px',
+        // Colors
+        backgroundColor,
+        borderColor,
+        color: textColor,
+        // Animation/State
+        opacity: animate ? 0.7 : 1,
+        transform: animate ? 'scale(0.98)' : 'scale(1)',
+        transition: 'all 0.1s ease-in-out',
       }}
-      className={animate ? 'animate-press-bounce' : ''}
-      bindtap={handleTap}
+      className={className}
     >
       {children}
     </text>

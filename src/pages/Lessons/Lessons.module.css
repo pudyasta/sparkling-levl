@@ -1,0 +1,96 @@
+.container {
+}
+
+.scrollView {
+  padding: 20px;
+  height: 100%;
+  width: 100%;
+}
+
+.header {
+  margin-bottom: 24px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 800;
+  color: #202124; /* LightColors.Neutral */
+  margin-bottom: 8px;
+}
+
+.description {
+  font-size: 16px;
+  color: #5f6368; /* LightColors.Disabled/Grey */
+  line-height: 22px;
+}
+
+.blockWrapper {
+  margin-bottom: 20px;
+}
+
+.textContent {
+  font-size: 15px;
+  line-height: 24px;
+  color: #202124;
+}
+
+/* Image Block */
+.imageCard {
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: #f8f9fa;
+}
+
+.image {
+  width: 100%;
+  height: 200px;
+}
+
+.caption {
+  padding: 12px;
+  font-size: 12px;
+  color: #5f6368;
+  text-align: center;
+}
+
+/* File Block - Converted from your HTML <div> structure */
+.fileCard {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  background-color: #e8f0fe; /* LightColors.Accent */
+  border-radius: 12px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #d2e3fc;
+}
+
+.fileInfo {
+  flex: 1;
+}
+
+.fileName {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1a73e8; /* LightColors.Primary */
+  margin-bottom: 4px;
+}
+
+.fileSize {
+  font-size: 12px;
+  color: #5f6368;
+}
+
+.downloadBtn {
+  background-color: #1a73e8;
+  padding: 8px 16px;
+  border-radius: 8px;
+}
+
+.downloadText {
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+}

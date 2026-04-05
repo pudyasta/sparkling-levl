@@ -4,7 +4,7 @@ import { validateSafely } from '@/lib/helper/validate';
 import type { RegisterRequest } from '../repository/type';
 import { useRegisterRepo } from '../repository/useRegister';
 import type { AuthResponse } from '@/pages/Login/repository/type';
-import { useAuth } from '@/context/AuthProvider';
+import { useNativeBridge } from '@/context/NativeBridgeProvider';
 
 interface UseRegisterOptions {
   onValidationError?: (errors: any) => void;
@@ -14,12 +14,11 @@ interface UseRegisterOptions {
 
 export const useRegister = (options?: UseRegisterOptions) => {
   const { registerApi } = useRegisterRepo();
-  const { setAccessToken, setUser, accessToken } = useAuth();
+  const { setAccessToken, setUser } = useNativeBridge();
 
   const mutation = useMutation<AuthResponse, any, RegisterRequest>({
     mutationFn: async (rawValues: RegisterRequest) => {
       const result = await validateSafely(registerSchema, rawValues);
-      console.log(result);
       if (!result.success) {
         throw { type: 'VALIDATION_ERROR', errors: result.errors };
       }
@@ -47,14 +46,11 @@ export const useRegister = (options?: UseRegisterOptions) => {
       } else if (!data.data?.access_token || !data.data?.refresh_token) {
         throw new Error('Invalid token response');
       } else {
-        console.log(data.data.access_token);
-        console.log(accessToken);
         setAccessToken({
           access_token: data.data.access_token,
           refresh_token: data.data.refresh_token,
           expires_in: data.data.expires_in,
         });
-        console.log(accessToken);
         setUser({
           id: data.data.user.id,
           name: data.data.user.name,
@@ -71,7 +67,6 @@ export const useRegister = (options?: UseRegisterOptions) => {
       }
     },
     onError: (error: any) => {
-      console.log(error);
       if (error.type === 'VALIDATION_ERROR') {
         options?.onValidationError?.(error.errors);
       }

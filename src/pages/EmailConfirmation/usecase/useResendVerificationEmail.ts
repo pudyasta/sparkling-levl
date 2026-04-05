@@ -1,7 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { validateSafely } from '@/lib/helper/validate';
 import { navigate } from '@/lib/native/nativeNavigate';
-import { email } from 'zod';
 import type { AuthResponse } from '@/pages/Login/repository/type';
 import { useResendVerificationEmailRepo } from '../repository/useResendVerificationEmailRepo';
 
@@ -11,9 +10,7 @@ interface UseResendVerificationEmailOptions {
   onError?: (error: any) => void;
 }
 
-export const useResendVerificationEmail = (
-  options?: UseResendVerificationEmailOptions,
-) => {
+export const useResendVerificationEmail = (options?: UseResendVerificationEmailOptions) => {
   const { resendVerificationEmailApi } = useResendVerificationEmailRepo();
   const mutation = useMutation<AuthResponse, any, any>({
     mutationFn: async () => {

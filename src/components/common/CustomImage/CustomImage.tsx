@@ -3,6 +3,7 @@ import type { FC } from '@lynx-js/react';
 interface CustomImage {
   src: string;
   className?: string;
+  style?: React.CSSProperties;
 }
 
 const SVG_REGEX = /\.svg(?:\?.*)?$/i;

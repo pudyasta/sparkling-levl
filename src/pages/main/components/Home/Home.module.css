@@ -1,0 +1,233 @@
+.container {
+  flex: 1;
+  padding-bottom: 40px;
+}
+
+.header {
+  background-size: cover;
+  overflow: hidden;
+  background-position: center;
+  min-height: 20vh;
+  display: flex;
+}
+
+.headerContent {
+  display: flex;
+  flex-direction: column;
+  padding: 32px 1rem;
+  gap: 10px;
+  width: 100%;
+}
+
+.headerInfo {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.headerName {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.greetingText {
+  color: red;
+}
+
+.userName {
+  color: #ffffff;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.statsRow {
+  display: flex;
+  flex-direction: row;
+}
+
+.streakBadge {
+  padding: 8px 20px;
+  border-radius: 12px;
+  margin-right: 8px;
+  background: linear-gradient(90deg, #e23d3d, #e98980);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.streakText {
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.xpBadge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #f7b500, #f2d06b);
+  display: flex;
+  align-items: center;
+}
+
+.xpText {
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.avatarContainer {
+  width: 60px;
+  height: 60px;
+  border-radius: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatarText {
+  font-size: 20px;
+  color: #ffffff;
+  font-weight: bold;
+}
+
+/* Main Content Area */
+.contentWrapper {
+  padding: 0 1rem;
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.levelCardInner {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+}
+
+.levelIcon {
+  width: 44px;
+  height: 44px;
+}
+
+.progressBarTrack {
+  height: 8px;
+  background-color: #e9ebf0;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progressBarFill {
+  height: 100%;
+  border-radius: 999px;
+}
+
+/* Course Card */
+.courseCard {
+  background-color: #ffffff;
+  border-radius: 16px;
+  padding: 16px;
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  margin-bottom: 24px;
+  gap: 16px;
+}
+
+.courseThumbnail {
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  background-size: cover;
+}
+
+.courseTitle {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.courseMeta {
+  color: #4a90e2;
+  font-size: 14px;
+  margin: 2px 0;
+}
+
+.courseSubText {
+  color: #888888;
+}
+
+/* Achievements */
+.achievementScroll {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 24px;
+}
+
+.achievementItem {
+  align-items: center;
+  max-width: 25vw;
+  margin-right: 16px;
+}
+
+.imageWrapper {
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.achievementIcon {
+  width: 64px;
+  height: 64px;
+}
+
+.achievementLabel {
+  text-align: center;
+}
+
+/* Recommended */
+.recommendedCard {
+  background-color: #ffffff;
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.tagText {
+  color: #ffffff;
+  font-size: 12px;
+}
+
+/* Section Header */
+.sectionHeaderRow {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.sectionTitle {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.seeAllLink {
+  font-size: 14px;
+}
+
+.fireIcon {
+  width: 18px;
+  height: 24px;
+}
+
+.level-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}

@@ -1,5 +1,5 @@
 import { useState } from '@lynx-js/react';
-import Card from '../common/Card';
+import Card from '../common/Card/Card';
 import Text from '../Text';
 import { TextType } from '../Text/types';
 import style from './CourseCard.module.css';
@@ -13,13 +13,7 @@ interface CourseCardProps {
   bindTap: () => void;
 }
 
-const CourseCard: React.FC<CourseCardProps> = ({
-  title,
-  difficulty,
-  desc,
-  image,
-  bindTap,
-}) => {
+const CourseCard: React.FC<CourseCardProps> = ({ title, difficulty, desc, image, bindTap }) => {
   return (
     <Card className={style.recommendedCard} bindTap={bindTap}>
       <view className={style.titleWrapper}>

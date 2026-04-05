@@ -1,9 +1,12 @@
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
 import { pluginQRCode } from '@lynx-js/qrcode-rsbuild-plugin';
 import { pluginReactLynx } from '@lynx-js/react-rsbuild-plugin';
 import { defineConfig } from '@lynx-js/rspeedy';
 
 import { pluginTypedCSSModules } from '@rsbuild/plugin-typed-css-modules';
-
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export default defineConfig({
   source: {
     entry: {
@@ -12,6 +15,17 @@ export default defineConfig({
       login: './src/pages/Login/index.tsx',
       register: './src/pages/Register/index.tsx',
       emailConfirmation: './src/pages/EmailConfirmation/index.tsx',
+      courseDetail: './src/pages/CourseDetail/index.tsx',
+      lessons: './src/pages/Lessons/index.tsx',
+    },
+  },
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+      '@login': path.resolve(__dirname, './src/pages/Login'),
+      '@register': path.resolve(__dirname, './src/pages/Register'),
+      '@course_detail': path.resolve(__dirname, './src/pages/CourseDetail'),
+      '@email_confirmation': path.resolve(__dirname, './src/pages/EmailConfirmation'),
     },
   },
   output: {
@@ -24,7 +38,7 @@ export default defineConfig({
     pluginQRCode({
       schema(url: string) {
         return {
-          http: `http://${url}?fullscreen=true`,
+          http: `${url}?fullscreen=true`,
           hybrid: `hybrid://lynxview_page?bundle=${url}?fullscreen=true`,
         };
       },
