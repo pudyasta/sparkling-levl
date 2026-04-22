@@ -12,48 +12,44 @@ export interface DashboardResponse {
 }
 
 export interface DashboardData {
-  streak: StreakInfo;
-  level: LevelInfo;
-  xp: XPInfo;
-  courses: CourseStats;
-  learning_hours: number;
-  days_active: number;
-  recent_activity: ActivityItem[];
+  gamification_stats: GamificationStats;
+  latest_learning_activity: LatestLearningActivity;
+  recent_achievements: Achievement[];
+  global_top_leaderboard: LeaderboardEntry[];
 }
 
-export interface StreakInfo {
-  current: number;
-  longest: number;
+export interface GamificationStats {
+  day_streak: number;
+  xp: number;
+  level: number;
+  current_level_xp: number;
+  xp_to_next_level: number;
+  progress_percent: number;
 }
 
-export interface LevelInfo {
-  current: number;
+export interface LatestLearningActivity {
+  course: string;
+  unit: string;
+  lesson_index: number;
+  total_lessons: number;
+  updated_at: string; // ISO Date string
+}
+
+export interface Achievement {
   name: string;
-  current_xp: number;
-  required_xp: number;
-  next_level_xp: number;
-  progress_percentage: number;
+  image: string;
+  earned_at: string; // ISO Date string
 }
 
-export interface XPInfo {
-  total: number;
-  this_month: number;
+export interface LeaderboardEntry {
+  user: UserProfile;
+  total_points: number;
 }
 
-export interface CourseStats {
-  enrolled: number;
-}
-
-export type ActivityType =
-  | 'activity'
-  | 'assignment_submission'
-  | 'course_completion';
-
-export interface ActivityItem {
-  type: ActivityType;
-  description: string;
-  xp_earned: number;
-  timestamp: string; // ISO 8601 format
+export interface UserProfile {
+  id: number;
+  name: string;
+  avatar: string;
 }
 
 /**

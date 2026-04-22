@@ -10,6 +10,7 @@ interface ButtonProps {
   variant?: 'filled' | 'outlined';
   size?: 'small' | 'medium' | 'large';
   className?: string;
+  rounded?: boolean;
 }
 
 const Button = ({
@@ -20,6 +21,7 @@ const Button = ({
   disabled = false,
   size = 'medium',
   className = '',
+  rounded = false,
 }: ButtonProps) => {
   const [animate, setAnimate] = useState(false);
 
@@ -82,7 +84,7 @@ const Button = ({
         width: '100%',
         textAlign: 'center',
         fontWeight: '700',
-        borderRadius: '12px',
+        borderRadius: rounded ? '999px' : '12px',
         borderWidth: '1px',
         borderStyle: 'solid',
         boxSizing: 'border-box',

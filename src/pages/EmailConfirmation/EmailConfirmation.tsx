@@ -64,7 +64,7 @@ export const EmailConfirmation: FC<EmailConfirmationProps> = (props) => {
       </view>
 
       {/* Text Content */}
-      <Text size={TextType.h1} fontFamily={FontFamily.jakarta} bold>
+      <Text size={TextType.h1} fontFamily={FontFamily.jakarta}>
         Confirm Your Email!
       </Text>
       <Text className={styles.description} typeof={TextType.b2} fontFamily={FontFamily.jakarta}>

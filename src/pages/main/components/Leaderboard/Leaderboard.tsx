@@ -59,7 +59,7 @@ function Leaderboard() {
       >
         <IconWithBackground image={thropy} />
         <view>
-          <Text size={TextType.h1} bold color="white" fontFamily={FontFamily.jakarta}>
+          <Text size={TextType.h1} fontWeight="bold" color="white" fontFamily={FontFamily.jakarta}>
             Leaderboard
           </Text>
           <Text size={TextType.b2} color="white">
@@ -103,7 +103,7 @@ function Leaderboard() {
                     </view>
                   </view>
                   <view className={styles.lbInfo}>
-                    <Text size={TextType.b1} bold style={{ textAlign: 'center' }}>
+                    <Text size={TextType.b1} fontWeight="bold" style={{ textAlign: 'center' }}>
                       {user.user.name.split(' ')[0] + ' ' + user.user.name.split(' ')[1]?.[0]}
                     </Text>
                     <view className={styles.xpRow} style={{ textAlign: 'center' }}>

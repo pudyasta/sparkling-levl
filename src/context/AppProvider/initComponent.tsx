@@ -1,7 +1,8 @@
 // src/utils/bootstrap.tsx
 import { root } from '@lynx-js/react';
-import { AppProvider } from './AppProvider';
+
 import '../../styles/core.css';
+import { AppProvider } from './AppProvider';
 
 declare module '@lynx-js/types' {
   interface GlobalProps {

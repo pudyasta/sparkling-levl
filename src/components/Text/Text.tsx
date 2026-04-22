@@ -1,4 +1,3 @@
-import handleFontWeight from './utils/handleFontWeight';
 import handleFontSize from './utils/handleFontSize';
 import handleLineHeight from './utils/handleLineHeight';
 import handleLetterSpacing from './utils/handleLetterSpacing';
@@ -9,17 +8,14 @@ import handleFontFamily from './utils/handleFontFamily';
 const Text = ({
   asSpan = false,
   body,
-  bold = false,
-  caption = false,
+  fontWeight = 'normal',
   children,
   color,
   disabled = false,
   fontFamily = FontFamily.inter,
-  large = false,
   link = '',
   main = false,
   margin = '',
-  micro = false,
   tag,
   uppercase = false,
   onClick = () => {},
@@ -34,7 +30,7 @@ const Text = ({
         fontFamily: handleFontFamily(fontFamily),
         display: link || asSpan ? 'linear' : 'block',
         position: 'relative',
-        fontWeight: handleFontWeight(bold),
+        fontWeight: fontWeight,
         fontSize: `${handleFontSize({ size })}px`,
         color: handleColor({ color, link, tag, main, disabled }),
         lineHeight: `${handleLineHeight({ size })}px`,

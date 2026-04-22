@@ -81,7 +81,6 @@ export default function LoginPage() {
       {/* Form Section */}
       <view className="flex-col items-center gap-5 px-5 py-8 flex justify-center">
         <Input title="Email or username" variant="email" icon="mail" ref={emailRef} />
-        <Input title="Password" variant="password" icon="lock" ref={passwordRef} />
 
         <Text
           typeof={TextType.b1}

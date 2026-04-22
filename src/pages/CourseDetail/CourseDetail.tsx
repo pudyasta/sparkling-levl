@@ -1,17 +1,18 @@
-import { useEffect, useState, type FC } from '@lynx-js/react';
-import styles from './CourseDetail.module.css';
-import { navigateBack } from '@/lib/native/nativeNavigate';
+import { type FC, useEffect } from '@lynx-js/react';
+import { close } from 'sparkling-navigation';
+
+import { back } from '@/assets/images/icon';
 import Text from '@/components/Text';
 import { FontFamily, TextType } from '@/components/Text/types';
-import { Colors } from '@/constant/style';
-import Card from '@/components/common/Card/Card';
 import Button from '@/components/common/Button';
-import { useGetCourseDetail } from './usecase/useCourseDetail';
-import { useNativeBridge } from '@/context/NativeBridgeProvider';
+import Card from '@/components/common/Card/Card';
 import CustomImage from '@/components/common/CustomImage/CustomImage';
-import { back } from '@/assets/images/icon';
-import { close } from 'sparkling-navigation';
+import { Colors } from '@/constant/style';
+import { useNativeBridge } from '@/context/NativeBridgeProvider';
+
+import styles from './CourseDetail.module.css';
 import { UnitSection } from './components/Units';
+import { useGetCourseDetail } from './usecase/useCourseDetail';
 
 export interface Lesson {
   id: string;
@@ -37,9 +38,6 @@ export interface CourseDetailData {
 }
 
 export const CourseDetail: FC = () => {
-  const [totalDuration, setTotalDuration] = useState(0);
-  const [totalXP, setTotalXP] = useState(0);
-
   const { routerParams } = useNativeBridge();
   const { courses, isLoading } = useGetCourseDetail({
     slug: routerParams?.slug || '',
@@ -47,7 +45,6 @@ export const CourseDetail: FC = () => {
 
   useEffect(() => {
     if (!courses) return;
-    console.log('COBA', JSON.stringify(courses, null, 2));
   }, [courses]);
 
   return (
@@ -76,7 +73,6 @@ export const CourseDetail: FC = () => {
             size={TextType.h1}
             fontFamily={FontFamily.jakarta}
             color={'white'}
-            bold
           >
             {courses.title}
           </Text>
@@ -96,7 +92,7 @@ export const CourseDetail: FC = () => {
             {courses.enrollment_status === 'active' ? (
               <>
                 <view className={styles.progressTextRow}>
-                  <Text className={styles.cardLabel} size={TextType.b1} bold>
+                  <Text className={styles.cardLabel} size={TextType.b1}>
                     Your Progress
                   </Text>
                   <Text className={styles.cardValue} color={Colors.Primary} size={TextType.h2}>
@@ -117,15 +113,15 @@ export const CourseDetail: FC = () => {
                 </Button>
               </>
             ) : (
-              <Text size={TextType.h2} bold color={Colors.Primary}>
+              <Text size={TextType.h2} color={Colors.Primary}>
                 Enroll to Start Learning!
               </Text>
             )}
           </Card>
 
           {/* 4. Lesson List */}
-          {courses.units && (
-            <Text className={styles.sectionTitle} size={TextType.h2} bold>
+          {courses.units && courses.units && (
+            <Text className={styles.sectionTitle} size={TextType.h2}>
               Course Units
             </Text>
           )}
@@ -134,7 +130,11 @@ export const CourseDetail: FC = () => {
               <UnitSection
                 key={unit.id}
                 unit={unit}
-                isLastAccessed={unit.id == courses.progress.last_accessed_unit.id}
+                isLastAccessed={
+                  courses?.progress?.last_accessed_unit
+                    ? unit.id == courses.progress.last_accessed_unit.id
+                    : false
+                }
               />
             ))}
         </view>

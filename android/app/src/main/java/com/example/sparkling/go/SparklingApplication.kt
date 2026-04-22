@@ -23,12 +23,19 @@ import com.tiktok.sparkling.method.router.utils.RouterProvider
 import com.example.sparkling.go.LynxInputComponent
 import com.example.sparkling.go.BuiltinTemplateProvider
 import com.example.sparkling.go.components.NativeSvgView
+import com.example.sparkling.go.depend.AppMediaDepend
 import com.lynx.service.devtool.LynxDevToolService
 import com.lynx.service.http.LynxHttpService
 import com.lynx.service.image.LynxImageService
 import com.lynx.service.log.LynxLogService
 import com.lynx.tasm.LynxEnv
 import com.lynx.tasm.service.LynxServiceCenter
+import com.tiktok.sparkling.method.media.choosemedia.ChooseMediaMethod
+import com.tiktok.sparkling.method.media.downloadfile.DownloadFileMethod
+import com.tiktok.sparkling.method.media.savedataurl.SaveDataURLMethod
+import com.tiktok.sparkling.method.media.uploadfile.UploadFileMethod
+import com.tiktok.sparkling.method.media.uploadimage.UploadImageMethod
+import com.tiktok.sparkling.method.media.utils.MediaProvider
 import com.tiktok.sparkling.method.storage.getItem.StorageGetItemMethod
 import com.tiktok.sparkling.method.storage.removeItem.StorageRemoveItemMethod
 import com.tiktok.sparkling.method.storage.setItem.StorageSetItemMethod
@@ -93,6 +100,13 @@ class SparklingApplication : Application() {
         SparklingBridgeManager.registerIDLMethod(RouterOpenMethod::class.java)
         SparklingBridgeManager.registerIDLMethod(RouterCloseMethod::class.java)
         RouterProvider.hostRouterDepend = SparklingHostRouterDepend()
+
+        SparklingBridgeManager.registerIDLMethod(ChooseMediaMethod::class.java)
+        SparklingBridgeManager.registerIDLMethod(DownloadFileMethod::class.java)
+        SparklingBridgeManager.registerIDLMethod(SaveDataURLMethod::class.java)
+        SparklingBridgeManager.registerIDLMethod(UploadFileMethod::class.java)
+        SparklingBridgeManager.registerIDLMethod(UploadImageMethod::class.java)
+        MediaProvider.hostMediaDepend = AppMediaDepend.register(this)
 
         SparklingBridgeManager.registerIDLMethod(StorageSetItemMethod::class.java)
         SparklingBridgeManager.registerIDLMethod(StorageGetItemMethod::class.java)

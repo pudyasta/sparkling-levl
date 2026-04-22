@@ -1,6 +1,6 @@
 import { createContext, useContext, useState } from 'react';
 import * as router from 'sparkling-navigation';
-
+// Delete this file
 type RouterParamsContextType = {
   params: Record<string, any> | null;
   setParams: (p: Record<string, any> | null) => void;

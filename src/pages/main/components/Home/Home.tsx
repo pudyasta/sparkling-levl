@@ -1,20 +1,23 @@
-import { loginBanner } from '@/assets/images/pages';
-import { Colors } from '@/constant/style';
-import style from './Home.module.css';
-import Text from '@/components/Text';
-import Card from '@/components/common/Card/Card';
+import { useEffect } from 'react';
+
 import { dummy, fire } from '@/assets/images/icon';
-import { TextType } from '@/components/Text/types';
+import { loginBanner } from '@/assets/images/pages';
 import CourseCard from '@/components/CoursesCard/CoursesCard';
-import { getTimeOfDay } from '@/lib/helper/getTime';
-import { useNativeBridge } from '@/context/NativeBridgeProvider';
-import { useGetAchievements, useGetGamificationStats } from '../../usecase/useGetProfile';
+import Text from '@/components/Text';
+import { TextType } from '@/components/Text/types';
+import Card from '@/components/common/Card/Card';
 import CustomImage from '@/components/common/CustomImage/CustomImage';
+import { Colors } from '@/constant/style';
+import { useNativeBridge } from '@/context/NativeBridgeProvider';
+import { getTimeOfDay } from '@/lib/helper/getTime';
+
 import {
   useGetDashboardRecentLearning,
   useGetDashboardSummary,
   useGetRecommendedCourses,
 } from '../../usecase/useGetAllDashboard';
+import { useGetAchievements, useGetGamificationStats } from '../../usecase/useGetProfile';
+import style from './Home.module.css';
 
 export default function LearningDashboard() {
   const { user, navigateTo } = useNativeBridge();
@@ -24,9 +27,13 @@ export default function LearningDashboard() {
   const { achievements } = useGetAchievements();
   const { recommendedCourses } = useGetRecommendedCourses();
 
+  useEffect(() => {
+    console.log(JSON.stringify(summary, null, 2));
+    console.log('SUMM', summary, recentLearning, recommendedCourses);
+  }, [summary, recentLearning, recommendedCourses]);
+
   return (
     recentLearning &&
-    summary &&
     recommendedCourses && (
       <scroll-view className={style.container} scroll-y>
         {/* Header Section */}
@@ -42,7 +49,7 @@ export default function LearningDashboard() {
                 <Text size={TextType.b2} color="white">
                   Good {getTimeOfDay()},
                 </Text>
-                <Text size={TextType.h1} bold color="white">
+                <Text size={TextType.h1} fontWeight="bold" color="white">
                   {user?.name || ''}
                 </Text>
               </view>
@@ -50,24 +57,26 @@ export default function LearningDashboard() {
                 <text className={style.avatarText}>AC</text>
               </view>
             </view>
-            <view className={style.statsRow}>
-              <view className={style.streakBadge}>
-                <image src={fire} className={style.fireIcon} />
-                <view>
-                  <Text size={TextType.h2} bold color="white">
-                    {summary?.streak.current || 0}
-                  </Text>
-                  <Text size={TextType.b3} color="white">
-                    Days Streak
+            {summary && (
+              <view className={style.statsRow}>
+                <view className={style.streakBadge}>
+                  <image src={fire} className={style.fireIcon} />
+                  <view>
+                    <Text size={TextType.h2} fontWeight="bold" color="white">
+                      {summary.gamification_stats.day_streak || 0}
+                    </Text>
+                    <Text size={TextType.b3} color="white">
+                      Days Streak
+                    </Text>
+                  </view>
+                </view>
+                <view className={style.xpBadge}>
+                  <Text size={TextType.b1} className={style.xpText} color="white">
+                    ✨ +{summary.gamification_stats.xp || 0} XP
                   </Text>
                 </view>
               </view>
-              <view className={style.xpBadge}>
-                <Text size={TextType.b1} className={style.xpText} color="white">
-                  ✨ +{summary.xp.this_month || 0} XP
-                </Text>
-              </view>
-            </view>
+            )}
           </view>
         </view>
 
@@ -89,13 +98,13 @@ export default function LearningDashboard() {
                 className={style.courseThumbnail}
               />
               <view className={style.content}>
-                <Text size={TextType.b1} bold className={style.courseTitle}>
-                  {recentLearning[0].course.title}
+                <Text size={TextType.b1} fontWeight="bold" className={style.courseTitle}>
+                  {recentLearning[0].course?.title || ''}
                 </Text>
                 <Text size={TextType.b3} color={Colors.Primary}>
                   {recentLearning[0].progress.completed_lessons} of{' '}
                   {recentLearning[0].progress.total_lessons} lessons{' - '}
-                  <Text size={TextType.b3}>{recentLearning[0].last_lesson.title}</Text>
+                  <Text size={TextType.b3}>{recentLearning[0].last_lesson?.title || ''}</Text>
                 </Text>
                 <view className={style.progressBarTrack}>
                   <view
@@ -134,9 +143,9 @@ export default function LearningDashboard() {
             {recommendedCourses.map((course) => (
               <CourseCard
                 key={course.id}
-                title={course.title}
-                desc={course.description}
-                difficulty={course.instructor.name}
+                title={course?.title || ''}
+                desc={course.description || ''}
+                difficulty={course.instructor.name || ''}
                 image={course.thumbnail}
                 bindTap={() =>
                   navigateTo('courseDetail.lynx.bundle', {
@@ -156,7 +165,7 @@ export default function LearningDashboard() {
 function SectionHeader({ title }: { title: string }) {
   return (
     <view className={style.sectionHeaderRow}>
-      <Text size={TextType.h2} bold>
+      <Text size={TextType.h2} fontWeight="bold">
         {title}
       </Text>
       <Text size={TextType.b2} style={{ color: Colors.Primary }}>

@@ -1,7 +1,6 @@
 import { useEffect, useState, type FC } from '@lynx-js/react';
 import styles from './Leaderboarditem.module.css';
 import Card from '@/components/common/Card/Card';
-import { convertSvgUrlToPng } from '@/lib/helper/svgToPng';
 import CustomImage from '@/components/common/CustomImage/CustomImage';
 import Text from '@/components/Text';
 import { TextType } from '@/components/Text/types';

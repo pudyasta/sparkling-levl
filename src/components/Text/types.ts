@@ -11,7 +11,19 @@ export interface TypographyProps extends Omit<ComponentPropsWithoutRef<'span'>, 
   /**
    * To apply bold on text
    */
-  bold?: boolean;
+  fontWeight?:
+    | 'bold'
+    | 'normal'
+    | '100'
+    | '200'
+    | '300'
+    | '400'
+    | '500'
+    | '600'
+    | '700'
+    | '800'
+    | '900'
+    | undefined;
   /**
    * To apply caption Typography design
    */
@@ -101,4 +113,9 @@ export enum TextType {
 export enum FontFamily {
   inter = 'font-inter',
   jakarta = 'font-jakarta',
+}
+
+export enum fontWeight {
+  bold = 800,
+  semiBold = 500,
 }

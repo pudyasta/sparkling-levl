@@ -1,18 +1,17 @@
 import { useRef, useState } from '@lynx-js/react';
-import Input, { type InputRef } from '@/components/Input/Input';
-import Button from '@/components/common/Button';
-import Text from '@/components/Text';
-import { TextType } from '@/components/Text/types';
-import { useKeyboardShift } from '@/hooks/useKeyboardShift';
-import { useRegister } from '@/pages/Register/usecase/useRegister';
+
 import { searchMascot } from '@/assets/images/mascot';
 import { loginBanner } from '@/assets/images/pages/';
-import { Colors } from '@/constant/style';
-import style from './RegisterPage.module.css';
-import { Modal, ModalTemplate } from '@/components/Modal/Modal.view';
+import Input, { type InputRef } from '@/components/Input/Input';
 import { Loading } from '@/components/Loading/Loading';
-import * as router from 'sparkling-navigation';
-import { useEffect } from 'react';
+import { Modal, ModalTemplate } from '@/components/Modal/Modal.view';
+import Text from '@/components/Text';
+import { TextType } from '@/components/Text/types';
+import Button from '@/components/common/Button';
+import { Colors } from '@/constant/style';
+import { useNativeBridge } from '@/context/NativeBridgeProvider';
+import { useKeyboardShift } from '@/hooks/useKeyboardShift';
+import { useRegister } from '@/pages/Register/usecase/useRegister';
 
 export default function RegisterPage() {
   const emailRef = useRef<InputRef>(null);
@@ -20,27 +19,14 @@ export default function RegisterPage() {
   const nameRef = useRef<InputRef>(null);
   const passwordRef = useRef<InputRef>(null);
   const confirmPasswordRef = useRef<InputRef>(null);
+  const { navigateTo } = useNativeBridge();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { kbHeight } = useKeyboardShift('panel');
   const { isLoading, error, execute } = useRegister({
     onSuccess: () => {
-      router.navigate(
-        {
-          path: 'emailConfirmation.lynx.bundle',
-          options: {
-            params: {
-              title: 'Email Confirmation',
-              hide_nav_bar: 1,
-            },
-            replace: true,
-          },
-        },
-        (result: router.OpenResponse) => {
-          router.close({ containerID: lynx.__globalProps.containerID });
-        }
-      );
+      navigateTo('emailConfirmation.lynx.bundle', { close: true });
     },
     onValidationError: (errors) => {
       if (errors) {
@@ -83,36 +69,41 @@ export default function RegisterPage() {
   return (
     <scroll-view
       scroll-orientation="vertical"
+      className="h-full w-full flex-1"
       style={{
-        width: '100%',
-        height: '100%',
         paddingBottom: kbHeight > 0 ? `${kbHeight}px` : '0px',
       }}
       id="panel"
     >
+      {/* Banner Section */}
       <view
+        className="min-h-[35vh] flex-col items-end gap-3 bg-cover bg-bottom pl-5 pr-8 pt-5 flex relative justify-end overflow-hidden"
         style={{
           backgroundImage: `url(${loginBanner})`,
         }}
-        className={style.banner}
       >
-        <view className={style.header}>
-          <view className={style.headerLogo}>
+        {/* Header Section - Note: items-start based on your CSS */}
+        <view className="w-full flex-col items-start gap-[10px] flex">
+          <view className="h-14 w-14 items-center rounded-[16px] bg-white/20 flex justify-center">
             <Text size={TextType.h1}>📖</Text>
           </view>
 
-          <Text size={TextType.h1} color="white" bold>
+          <Text size={TextType.h1} color="white" fontWeight="bold">
             Welcome Explorer!
           </Text>
           <Text size={TextType.b2} color="white">
             Discover a new world with Levl!
           </Text>
         </view>
-        <view className={style.mascotContainer}>
-          <image src={searchMascot} className={style.mascot} />
+
+        {/* Mascot Container - Note: justify-end based on your CSS */}
+        <view className="w-full flex justify-end">
+          <image src={searchMascot} className="h-[120px] w-[140px]" />
         </view>
       </view>
-      <view className={style.formContainer}>
+
+      {/* Form Section */}
+      <view className="flex-col items-center gap-4 px-5 py-8 flex justify-center">
         <Input title="Name" variant="text" icon="user" ref={nameRef} />
         <Input title="Email" variant="email" icon="mail" ref={emailRef} />
         <Input title="Username" variant="text" icon="user" ref={usernameRef} />
@@ -122,26 +113,9 @@ export default function RegisterPage() {
         <Button onPress={autoFillForm} disabled={isLoading}>
           {isLoading ? <Loading size={32} /> : 'Sign Up'}
         </Button>
-        {/* Signup */}
-        <Text
-          typeof={TextType.b1}
-          onClick={() =>
-            router.navigate(
-              {
-                path: 'login.lynx.bundle',
-                options: {
-                  params: {
-                    title: 'Home',
-                    hide_nav_bar: 1,
-                  },
-                },
-              },
-              (result: router.OpenResponse) => {
-                router.close({ containerID: lynx.__globalProps.containerID });
-              }
-            )
-          }
-        >
+
+        {/* Login Redirect */}
+        <Text typeof={TextType.b1} onClick={() => navigateTo('login.lynx.bundle', { close: true })}>
           Udah punya akun?{' '}
           <Text typeof={TextType.b1} style={{ color: Colors.Primary }}>
             Masuk disini

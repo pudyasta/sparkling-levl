@@ -5,7 +5,7 @@ export const fontSizeLv3 = 14;
 export const fontSizeLv4 = 16;
 export const fontSizeLv5 = 18;
 export const fontSizeLv6 = 20;
-export const fontSizeLv7 = 24;
+export const fontSizeLv7 = 28;
 
 // Line height
 export const lineHeightMicro = 12;
@@ -15,8 +15,8 @@ export const lineHeightLv3 = 18;
 export const lineHeightLv4 = 20;
 export const lineHeightLv5 = 22;
 export const lineHeightLv6 = 24;
-export const lineHeightLv7 = 26;
-export const lineHeightLv9 = 28;
+export const lineHeightLv7 = 28;
+export const lineHeightLv9 = 36;
 
 // Font weight
 export const fontWeightRegular = 400;

@@ -46,7 +46,7 @@ const Courses: React.FC = () => {
         <view className={styles.container}>
           {/* Header Section */}
           <view className={styles.header}>
-            <Text size={TextType.h1} bold color="white">
+            <Text size={TextType.h1} fontWeight="bold" color="white">
               Courses
             </Text>
 

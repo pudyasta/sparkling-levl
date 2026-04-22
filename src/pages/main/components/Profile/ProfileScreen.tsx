@@ -1,17 +1,18 @@
-import { useEffect, type FC } from '@lynx-js/react';
-import styles from './Profile.module.css';
-import AchievementItem from './components/Achievements';
+import { type FC, useEffect } from '@lynx-js/react';
 
-import RecentActivityItem from './components/RecentActivities';
-import StatsCard from './components/StatsCard';
-import { ProfileHeader } from './components/ProfileHeader';
-import Card from '@/components/common/Card/Card';
-import { useNativeBridge } from '@/context/NativeBridgeProvider';
-import Button from '@/components/common/Button';
 import { courses, date, time, xp } from '@/assets/images/icon';
 import Text from '@/components/Text';
 import { FontFamily, TextType } from '@/components/Text/types';
+import Button from '@/components/common/Button';
+import Card from '@/components/common/Card/Card';
+import { useNativeBridge } from '@/context/NativeBridgeProvider';
+
 import { useGetAchievements, useGetGamificationStats } from '../../usecase/useGetProfile';
+import styles from './Profile.module.css';
+import AchievementItem from './components/Achievements';
+import { ProfileHeader } from './components/ProfileHeader';
+import RecentActivityItem from './components/RecentActivities';
+import StatsCard from './components/StatsCard';
 
 export const ProfileScreen: FC = () => {
   const { user, logout } = useNativeBridge();
@@ -52,7 +53,7 @@ export const ProfileScreen: FC = () => {
         <Card className={styles.progressCard}>
           <view className={styles.progressTop}>
             <view className={styles.progressInfo}>
-              <Text size={TextType.h2} bold fontFamily={FontFamily.jakarta}>
+              <Text size={TextType.h2} fontWeight="bold" fontFamily={FontFamily.jakarta}>
                 {stats.level.name}
               </Text>
               <Text size={TextType.b3}>
@@ -83,7 +84,7 @@ export const ProfileScreen: FC = () => {
 
         {/* Achievements */}
         <view className={styles.sectionHeader}>
-          <Text size={TextType.h2} bold fontFamily={FontFamily.jakarta}>
+          <Text size={TextType.h2} fontWeight="bold" fontFamily={FontFamily.jakarta}>
             Achievements
           </Text>
           <Text>See All</Text>
@@ -107,7 +108,7 @@ export const ProfileScreen: FC = () => {
 
         {/* Recent Activity */}
         <view className={styles.sectionHeader}>
-          <Text size={TextType.h2} bold fontFamily={FontFamily.jakarta}>
+          <Text size={TextType.h2} fontWeight="bold" fontFamily={FontFamily.jakarta}>
             Recent Activity
           </Text>
           <Text>See All</Text>
@@ -127,14 +128,16 @@ export const ProfileScreen: FC = () => {
           />
         </view>
       </view>
-      <Button
-        color="primary"
-        onPress={() => {
-          logout();
-        }}
-      >
-        Logout
-      </Button>
+      <view className={styles.content}>
+        <Button
+          color="primary"
+          onPress={() => {
+            logout();
+          }}
+        >
+          Logout
+        </Button>
+      </view>
     </scroll-view>
   );
 };

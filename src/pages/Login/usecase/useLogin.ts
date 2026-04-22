@@ -54,7 +54,7 @@ export const useLogin = (options?: UseLoginOptions) => {
       options?.onSuccess?.(data);
     },
     onError: (error: any) => {
-      console.log(error);
+      console.log(JSON.stringify(error, null, 2));
       if (error.type === 'VALIDATION_ERROR') {
         options?.onValidationError?.(error.errors);
       }

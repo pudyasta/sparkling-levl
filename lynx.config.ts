@@ -1,22 +1,22 @@
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-
 import { pluginQRCode } from '@lynx-js/qrcode-rsbuild-plugin';
 import { pluginReactLynx } from '@lynx-js/react-rsbuild-plugin';
 import { defineConfig } from '@lynx-js/rspeedy';
-
 import { pluginTypedCSSModules } from '@rsbuild/plugin-typed-css-modules';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export default defineConfig({
   source: {
     entry: {
-      main: './src/pages/Login/index.tsx',
-      second: './src/pages/Main/index.tsx',
+      main: './src/pages/Main/index.tsx',
       login: './src/pages/Login/index.tsx',
       register: './src/pages/Register/index.tsx',
       emailConfirmation: './src/pages/EmailConfirmation/index.tsx',
       courseDetail: './src/pages/CourseDetail/index.tsx',
       lessons: './src/pages/Lessons/index.tsx',
+      forgotPassword: './src/pages/ForgotPassword/index.tsx',
+      quiz: './src/pages/Quiz/index.tsx',
     },
   },
   resolve: {

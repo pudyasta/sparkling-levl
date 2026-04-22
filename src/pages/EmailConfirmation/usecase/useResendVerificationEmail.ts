@@ -1,6 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
 import { validateSafely } from '@/lib/helper/validate';
-import { navigate } from '@/lib/native/nativeNavigate';
 import type { AuthResponse } from '@/pages/Login/repository/type';
 import { useResendVerificationEmailRepo } from '../repository/useResendVerificationEmailRepo';
 

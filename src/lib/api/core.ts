@@ -1,9 +1,17 @@
 import axios, { type AxiosRequestConfig, type AxiosResponse } from 'axios';
-import { useNativeBridge } from '@/context/NativeBridgeProvider';
+
 import { API_BASE_URL, POST_METHOD } from '@/constant/api';
-import { useEffect } from '@lynx-js/react';
 import { AUTH_REFRESH_ENDPOINT } from '@/constant/route';
+import { useNativeBridge } from '@/context/NativeBridgeProvider';
 import type { AuthResponse } from '@/pages/Login/repository/type';
+
+export interface ApiResponse<T> {
+  success: boolean;
+  message: string;
+  data: T;
+  meta: null | Record<string, unknown>;
+  errors: null | Record<string, unknown>;
+}
 
 const instance = axios.create({
   baseURL: API_BASE_URL,
@@ -19,14 +27,12 @@ export const refreshTokenApi = async (refreshToken: string): Promise<AuthRespons
 };
 
 export const guestAPIClient = async (url: string, config: AxiosRequestConfig = {}) => {
-  const start = Date.now();
-
   try {
     const response = await instance.request({
       url,
       ...config,
-      // Temporarily remove this to see if Axios catch block triggers faster
-      validateStatus: (status) => status >= 200 && status < 300,
+      // // Temporarily remove this to see if Axios catch block triggers faster
+      // validateStatus: (status) => status >= 200 && status < 300,
     });
 
     return response;
@@ -37,7 +43,7 @@ export const guestAPIClient = async (url: string, config: AxiosRequestConfig = {
 };
 
 export const useApiClient = () => {
-  const { accessToken, setAccessToken } = useNativeBridge();
+  const { accessToken, setAccessToken, navigateTo } = useNativeBridge();
 
   const api = async (url: string, config: AxiosRequestConfig = {}) => {
     const headers = {
@@ -59,7 +65,7 @@ export const useApiClient = () => {
     // -------- Handle 401: If no refresh token, we can't proceed this request
     if (!accessToken?.refresh_token) {
       console.log(accessToken);
-      // navigate('/login');
+      navigateTo('login.lynx.bundle');
       return res;
     }
 
@@ -70,6 +76,7 @@ export const useApiClient = () => {
     */
     try {
       const newToken = await refreshTokenApi(accessToken.refresh_token);
+      console.log('newToken', JSON.stringify(newToken, null, 2));
 
       if (!newToken?.data?.access_token) {
         throw new Error('Refresh failed');
@@ -92,10 +99,8 @@ export const useApiClient = () => {
         },
       });
     } catch (err) {
-      // If refresh fails, the session is dead. Log out the user.
       setAccessToken(null);
       console.log(err);
-      // navigate('/login');
       return res;
     }
   };

@@ -1,4 +1,5 @@
 .container {
+  height: 100vh;
 }
 
 .scrollView {
@@ -6,16 +7,13 @@
   height: 100%;
   width: 100%;
 }
+.content {
+  min-height: 100vh;
+  padding: 60px 0 100px 0;
+}
 
 .header {
   margin-bottom: 24px;
-}
-
-.title {
-  font-size: 24px;
-  font-weight: 800;
-  color: #202124; /* LightColors.Neutral */
-  margin-bottom: 8px;
 }
 
 .description {
@@ -25,7 +23,7 @@
 }
 
 .blockWrapper {
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 .textContent {
@@ -38,7 +36,6 @@
 .imageCard {
   border-radius: 12px;
   overflow: hidden;
-  background-color: #f8f9fa;
 }
 
 .image {
@@ -60,7 +57,6 @@
   align-items: center;
   justify-content: space-between;
   padding: 16px;
-  background-color: #e8f0fe; /* LightColors.Accent */
   border-radius: 12px;
   border-width: 1px;
   border-style: solid;
@@ -93,4 +89,183 @@
   color: #ffffff;
   font-size: 12px;
   font-weight: 700;
+}
+
+.footerContainer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+
+.navbar {
+  background-color: #ffffff;
+  padding: 16px 20px 32px 20px;
+  border-top: 1px solid #f1f3f4;
+  z-index: 110;
+}
+
+/* Progress Row */
+.progressRow {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.navbarProgress {
+  width: 100%;
+  position: absolute;
+  top: 0;
+  background-color: white;
+  border-bottom: 1px solid #f1f3f4;
+  padding: 16px 20px 16px 20px;
+  z-index: 110;
+}
+
+.progressText {
+  font-size: 14px;
+  font-weight: 700;
+  color: #202124;
+}
+
+.progressBarBg {
+  height: 6px;
+  background-color: #f1f3f4;
+  border-radius: 3px;
+}
+
+.progressBarFill {
+  height: 100%;
+  background-color: #00e676; /* Green progress from your image */
+  border-radius: 3px;
+}
+
+/* Button Row */
+.buttonRow {
+  display: grid;
+  grid-template-columns: 1fr 3fr 1fr;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+.primaryBtn {
+  flex: 1;
+  border-radius: 999px;
+  margin: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.circleBtn {
+  font-size: 24px;
+}
+
+/* Bottom Sheet Animation */
+.bottomSheet {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  background-color: #ffffff;
+  border-radius: 24px 24px 0 0;
+  transform: translateY(-100%);
+  transition: transform 0.35s cubic-bezier(0.25, 0.1, 0.25, 1);
+  z-index: 105;
+  padding: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+}
+
+.sheetOpen {
+  transform: translateY(60px); /* Adjust so it sits exactly above the navbar */
+}
+
+.sheetList {
+  height: 100%;
+  width: 100%;
+  padding: 0 4px;
+}
+
+.sheetItem {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 16px;
+  margin-bottom: 8px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.itemActive {
+  background-color: #f0f7ff; /* Light blue tint */
+  border-color: #d1e3ff; /* Soft blue border */
+}
+
+.statusIconWrapper {
+  margin-right: 16px;
+}
+
+/* Custom Check/Radio indicators */
+.completedIcon {
+  width: 24px;
+  height: 24px;
+  border-radius: 12px;
+  background-color: #34a853;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.checkText {
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.radioCircle {
+  width: 22px;
+  height: 22px;
+  border-radius: 11px;
+  border: 2px solid #dadce0;
+  background-color: #ffffff;
+}
+
+.radioActive {
+  border-color: #1a73e8;
+}
+
+.sheetItemText {
+  font-size: 16px;
+  color: #3c4043;
+  font-weight: 500;
+}
+
+.textActive {
+  color: #1a73e8;
+  font-weight: 700;
+}
+
+.itemLocked {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.assignmentCard,
+.quizInfo {
+  background-color: #f8f9fa;
+  padding: 15px;
+  border-radius: 12px;
+  margin-top: 20px;
+  border: 1px solid #e8eaed;
+}
+
+.uploadArea {
+  padding: 10px;
+  border: 2px solid #dadce0;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffffff;
 }

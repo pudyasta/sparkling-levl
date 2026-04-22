@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { BizKey, PrefKey, removePref } from '@/lib/helper/localStorage';
+import { BizKey, PrefKey } from '@/lib/helper/localStorage';
 import { isTokenValid } from '@/lib/helper/isTokenValid';
 import { refreshTokenApi } from '@/lib/api/core';
 import type { Token, User } from '@/pages/Login/repository/type';
@@ -110,7 +110,6 @@ export const NativeBridgeProvider = ({ children }: { children: React.ReactNode }
         options: { params: { ...params, hide_nav_bar: 1 } },
       },
       () => {
-        console.log(params);
         callback?.();
         if (params.close == true) {
           router.close({ containerID: lynx.__globalProps.containerID });
