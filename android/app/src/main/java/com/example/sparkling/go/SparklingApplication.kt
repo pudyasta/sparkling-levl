@@ -20,14 +20,14 @@ import com.tiktok.sparkling.method.registry.core.SparklingBridgeManager
 import com.tiktok.sparkling.method.router.close.RouterCloseMethod
 import com.tiktok.sparkling.method.router.open.RouterOpenMethod
 import com.tiktok.sparkling.method.router.utils.RouterProvider
-import com.example.sparkling.go.LynxInputComponent
-import com.example.sparkling.go.BuiltinTemplateProvider
 import com.example.sparkling.go.components.NativeSvgView
+import com.example.sparkling.go.components.VideoPlayerView
 import com.example.sparkling.go.depend.AppMediaDepend
+import com.example.sparkling.go.modules.NativeFilePicker
+import com.example.sparkling.go.modules.NativeFileUploader
 import com.lynx.service.devtool.LynxDevToolService
 import com.lynx.service.http.LynxHttpService
 import com.lynx.service.image.LynxImageService
-import com.lynx.service.log.LynxLogService
 import com.lynx.tasm.LynxEnv
 import com.lynx.tasm.service.LynxServiceCenter
 import com.tiktok.sparkling.method.media.choosemedia.ChooseMediaMethod
@@ -79,6 +79,11 @@ class SparklingApplication : Application() {
                     override fun createUI(context: LynxContext): LynxUI<*> {
                         return NativeSvgView(context)
                     }
+                },
+                object : Behavior("video-player") {
+                    override fun createUI(context: LynxContext): LynxUI<*> {
+                        return VideoPlayerView(context)
+                    }
                 }
             ))
             setTemplateProvider(BuiltinTemplateProvider(this@SparklingApplication))
@@ -106,7 +111,11 @@ class SparklingApplication : Application() {
         SparklingBridgeManager.registerIDLMethod(SaveDataURLMethod::class.java)
         SparklingBridgeManager.registerIDLMethod(UploadFileMethod::class.java)
         SparklingBridgeManager.registerIDLMethod(UploadImageMethod::class.java)
+        SparklingBridgeManager.registerIDLMethod(NativeFileUploader::class.java)
+        SparklingBridgeManager.registerIDLMethod(NativeFilePicker::class.java)
+
         MediaProvider.hostMediaDepend = AppMediaDepend.register(this)
+
 
         SparklingBridgeManager.registerIDLMethod(StorageSetItemMethod::class.java)
         SparklingBridgeManager.registerIDLMethod(StorageGetItemMethod::class.java)

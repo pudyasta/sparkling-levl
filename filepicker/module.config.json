@@ -1,0 +1,6 @@
+{
+  "packageName": "org.sparkling",
+  "moduleName": "Filepicker",
+  "androidDsl": "kts",
+  "projectName": "filepicker"
+}

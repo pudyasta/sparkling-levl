@@ -1,3 +1,5 @@
+import type { Tags } from '@/pages/Main/repository/type/course';
+
 import Card from '../../../../../../components/common/Card/Card';
 import styles from './CourseCard.module.css';
 
@@ -11,6 +13,7 @@ interface CourseCardProps {
     lessons: number;
     category: string;
     completed: boolean;
+    tags: Tags[];
   };
 }
 const CourseCard: React.FC<CourseCardProps> = ({ bindTap, course }) => {
@@ -19,9 +22,13 @@ const CourseCard: React.FC<CourseCardProps> = ({ bindTap, course }) => {
       <view className={styles.contentWrapper}>
         <view className={styles.headerArea}>
           <text className={styles.title}>{course.title}</text>
-          <view className={styles.badge}>
-            <text className={styles.badgeText}>{course.level}</text>
-          </view>
+          {course.tags.map((tag) => (
+            <view className={styles.badge}>
+              <text className={styles.badgeText} key={tag.id}>
+                {tag.name}
+              </text>
+            </view>
+          ))}
         </view>
 
         <text className={styles.description}>{course.description}</text>

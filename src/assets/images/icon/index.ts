@@ -1,12 +1,12 @@
-import eye from './eye.png?inline';
-import eyeClose from './hidden.png?inline';
-import dummy from './dummy.png?inline';
-import fire from './fire.png?inline';
-import thropy from './thropy.png?inline';
-import date from './date.svg?inline';
-import xp from './xp.svg?inline';
-import courses from './course.svg?inline';
-import time from './time.svg?inline';
-import back from './back.svg?inline';
+import back from './back.svg';
+import courses from './course.svg';
+import date from './date.svg';
+import dummy from './dummy.png';
+import eye from './eye.png';
+import fire from './fire.png';
+import eyeClose from './hidden.png';
+import thropy from './thropy.png';
+import time from './time.svg';
+import xp from './xp.svg';
 
 export { eye, eyeClose, dummy, fire, thropy, date, xp, courses, time, back };

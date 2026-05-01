@@ -3,8 +3,11 @@
 // LICENSE file in the root directory of this source tree.
 package com.example.sparkling.go
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import com.example.sparkling.go.modules.NativeFilePicker
 import com.tiktok.sparkling.Sparkling
 import com.tiktok.sparkling.SparklingContext
 import com.tiktok.sparkling.method.registry.api.SparklingBridge

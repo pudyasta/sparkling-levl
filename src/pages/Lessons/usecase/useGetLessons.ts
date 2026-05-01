@@ -35,7 +35,6 @@ export const useGetLessons = <TData = LessonData | AssignmentStudentResponse | Q
           assignment_id: request.assignment_id,
         });
       } else if (request.type === 'quiz') {
-        console.log(request.type);
         response = await getQuiz({
           type: request.type,
           quiz_id: request.quiz_id,

@@ -1,5 +1,12 @@
-import type { CourseResponse, GetAllCoursesRequest } from './type/course';
 import { GET_METHOD } from '@/constant/api';
+import {
+  DASHBOARD_RECENT_ACHIEVEMENTS_ENDPOINT,
+  DASHBOARD_RECENT_LEARNING_ENDPOINT,
+  DASHBOARD_RECOMMENDED_COURSES_ENDPOINT,
+  DASHBOARD_SUMMARY_ENDPOINT,
+} from '@/constant/route';
+import { guestAPIClient, useApiClient } from '@/lib/api/core';
+
 import {
   GET_ALL_ACHIEVEMENTS,
   GET_ALL_COURSES,
@@ -7,17 +14,9 @@ import {
   GET_LEADERBOARD,
   GET_USER_RANK,
 } from './constant';
-import { guestAPIClient, useApiClient } from '@/lib/api/core';
-import {
-  DASHBOARD_RECENT_ACHIEVEMENTS_ENDPOINT,
-  DASHBOARD_RECENT_LEARNING_ENDPOINT,
-  DASHBOARD_RECOMMENDED_COURSES_ENDPOINT,
-  DASHBOARD_SUMMARY_ENDPOINT,
-} from '@/constant/route';
+import type { CourseQueryParams, CourseResponse, GetAllCoursesRequest } from './type/course';
 
-export const getAllCoursesApi = async (
-  data: GetAllCoursesRequest,
-): Promise<CourseResponse> => {
+export const getAllCoursesApi = async (data: GetAllCoursesRequest): Promise<CourseResponse> => {
   let url = GET_ALL_COURSES;
 
   const response = await guestAPIClient(url, {
@@ -29,6 +28,30 @@ export const getAllCoursesApi = async (
 
 export const useMainRepository = () => {
   const { api } = useApiClient();
+
+  const getAllCoursesApi = async (params?: CourseQueryParams): Promise<CourseResponse> => {
+    const query = new URLSearchParams();
+
+    query.set('include', params?.include ?? 'units,category,tags');
+    query.set('per_page', String(params?.per_page ?? 20));
+
+    if (params?.search) query.set('search', params.search);
+    if (params?.page) query.set('page', String(params.page));
+    if (params?.sort) query.set('sort', params.sort);
+    if (params?.['filter[status]']) query.set('filter[status]', params['filter[status]']!);
+    if (params?.['filter[level_tag]']) query.set('filter[level_tag]', params['filter[level_tag]']!);
+    if (params?.['filter[type]']) query.set('filter[type]', params['filter[type]']!);
+    if (params?.['filter[category_id]'])
+      query.set('filter[category_id]', String(params['filter[category_id]']));
+
+    const response = await api(`${GET_ALL_COURSES}?${query.toString()}`, {
+      method: GET_METHOD,
+      timeout: 5000,
+    });
+    console.log('RES', JSON.stringify(response, null, 2));
+
+    return response?.data;
+  };
 
   const getLeaderboardApi = async () => {
     const url = GET_LEADERBOARD;
@@ -97,6 +120,7 @@ export const useMainRepository = () => {
   };
 
   return {
+    getAllCoursesApi,
     getLeaderboardApi,
     getUserRankApi,
     getGamificationStatsApi,

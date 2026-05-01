@@ -1,9 +1,11 @@
 import { useMutation } from '@tanstack/react-query';
-import { loginSchema, type LoginSchema } from './loginValidation';
+
 import { useNativeBridge } from '@/context/NativeBridgeProvider';
 import { validateSafely } from '@/lib/helper/validate';
-import { useLoginRepo } from '../repository/useLoginRepo';
+
 import type { LoginRequest } from '../repository/type';
+import { useLoginRepo } from '../repository/useLoginRepo';
+import { type LoginSchema, loginSchema } from './loginValidation';
 
 interface UseLoginOptions {
   onValidationError?: (errors: any) => void;
@@ -32,10 +34,12 @@ export const useLogin = (options?: UseLoginOptions) => {
       if (!data.data?.access_token || !data.data?.refresh_token) {
         throw new Error('Invalid token response');
       }
+      console.log(data.data.refresh_token);
       setAccessToken({
         access_token: data.data.access_token,
         refresh_token: data.data.refresh_token,
-        expires_in: data.data.expires_in,
+        // expires_in: data.data.expires_in,
+        expires_in: 3,
       });
 
       setUser({
@@ -54,7 +58,6 @@ export const useLogin = (options?: UseLoginOptions) => {
       options?.onSuccess?.(data);
     },
     onError: (error: any) => {
-      console.log(JSON.stringify(error, null, 2));
       if (error.type === 'VALIDATION_ERROR') {
         options?.onValidationError?.(error.errors);
       }

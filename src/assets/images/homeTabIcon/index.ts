@@ -1,13 +1,12 @@
-import homeActive from './home.png?inline';
-import homeInactive from './home-innactive.png?inline';
-import userActive from './user.png?inline';
-import userInactive from './user-innactive.png?inline';
-import rankingActive from './ranking.png?inline';
-import rankingInactive from './ranking-innactive.png?inline';
-import bookActive from './book.png?inline';
-import bookInactive from './book-innactive.png?inline';
-
-import booksvg from './book.svg?inline';
+import bookInactive from './book-innactive.png';
+import bookActive from './book.png';
+import booksvg from './book.svg';
+import homeInactive from './home-innactive.png';
+import homeActive from './home.png';
+import rankingInactive from './ranking-innactive.png';
+import rankingActive from './ranking.png';
+import userInactive from './user-innactive.png';
+import userActive from './user.png';
 
 export {
   homeActive,

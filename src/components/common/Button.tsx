@@ -1,5 +1,9 @@
+import { type ReactNode, useState } from '@lynx-js/react';
+
 import { Colors } from '@/constant/style';
-import { useState, type ReactNode } from '@lynx-js/react';
+
+import { Loading } from '../Loading/Loading';
+
 // Assuming your palette is exported from here
 
 interface ButtonProps {
@@ -11,6 +15,7 @@ interface ButtonProps {
   size?: 'small' | 'medium' | 'large';
   className?: string;
   rounded?: boolean;
+  isLoading?: boolean;
 }
 
 const Button = ({
@@ -22,6 +27,7 @@ const Button = ({
   size = 'medium',
   className = '',
   rounded = false,
+  isLoading = false,
 }: ButtonProps) => {
   const [animate, setAnimate] = useState(false);
 
@@ -102,7 +108,7 @@ const Button = ({
       }}
       className={className}
     >
-      {children}
+      {isLoading ? <Loading size={32} /> : children}
     </text>
   );
 };

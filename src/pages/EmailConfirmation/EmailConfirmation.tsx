@@ -1,14 +1,16 @@
-import { useState, useEffect, type FC } from '@lynx-js/react';
-import CustomImage from '@/components/common/CustomImage/CustomImage';
-import styles from './EmailConfirmation.module.css';
+import { type FC, useEffect, useState } from '@lynx-js/react';
+
+import { docsMascot } from '@/assets/images/mascot';
+import { Loading } from '@/components/Loading/Loading';
 import Text from '@/components/Text';
 import { FontFamily, TextType } from '@/components/Text/types';
 import Button from '@/components/common/Button';
+import CustomImage from '@/components/common/CustomImage/CustomImage';
 import { Colors } from '@/constant/style';
-import { docsMascot } from '@/assets/images/mascot';
-import { useResendVerificationEmail } from './usecase/useResendVerificationEmail';
-import { Loading } from '@/components/Loading/Loading';
 import { useNativeBridge } from '@/context/NativeBridgeProvider';
+
+import styles from './EmailConfirmation.module.css';
+import { useResendVerificationEmail } from './usecase/useResendVerificationEmail';
 
 interface EmailConfirmationProps {
   // Original props
@@ -47,9 +49,6 @@ export const EmailConfirmation: FC<EmailConfirmationProps> = (props) => {
   const handleResend = () => {
     if (!canResend) return;
     resendVerificationEmail(() => {
-      // Trigger your API resend logic here
-      // console.log('Resending to', email);
-
       // Reset timer
       setTimer(59);
       setCanResend(false);

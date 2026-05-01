@@ -1,6 +1,9 @@
 // src/utils/bootstrap.tsx
 import { root } from '@lynx-js/react';
 
+import { ErrorBoundary } from '@/components/Errorpage/ErrorBoundary';
+
+import '../../styles/animation.css';
 import '../../styles/core.css';
 import { AppProvider } from './AppProvider';
 
@@ -19,7 +22,9 @@ export function initComponent<P extends object>(Component: React.ComponentType<P
   const nativeProps = (lynx.__globalProps || {}) as P;
   root.render(
     <AppProvider>
+      {/* <ErrorBoundary> */}
       <Component {...nativeProps} />
+      {/* </ErrorBoundary> */}
     </AppProvider>
   );
 

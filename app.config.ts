@@ -1,8 +1,9 @@
 // @ts-nocheck
-import { defineConfig } from '@lynx-js/rspeedy';
 import { pluginQRCode } from '@lynx-js/qrcode-rsbuild-plugin';
 import { pluginReactLynx } from '@lynx-js/react-rsbuild-plugin';
+import { defineConfig } from '@lynx-js/rspeedy';
 import type { AppConfig } from 'sparkling-app-cli';
+
 import lynxConfig from './lynx.config.ts';
 
 const config: AppConfig = {
@@ -18,7 +19,7 @@ const config: AppConfig = {
   },
   paths: {
     androidAssets: 'android/app/src/main/assets',
-    iosAssets: 'ios/SparklingGo/SparklingGo/Resources/Assets',
+    iosAssets: 'ios/LynxResources',
   },
   appIcon: './resource/app_icon.png',
   router: {

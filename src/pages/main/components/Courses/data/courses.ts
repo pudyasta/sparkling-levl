@@ -29,9 +29,17 @@ export const COURSES: Course[] = [
   },
 ];
 
-export const CATEGORIES: Category[] = [
-  'All',
-  'Mobile Development',
-  'Programming',
-  'Design',
-];
+export const CATEGORIES: Category[] = ['All', 'Mobile Development', 'Programming', 'Design'];
+
+export const LEVEL_TAGS = [
+  { label: 'Beginner', value: 'beginner' },
+  { label: 'Intermediate', value: 'intermediate' },
+  { label: 'Advanced', value: 'advanced' },
+] as const;
+
+export const SORT_OPTIONS = [
+  { label: 'Newest', value: '-created_at' },
+  { label: 'Oldest', value: 'created_at' },
+  { label: 'A–Z', value: 'title' },
+  { label: 'Z–A', value: '-title' },
+] as const;

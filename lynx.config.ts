@@ -17,6 +17,7 @@ export default defineConfig({
       lessons: './src/pages/Lessons/index.tsx',
       forgotPassword: './src/pages/ForgotPassword/index.tsx',
       quiz: './src/pages/Quiz/index.tsx',
+      myCourse: './src/pages/MyCourses/index.tsx',
     },
   },
   resolve: {

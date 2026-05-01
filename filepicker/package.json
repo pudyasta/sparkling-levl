@@ -1,0 +1,18 @@
+{
+  "name": "filepicker",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "codegen": "npx sparkling-method-cli codegen",
+    "test": "echo \"Add your tests\""
+  },
+  "files": [
+    "dist",
+    "android",
+    "ios",
+    "generated"
+  ],
+  "devDependencies": {},
+  "dependencies": {}
+}

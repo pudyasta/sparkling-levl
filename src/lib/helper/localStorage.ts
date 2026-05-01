@@ -3,10 +3,12 @@ export enum PrefKey {
   Token = 'token',
   User = 'user',
   params = 'params',
+  SubmissionId = 'submissionId',
 }
 
 export enum BizKey {
   Authorization = 'authorization',
+  Quiz = 'quiz',
   Other = 'other',
 }
 

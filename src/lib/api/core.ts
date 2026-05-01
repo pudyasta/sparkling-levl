@@ -3,7 +3,7 @@ import axios, { type AxiosRequestConfig, type AxiosResponse } from 'axios';
 import { API_BASE_URL, POST_METHOD } from '@/constant/api';
 import { AUTH_REFRESH_ENDPOINT } from '@/constant/route';
 import { useNativeBridge } from '@/context/NativeBridgeProvider';
-import type { AuthResponse } from '@/pages/Login/repository/type';
+import type { Token } from '@/pages/Login/repository/type';
 
 export interface ApiResponse<T> {
   success: boolean;
@@ -15,10 +15,11 @@ export interface ApiResponse<T> {
 
 const instance = axios.create({
   baseURL: API_BASE_URL,
-  // headers: { 'Content-Type': 'application/json' },
+  headers: { 'Content-Type': 'application/json' },
 });
 
-export const refreshTokenApi = async (refreshToken: string): Promise<AuthResponse> => {
+export const refreshTokenApi = async (refreshToken: string): Promise<ApiResponse<Token>> => {
+  console.log('API', refreshToken);
   const response = await guestAPIClient(AUTH_REFRESH_ENDPOINT, {
     method: POST_METHOD,
     data: { refresh_token: refreshToken },
@@ -27,17 +28,17 @@ export const refreshTokenApi = async (refreshToken: string): Promise<AuthRespons
 };
 
 export const guestAPIClient = async (url: string, config: AxiosRequestConfig = {}) => {
+  console.log('response ini', JSON.stringify(config, null, 2));
+
   try {
     const response = await instance.request({
       url,
+      headers: { 'Content-Type': 'application/json' },
       ...config,
-      // // Temporarily remove this to see if Axios catch block triggers faster
-      // validateStatus: (status) => status >= 200 && status < 300,
     });
 
     return response;
   } catch (error) {
-    console.log(error);
     throw error;
   }
 };
@@ -61,10 +62,9 @@ export const useApiClient = () => {
 
     // -------- If 401 & refresh token null → redirect to login
     if (res.status !== 401) return res;
-
     // -------- Handle 401: If no refresh token, we can't proceed this request
     if (!accessToken?.refresh_token) {
-      console.log(accessToken);
+      console.log('Access token', JSON.stringify(accessToken, null, 2));
       navigateTo('login.lynx.bundle');
       return res;
     }
@@ -76,18 +76,14 @@ export const useApiClient = () => {
     */
     try {
       const newToken = await refreshTokenApi(accessToken.refresh_token);
-      console.log('newToken', JSON.stringify(newToken, null, 2));
 
       if (!newToken?.data?.access_token) {
         throw new Error('Refresh failed');
       }
 
       // -------- Update access token
-      setAccessToken({
-        ...accessToken,
-        access_token: newToken.data.access_token,
-        refresh_token: newToken.data.refresh_token,
-      });
+      console.log('newToken', newToken);
+      setAccessToken(newToken.data);
 
       // -------- Final Retry with the brand-new token
       return await instance.request({
@@ -99,9 +95,9 @@ export const useApiClient = () => {
         },
       });
     } catch (err) {
-      setAccessToken(null);
-      console.log(err);
-      return res;
+      console.log('error Refresh', JSON.stringify(err, null, 2));
+      // setAccessToken(null);
+      // navigateTo('login.lynx.bundle');
     }
   };
 
@@ -114,7 +110,6 @@ export const useApiClient = () => {
 
       return response;
     } catch (error) {
-      console.log(error);
       throw error;
     }
   };

@@ -1,5 +1,3 @@
-import { useMutation } from '@tanstack/react-query';
-
 import { POST_METHOD } from '@/constant/api';
 import { LESSON_MARK_AS_DONE_ENDPOINT } from '@/constant/route';
 import { useApiClient } from '@/lib/api/core';

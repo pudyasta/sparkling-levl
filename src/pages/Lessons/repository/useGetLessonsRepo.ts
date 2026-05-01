@@ -23,7 +23,6 @@ export const useGetLessonsRepo = () => {
     });
 
     if (!response) {
-      console.log(response);
       return null;
     }
 
@@ -41,7 +40,6 @@ export const useGetLessonsRepo = () => {
     });
 
     if (!response) {
-      console.log(response);
       return null;
     }
 
@@ -56,7 +54,6 @@ export const useGetLessonsRepo = () => {
     });
 
     if (!response) {
-      console.log(response);
       return null;
     }
 

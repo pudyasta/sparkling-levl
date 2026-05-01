@@ -15,9 +15,7 @@ export const useMarkAsDone = (options?: UseMarkAsDoneOptions) => {
     mutationFn: async (lessonSlug: string) => {
       return markAsDoneApi(lessonSlug);
     },
-    onSuccess: ({ data }) => {
-      console.log('data', JSON.stringify(data, null, 2));
-
+    onSuccess: (data) => {
       options?.onSuccess?.(data);
     },
     onError: (error: any) => {

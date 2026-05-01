@@ -1,28 +1,28 @@
-import { Tabs } from '../../components/common/Tabs/Tabs';
-import Courses from './components/Courses/Courses';
+import { useEffect } from '@lynx-js/react';
+
+import { useNativeBridge } from '@/context/NativeBridgeProvider';
 
 import {
-  homeActive,
-  homeInactive,
-  userActive,
-  userInactive,
-  rankingActive,
-  rankingInactive,
   bookActive,
   bookInactive,
   booksvg,
+  homeActive,
+  homeInactive,
+  rankingActive,
+  rankingInactive,
+  userActive,
+  userInactive,
 } from '../../assets/images/homeTabIcon';
-import Leaderboard from './components/Leaderboard/Leaderboard';
+import { Tabs } from '../../components/common/Tabs/Tabs';
+import Courses from './components/Courses/Courses';
 import Home from './components/Home/Home';
+import Leaderboard from './components/Leaderboard/Leaderboard';
 import { ProfileScreen } from './components/Profile/ProfileScreen';
-import { useNativeBridge } from '@/context/NativeBridgeProvider';
-import { useEffect } from '@lynx-js/react';
 
 interface Props {}
 
 const MainPage: React.FC<Props> = ({}) => {
-  const { isAuthenticated, user, routerParams, navigateTo, hydrate, accessToken } =
-    useNativeBridge();
+  const { isAuthenticated, navigateTo, hydrate, isRefreshing } = useNativeBridge();
   const pages = [
     {
       label: {
@@ -59,12 +59,12 @@ const MainPage: React.FC<Props> = ({}) => {
   ];
 
   useEffect(() => {
+    if (isRefreshing) return;
+
     if (!isAuthenticated) {
-      navigateTo('login.lynx.bundle', { title: 'Home', hide_nav_bar: 1, close: true }, () => {
-        console.log('navigate', isAuthenticated, accessToken);
-      });
+      navigateTo('login.lynx.bundle', { title: 'Home', hide_nav_bar: 1, close: true });
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, isRefreshing]);
 
   return (
     isAuthenticated &&

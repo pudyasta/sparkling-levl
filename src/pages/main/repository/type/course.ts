@@ -1,3 +1,5 @@
+import type { Category, Unit, UnitProgress } from '@/pages/CourseDetail/repository/type';
+
 export interface GetAllCoursesRequest {
   search?: string;
   sort?: string;
@@ -29,6 +31,10 @@ export interface CourseData {
   updated_at: string;
   thumbnail: string;
   banner: string;
+  category: Category;
+  tags: Tags[];
+  units: Unit[];
+  progress: UnitProgress;
 }
 
 export interface Meta {
@@ -44,4 +50,22 @@ export interface Pagination {
   to: number;
   has_next: boolean;
   has_prev: boolean;
+}
+
+export interface CourseQueryParams {
+  search?: string;
+  page?: number;
+  per_page?: number;
+  sort?: string;
+  'filter[status]'?: string;
+  'filter[level_tag]'?: string;
+  'filter[type]'?: string;
+  'filter[category_id]'?: number;
+  include?: string;
+}
+
+export interface Tags {
+  id: number;
+  name: string;
+  slug: string;
 }

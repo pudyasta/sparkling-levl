@@ -1,0 +1,43 @@
+{
+  "name": "pickFile",
+  "moduleName": "Filepicker",
+  "packageName": "org.sparkling",
+  "source": "src/method.d.ts",
+  "request": {
+    "kind": "reference",
+    "name": "FilePickRequest"
+  },
+  "response": {
+    "kind": "primitive",
+    "name": "any",
+    "text": "result: any"
+  },
+  "interfaces": {
+    "FilePickRequest": {
+      "name": "FilePickRequest",
+      "description": "Simple case for displaying a toast.",
+      "fields": [
+        {
+          "name": "type",
+          "optional": false,
+          "type": {
+            "kind": "array",
+            "elementType": {
+              "kind": "primitive",
+              "name": "string"
+            }
+          }
+        },
+        {
+          "name": "callback",
+          "optional": true,
+          "type": {
+            "kind": "primitive",
+            "name": "void"
+          }
+        }
+      ]
+    }
+  },
+  "generatedAt": "2026-04-25T09:09:39.479Z"
+}

@@ -20,7 +20,7 @@ export interface CourseData {
   enrollment_type_label: string;
   status: 'published' | 'draft';
   status_label: string;
-  enrollment_status: 'active' | 'inactive';
+  enrollment_status: 'active' | 'pending' | 'completed' | 'cancelled';
   enrollment_status_label: string;
   published_at: string; // ISO Date string
   created_at: string; // ISO Date string

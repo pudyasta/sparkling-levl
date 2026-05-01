@@ -18,6 +18,7 @@ import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import com.example.sparkling.go.modules.NativeFilePicker
 import com.tiktok.sparkling.method.media.depend.ChooseMediaParams
 import com.tiktok.sparkling.method.media.depend.ChooseMediaResults
 import com.tiktok.sparkling.method.media.depend.IChooseMediaResultCallback
@@ -70,11 +71,35 @@ class AppMediaDepend : IHostMediaDepend {
             // Attach a headless fragment to each SparklingActivity to receive
             // onActivityResult and onRequestPermissionsResult callbacks.
             if (activity.javaClass.name == "com.tiktok.sparkling.SparklingActivity") {
-                val fm = (activity as? androidx.appcompat.app.AppCompatActivity)?.supportFragmentManager ?: return
+                Log.d("AppMediaDepend", "Attaching MediaResultFragment to SparklingActivity")
+                var fm: androidx.fragment.app.FragmentManager? = null
+                try {
+                    // Try to get supportFragmentManager
+                    val method = activity.javaClass.getMethod("getSupportFragmentManager")
+                    fm = method.invoke(activity) as? androidx.fragment.app.FragmentManager
+                    Log.d("AppMediaDepend", "Got supportFragmentManager via reflection")
+                } catch (e: Exception) {
+                    Log.d("AppMediaDepend", "No supportFragmentManager, trying fragmentManager")
+                    try {
+                        val method = activity.javaClass.getMethod("getFragmentManager")
+                        val androidFm = method.invoke(activity) as? android.app.FragmentManager
+                        Log.d("AppMediaDepend", "Got android FragmentManager, but can't use androidx Fragment")
+                        // Can't use androidx Fragment with android FragmentManager
+                    } catch (e2: Exception) {
+                        Log.e("AppMediaDepend", "No FragmentManager available: ${e.message}, ${e2.message}")
+                    }
+                }
+                if (fm == null) {
+                    Log.e("AppMediaDepend", "Cannot attach fragment, no FragmentManager available")
+                    return
+                }
                 if (fm.findFragmentByTag(MediaResultFragment.TAG) == null) {
+                    Log.d("AppMediaDepend", "Fragment not found, adding it")
                     fm.beginTransaction()
                         .add(MediaResultFragment(this@AppMediaDepend), MediaResultFragment.TAG)
                         .commitAllowingStateLoss()
+                } else {
+                    Log.d("AppMediaDepend", "Fragment already exists")
                 }
             }
         }
@@ -99,8 +124,23 @@ class AppMediaDepend : IHostMediaDepend {
         // No-arg constructor required by the framework for re-creation
         constructor() : this(AppMediaDepend())
 
+        init {
+            Log.d("MediaResultFragment", "MediaResultFragment created")
+        }
+
+        override fun onAttach(context: Context) {
+            super.onAttach(context)
+            Log.d("MediaResultFragment", "MediaResultFragment onAttach")
+        }
+
         override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
             super.onActivityResult(requestCode, resultCode, data)
+            Log.d("MediaResultFragment", "onActivityResult: requestCode=$requestCode, resultCode=$resultCode, data=${data?.data}")
+            // Handle file picker results
+            if (requestCode == 10001) {
+                Log.d("MediaResultFragment", "Handling file picker result")
+                return
+            }
             depend.handleActivityResult(requestCode, resultCode, data)
         }
 

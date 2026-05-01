@@ -7,16 +7,18 @@ type TimeOfDay = 'morning' | 'afternoon' | 'evening' | 'night';
  * Evening: 17:00 - 20:59
  * Night: 21:00 - 4:59
  */
-export const getTimeOfDay = (): TimeOfDay => {
-  const hour = new Date().getHours();
+export type WaktuHari = 'pagi' | 'siang' | 'sore' | 'malam';
 
-  if (hour >= 5 && hour < 12) {
-    return 'morning';
-  } else if (hour >= 12 && hour < 17) {
-    return 'afternoon';
-  } else if (hour >= 17 && hour < 21) {
-    return 'evening';
+export const getTimeOfDay = (): WaktuHari => {
+  const jam = new Date().getHours();
+
+  if (jam >= 5 && jam < 11) {
+    return 'pagi';
+  } else if (jam >= 11 && jam < 15) {
+    return 'siang';
+  } else if (jam >= 15 && jam < 18) {
+    return 'sore';
   } else {
-    return 'night';
+    return 'malam';
   }
 };

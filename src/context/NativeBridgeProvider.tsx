@@ -1,11 +1,12 @@
-import { createContext, useContext, useEffect, useState } from 'react';
-import { BizKey, PrefKey } from '@/lib/helper/localStorage';
-import { isTokenValid } from '@/lib/helper/isTokenValid';
-import { refreshTokenApi } from '@/lib/api/core';
-import type { Token, User } from '@/pages/Login/repository/type';
-import { getItem, setItem } from 'sparkling-storage';
-import * as router from 'sparkling-navigation';
 import { useMemo } from '@lynx-js/react/compat';
+import { createContext, useContext, useEffect, useState } from 'react';
+import * as router from 'sparkling-navigation';
+import { getItem, setItem } from 'sparkling-storage';
+
+import { refreshTokenApi } from '@/lib/api/core';
+import { isTokenValid } from '@/lib/helper/isTokenValid';
+import { BizKey, PrefKey } from '@/lib/helper/localStorage';
+import type { Token, User } from '@/pages/Login/repository/type';
 
 type NativeBridgeContextType = {
   // AUTH Related
@@ -16,6 +17,7 @@ type NativeBridgeContextType = {
   logout: () => void;
   isAuthenticated: boolean;
   hydrate: boolean;
+  isRefreshing: boolean;
 
   // Params
   routerParams: Record<string, any> | null;
@@ -28,9 +30,13 @@ export const NativeBridgeProvider = ({ children }: { children: React.ReactNode }
   const [accessToken, _setAccessToken] = useState<Token | null>(null);
   const [user, _setUser] = useState<User>({} as User);
   const [hydrate, setHydrate] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isNavigating, setIsNavigating] = useState(false);
 
   const isAuthenticated = useMemo(() => isTokenValid(accessToken), [accessToken]);
   const [routerParams, _setRouterParams] = useState<Record<string, any> | null>(null);
+
+  // QUIZ
 
   useEffect(() => {
     setHydrate(false);
@@ -51,17 +57,23 @@ export const NativeBridgeProvider = ({ children }: { children: React.ReactNode }
     getItem({ key: PrefKey.Token, biz: BizKey.Authorization }, (res) => {
       if (res.data && isTokenValid(res.data.data)) {
         _setAccessToken(res.data.data as Token);
-      } else if (res.data && res.data.refresh_token) {
-        refreshTokenApi(res.data.refresh_token)
+        checkHydration();
+      } else if (res.data && res.data.data?.refresh_token) {
+        setIsRefreshing(true);
+        refreshTokenApi(res.data.data.refresh_token)
           .then((res) => {
-            if (res.data) _setAccessToken(res.data as Token);
+            if (res.data) setAccessToken(res.data as Token);
           })
           .catch((err) => {
-            logout();
-            return;
+            logout;
+          })
+          .finally(() => {
+            setIsRefreshing(false);
+            checkHydration();
           });
+      } else {
+        checkHydration();
       }
-      checkHydration();
     });
 
     getItem({ key: PrefKey.User, biz: BizKey.Authorization }, (res) => {
@@ -88,10 +100,10 @@ export const NativeBridgeProvider = ({ children }: { children: React.ReactNode }
     _setAccessToken(null);
     _setUser({} as User);
     setItem({ key: PrefKey.Token, data: {}, biz: BizKey.Authorization }, (res) => {
-      console.log(JSON.stringify(res, null, 2));
       if (res.code !== 1) return;
       setItem({ key: PrefKey.User, data: {}, biz: BizKey.Authorization }, (res) => {});
     });
+    navigateTo('login.lynx.bundle');
   };
 
   const setParams = (params: Record<string, any> | null) => {
@@ -104,17 +116,20 @@ export const NativeBridgeProvider = ({ children }: { children: React.ReactNode }
     params: Record<string, any> = {},
     callback?: () => void
   ) => {
+    if (isNavigating) return;
+    setIsNavigating(true);
     router.navigate(
       {
         path: activity,
         options: { params: { ...params, hide_nav_bar: 1 } },
       },
       () => {
-        callback?.();
         if (params.close == true) {
           router.close({ containerID: lynx.__globalProps.containerID });
         }
+        callback?.();
         setParams(params);
+        setIsNavigating(false);
       }
     );
   };
@@ -133,6 +148,7 @@ export const NativeBridgeProvider = ({ children }: { children: React.ReactNode }
           routerParams,
           setRouterParams: setParams,
           navigateTo,
+          isRefreshing,
         }}
       >
         {children}

@@ -1,7 +1,7 @@
 import { GET_METHOD } from '@/constant/api';
-
-import { guestAPIClient, useApiClient } from '@/lib/api/core';
 import { COURSE_DETAIL_ENDPOINT, DASHBOARD_RECENT_ACHIEVEMENTS_ENDPOINT } from '@/constant/route';
+import { guestAPIClient, useApiClient } from '@/lib/api/core';
+
 import type { CourseResponse } from './type';
 
 export const useCourseDetailApi = () => {
@@ -14,7 +14,7 @@ export const useCourseDetailApi = () => {
       method: GET_METHOD,
     });
 
-    return response.data as CourseResponse;
+    return response?.data as CourseResponse;
   };
 
   return {

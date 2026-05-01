@@ -1,4 +1,5 @@
 import { useState } from '@lynx-js/react';
+
 import styles from './Tabs.module.css';
 
 interface TabItem {
@@ -22,7 +23,6 @@ export function Tabs({
 }) {
   const [active, setActive] = useState(defaultIndex);
   const handleChange = (i: number) => {
-    console.log(i);
     setActive(i);
     onChange?.(i);
   };

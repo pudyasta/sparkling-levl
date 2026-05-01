@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+
 import type { CourseData, CourseResponse } from '../repository/type';
 import { useCourseDetailApi } from '../repository/useCourseDetailRepository';
 
@@ -15,7 +16,6 @@ export const useGetCourseDetail = <T = CourseData>(options?: QueryOptions<T>) =>
     queryKey: ['coursesDetail'],
     queryFn: async (): Promise<CourseResponse> => {
       const response = await getDetailCourse(options?.slug || '');
-      console.log(response);
       return response;
     },
   });
