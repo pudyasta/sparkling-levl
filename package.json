@@ -12,6 +12,7 @@
   "dependencies": {
     "@lynx-js/react": "^0.116.5",
     "@tanstack/react-query": "^5.100.5",
+    "axios": "^1.15.2",
     "postcss-loader": "^8.2.1",
     "sparkling-method": "^2.0.1",
     "sparkling-navigation": "^2.0.1",

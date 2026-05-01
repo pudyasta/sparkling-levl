@@ -1,7 +1,5 @@
 import type { FC } from '@lynx-js/react';
 import style from './Loading.module.css';
-
-import './anim.css';
 interface Props {
   size?: number;
   color1?: string;
@@ -27,7 +25,7 @@ export const Loading: FC<Props> = ({
       }}
     >
       <view
-        className={`${style.tiktokBall} ${style.tiktokBallLeft}`}
+        className={`${style.tiktokBall} ${style.tiktokBallLeft} left-0`}
         style={{
           width: `${ballSize}px`,
           height: `${ballSize}px`,
@@ -35,7 +33,7 @@ export const Loading: FC<Props> = ({
         }}
       />
       <view
-        className={`${style.tiktokBall} ${style.tiktokBallRight}`}
+        className={`${style.tiktokBall} ${style.tiktokBallRight} right-0`}
         style={{
           width: `${ballSize}px`,
           height: `${ballSize}px`,
