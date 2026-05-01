@@ -56,7 +56,7 @@ export const EmailConfirmation: FC<EmailConfirmationProps> = (props) => {
   };
 
   return (
-    <view className={styles.container}>
+    <view className={`${styles.container} animate-fade-in`}>
       {/* Character Illustration */}
       <view className={styles.illustrationWrapper}>
         <CustomImage src={docsMascot} className={styles.illustration} />

@@ -19,28 +19,9 @@ const MyCourse: React.FC = () => {
   }
 
   return isLoading ? (
-    <>
-      <view
-        style={{
-          background: 'linear-gradient(180deg, #2d7cf1 0%, #1a5bb9 100%)',
-          padding: '1.5rem',
-          display: 'flex',
-          gap: '1rem',
-          alignItems: 'center',
-        }}
-      >
-        {/* <IconWithBackground image={thropy} /> */}
-        <view>
-          <Text size={TextType.h1} fontWeight="bold" color="white" fontFamily={FontFamily.jakarta}>
-            Leaderboard
-          </Text>
-          <Text size={TextType.b2} color="white">
-            Compete with other learners
-          </Text>
-        </view>
-      </view>
-      <Loading />
-    </>
+    <view className="h-full items-center flex justify-center">
+      <Loading size={32} />
+    </view>
   ) : (
     <>
       <view
@@ -62,7 +43,7 @@ const MyCourse: React.FC = () => {
           </Text>
         </view>
       </view>
-      <scroll-view scroll-y className="h-full w-full pt-2">
+      <scroll-view scroll-y className="h-full w-full pt-2 animate-fade-in">
         <view className="flex-col gap-1 px-4 flex">
           {myCourseData.data.map((item) => (
             <Card

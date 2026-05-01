@@ -197,9 +197,10 @@ const Courses: React.FC = () => {
                 <text className={styles.emptyText}>No courses match your search.</text>
               </view>
             ) : (
-              courses.map((course) => (
-                <>
+              <view className="animate-fade-in">
+                {courses.map((course) => (
                   <CourseCard
+                    key={course.id}
                     bindTap={() =>
                       navigateTo('courseDetail.lynx.bundle', {
                         courseId: course.id,
@@ -216,8 +217,8 @@ const Courses: React.FC = () => {
                       lessons: course.progress?.total_items || 0,
                     }}
                   />
-                </>
-              ))
+                ))}
+              </view>
             )}
 
             {/* Load more indicator */}

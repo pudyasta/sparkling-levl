@@ -71,7 +71,7 @@ function Leaderboard() {
       {isUserLoading || isLoading ? (
         <LeaderboardLoader />
       ) : (
-        <>
+        <view className="animate-fade-in">
           <view
             style={{
               flexDirection: 'row',
@@ -147,7 +147,7 @@ function Leaderboard() {
               xp={`${userRank?.total_xp || 0} XP`}
             />
           </view>
-        </>
+        </view>
       )}
     </view>
   );

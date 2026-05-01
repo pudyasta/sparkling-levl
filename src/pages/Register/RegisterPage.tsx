@@ -103,7 +103,7 @@ export default function RegisterPage() {
       </view>
 
       {/* Form Section */}
-      <view className="flex-col items-center gap-4 px-5 py-8 flex justify-center">
+      <view className="flex-col items-center gap-4 px-5 py-8 flex justify-center animate-fade-in">
         <Input title="Name" variant="text" icon="user" ref={nameRef} />
         <Input title="Email" variant="email" icon="mail" ref={emailRef} />
         <Input title="Username" variant="text" icon="user" ref={usernameRef} />

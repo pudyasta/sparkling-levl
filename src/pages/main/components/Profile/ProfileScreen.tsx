@@ -1,6 +1,7 @@
 import { type FC, useEffect } from '@lynx-js/react';
 
 import { courses, date, time, xp } from '@/assets/images/icon';
+import { Loading } from '@/components/Loading/Loading';
 import Text from '@/components/Text';
 import { FontFamily, TextType } from '@/components/Text/types';
 import Button from '@/components/common/Button';
@@ -25,13 +26,17 @@ export const ProfileScreen: FC = () => {
   } = useGetAchievements();
 
   if (isLoading || isLoadingAchievements) {
-    return 'loading';
+    return (
+      <view className="h-full items-center flex justify-center">
+        <Loading size={32} />
+      </view>
+    );
   }
 
   useEffect(() => {}, [stats, achievements]);
 
   return (
-    <scroll-view className={styles.container}>
+    <scroll-view className={`${styles.container} animate-fade-in`}>
       <ProfileHeader
         name={user?.name || ''}
         email={user?.email || ''}

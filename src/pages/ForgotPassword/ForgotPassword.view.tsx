@@ -79,7 +79,7 @@ export default function LoginPage() {
       </view>
 
       {/* Form Section */}
-      <view className="flex-col items-center gap-5 px-5 py-8 flex justify-center">
+      <view className="flex-col items-center gap-5 px-5 py-8 flex justify-center animate-fade-in">
         <Input title="Email or username" variant="email" icon="mail" ref={emailRef} />
 
         <Text

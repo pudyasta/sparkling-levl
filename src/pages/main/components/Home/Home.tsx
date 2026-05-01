@@ -46,7 +46,7 @@ export default function LearningDashboard() {
     recentLearning &&
     recommendedCourses && (
       <PullToRefresh onRefresh={async () => refetchAll()}>
-        <scroll-view className="flex-1 bg-slate-50 pb-10">
+        <scroll-view className="flex-1 bg-slate-50 pb-10 animate-fade-in">
           {/* Header Section */}
           <view
             className="min-h-[20vh] flex-col px-4 pb-10 pt-8 flex"
