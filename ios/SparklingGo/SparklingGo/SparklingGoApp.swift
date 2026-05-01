@@ -16,12 +16,15 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         window = UIWindow(frame: UIScreen.main.bounds)
         let webPCoder = SDImageWebPCoder.shared
         SDImageCodersManager.shared.addCoder(webPCoder)
-        
         SPKServiceRegister.registerAll()
         SPKExecuteAllPrepareBootTask()
         SPKKit.DIContainer.register(SPKTrackerService.self, scope: ServiceScope.transient) {
             SparklingGoTrackerService()
         }
+        let lynxEnv = LynxEnv.sharedInstance()
+        lynxEnv.lynxDebugEnabled = true
+        lynxEnv.devtoolEnabled = true
+        lynxEnv.logBoxEnabled = true
         return true
     }
 }
