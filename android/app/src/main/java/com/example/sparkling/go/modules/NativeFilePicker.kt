@@ -15,7 +15,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import com.example.sparkling.go.SplashActivity
 import com.lynx.tasm.behavior.LynxContext
 import com.tiktok.sparkling.SparklingActivity
-import com.tiktok.sparkling.method.media.utils.MediaProvider
 import com.tiktok.sparkling.method.registry.core.IDLBridgeMethod
 import com.tiktok.sparkling.method.registry.core.utils.IDLMethodHelper
 import com.tiktok.sparkling.method.registry.core.utils.createXModel

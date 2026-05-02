@@ -96,7 +96,7 @@ export const CourseDetail: FC = () => {
   return isLoading ? (
     <CourseDetailSkeleton />
   ) : (
-    <scroll-view className="h-full w-full bg-slate-50" scroll-y>
+    <scroll-view className="h-full w-full bg-slate-50 animate-fade-in" scroll-y>
       {/* 1. Hero Header */}
       <view
         className="bg-cover bg-center px-6 pb-[70px] pt-[50px]"

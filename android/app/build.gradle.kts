@@ -87,7 +87,6 @@ android {
         // BEGIN SPARKLING AUTOLINK
         listOf(
             project(":sparkling-debug-tool"),
-            project(":sparkling-media"),
             project(":sparkling-navigation"),
             project(":sparkling-storage")
         ).forEach { dep -> add("implementation", dep) }

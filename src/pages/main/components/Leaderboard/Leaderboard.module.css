@@ -39,6 +39,7 @@
   border-radius: 999px;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
 }
 
 .lbCardThird .lbAvatar {

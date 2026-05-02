@@ -1,5 +1,8 @@
 import { useEffect, useState } from '@lynx-js/react';
+import pipe from 'sparkling-method';
+import { close } from 'sparkling-navigation';
 
+import Button from '@/components/common/Button';
 import { Loading } from '@/components/Loading/Loading';
 import { Modal, ModalTemplate } from '@/components/Modal/Modal.view';
 import Text from '@/components/Text';
@@ -18,7 +21,7 @@ import { useMarkAsDone } from './usecase/useMarkAsDone';
 import { type SubmitAssignmentRequest, useSubmitAssignment } from './usecase/useSubmitAssignment';
 
 const LessonPage = () => {
-  const { routerParams } = useNativeBridge();
+  const { routerParams, setRouterParams } = useNativeBridge();
   const { execute } = useMarkAsDone();
   const { execute: submitAssignment } = useSubmitAssignment();
   const [currentParams, setCurrentParams] = useState({
@@ -35,6 +38,7 @@ const LessonPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isButtonLoading, setIsButtonLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isBackModalOpen, setIsBackModalOpen] = useState(false);
 
   let allLessons = routerParams?.all_lessons || [];
 
@@ -89,6 +93,22 @@ const LessonPage = () => {
     console.log(JSON.stringify(lessons, null, 2));
   }, [lessons]);
 
+  useEffect(() => {
+    const handleBackPress = () => {
+      setIsBackModalOpen(true);
+    };
+    pipe.on('backandroid', handleBackPress);
+    return () => {
+      pipe.off('backandroid', handleBackPress);
+    };
+  }, []);
+
+  const handleConfirmBack = () => {
+    setIsBackModalOpen(false);
+    setRouterParams({ ...routerParams, all_lessons: allLessons });
+    close({ containerID: lynx.__globalProps.containerID });
+  };
+
   const handleBottomSheetHeight = (length: number) => {
     if (length <= 2) return '25vh';
     if (length <= 4) return '40vh';
@@ -124,13 +144,6 @@ const LessonPage = () => {
   };
 
   const renderContent = () => {
-    if (isLoading)
-      return (
-        <view className="h-[100vh] items-center flex justify-center">
-          <Loading size={32} />
-        </view>
-      );
-
     switch (currentParams.type) {
       case 'assignment':
         return (
@@ -156,7 +169,18 @@ const LessonPage = () => {
     !isLoadingApi && (
       <view className="h-screen w-full relative">
         <scroll-view className="h-full w-full p-5" scroll-y>
-          {isLoadingApi ? <Loading /> : renderContent()}
+          {isLoading ? (
+            <view className="h-[100vh] items-center flex justify-center">
+              <Loading size={32} />
+            </view>
+          ) : (
+            <view
+              key={`${currentParams.lesson_slug}-${currentParams.assignment_id}`}
+              className="animate-fade-in"
+            >
+              {renderContent()}
+            </view>
+          )}
         </scroll-view>
 
         {/* Progress Trigger */}
@@ -170,7 +194,7 @@ const LessonPage = () => {
             </Text>
             <Text>{isSheetOpen ? '▼' : '▲'}</Text>
           </view>
-          <view className={`bg-[#f1f3f4]} h-1.5 w-full rounded-full`}>
+          <view className="bg-[#f1f3f4] h-1.5 w-full rounded-full">
             <view
               className={`h-full rounded-full transition duration-300 ease-in-out`}
               style={{ backgroundColor: Colors.Primary, width: `${progressPercentage}%` }}
@@ -180,7 +204,7 @@ const LessonPage = () => {
 
         {/* Bottom Sheet List */}
         <view
-          className={`duration-350 z-[105] w-full rounded-b-3xl bg-white p-4 absolute top-0 shadow-2xl transition-transform ease-[cubic-bezier(0.25,0.1,0.25,1)] ${isSheetOpen ? 'translate-y-[60px]' : '-translate-y-full'}`}
+          className={`duration-[350ms] z-[105] w-full overflow-hidden rounded-b-3xl bg-white p-4 absolute top-0 shadow-2xl transition-transform ease-[cubic-bezier(0.25,0.1,0.25,1)] ${isSheetOpen ? 'translate-y-[60px]' : '-translate-y-full'}`}
           style={{ height: handleBottomSheetHeight(routerParams?.all_lessons?.length || 0) }}
         >
           <scroll-view className="h-full w-full px-1" scroll-y>
@@ -230,6 +254,29 @@ const LessonPage = () => {
             }}
           />
         )}
+
+        <Modal
+          template={ModalTemplate.Custom}
+          visible={isBackModalOpen}
+          onClose={() => setIsBackModalOpen(false)}
+        >
+          <view className="flex flex-col gap-4 p-5">
+            <Text size={TextType.h3} fontWeight="600" className="text-center">
+              Keluar dari halaman ini?
+            </Text>
+            <Text className="text-center text-[#5f6368]">
+              Kemajuan kamu tidak akan hilang.
+            </Text>
+            <view className="flex flex-col gap-3">
+              <Button variant="filled" color="primary" onPress={handleConfirmBack}>
+                Keluar
+              </Button>
+              <Button variant="outlined" color="primary" onPress={() => setIsBackModalOpen(false)}>
+                Tetap di sini
+              </Button>
+            </view>
+          </view>
+        </Modal>
       </view>
     )
   );

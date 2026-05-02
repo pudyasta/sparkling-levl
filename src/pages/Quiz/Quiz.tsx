@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from '@lynx-js/react';
+
+import { Loading } from '@/components/Loading/Loading';
 import { getItem, setItem } from 'sparkling-storage';
 
 import Input from '@/components/Input/Input';
@@ -391,34 +393,42 @@ const QuizPage = () => {
         </view>
       </view>
 
-      {/* Content — unchanged below */}
+      {/* Content */}
       <scroll-view className="flex-1 bg-white px-5 pt-8" scroll-y>
-        <view className="flex-row flex justify-between">
-          <view className="items-center rounded-full bg-[#FFF8E6] px-3 py-1 flex">
-            <text className="uppercase text-[10px] font-bold text-[#FBB03B]">
-              {question?.type_label ?? 'Question'}
-            </text>
+        {phase === 'loading' ? (
+          <view className="h-[40vh] items-center flex justify-center">
+            <Loading size={32} />
           </view>
-          <view
-            bindtap={toggleFlag}
-            className={`h-8 flex-row items-center gap-1 rounded-full border px-3 flex ${
-              isFlagged ? 'border-orange-200 bg-orange-50' : 'border-transparent bg-slate-50'
-            }`}
-          >
-            <text>{isFlagged ? '🚩' : '🏳️'}</text>
-            <text
-              className={`text-[10px] font-bold ${isFlagged ? 'text-orange-500' : 'text-slate-400'}`}
-            >
-              {isFlagged ? 'FLAGGED' : 'FLAG'}
-            </text>
+        ) : (
+          <view key={currentPage} className="animate-fade-in">
+            <view className="flex-row flex justify-between">
+              <view className="items-center rounded-full bg-[#FFF8E6] px-3 py-1 flex">
+                <text className="uppercase text-[10px] font-bold text-[#FBB03B]">
+                  {question?.type_label ?? 'Question'}
+                </text>
+              </view>
+              <view
+                bindtap={toggleFlag}
+                className={`h-8 flex-row items-center gap-1 rounded-full border px-3 flex ${
+                  isFlagged ? 'border-orange-200 bg-orange-50' : 'border-transparent bg-slate-50'
+                }`}
+              >
+                <text>{isFlagged ? '🚩' : '🏳️'}</text>
+                <text
+                  className={`text-[10px] font-bold ${isFlagged ? 'text-orange-500' : 'text-slate-400'}`}
+                >
+                  {isFlagged ? 'FLAGGED' : 'FLAG'}
+                </text>
+              </view>
+            </view>
+
+            <Text size={TextType.h2} fontWeight="bold" className="my-6 leading-tight text-slate-800">
+              {question?.content}
+            </Text>
+
+            {question?.type === 'essay' ? renderEssay() : renderOptions()}
           </view>
-        </view>
-
-        <Text size={TextType.h2} fontWeight="bold" className="my-6 leading-tight text-slate-800">
-          {question?.content}
-        </Text>
-
-        {phase !== 'loading' ? question?.type === 'essay' ? renderEssay() : renderOptions() : <></>}
+        )}
       </scroll-view>
 
       {/* Footer */}
