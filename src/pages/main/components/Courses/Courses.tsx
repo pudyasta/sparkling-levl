@@ -11,7 +11,7 @@ import type { Category } from '@/pages/CourseDetail/repository/type';
 import { useGetAllCourses } from '../../usecase/useGetAllCourses';
 import styles from './Course.module.css';
 import CategoryLabel from './components/CategoryLabel';
-import { CATEGORIES, LEVEL_TAGS, SORT_OPTIONS } from './data/courses';
+import { LEVEL_TAGS, SORT_OPTIONS } from './data/courses';
 
 // Debounce helper — avoids firing API on every keystroke
 const useDebounce = (fn: (...args: any[]) => void, delay: number) => {
@@ -27,8 +27,6 @@ const useDebounce = (fn: (...args: any[]) => void, delay: number) => {
 
 const Courses: React.FC = () => {
   const { navigateTo } = useNativeBridge();
-
-  // ─── Filter state ──────────────────────────────────────────────────────────
   const [search, setSearch] = useState('');
   const [activeCategory, setActiveCategory] = useState<Category | null>(null);
   const [levelTag, setLevelTag] = useState('');
@@ -36,7 +34,6 @@ const Courses: React.FC = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
 
-  // ─── Data ──────────────────────────────────────────────────────────────────
   const { courses, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage, refetch } =
     useGetAllCourses({
       search: search || undefined,
@@ -45,14 +42,12 @@ const Courses: React.FC = () => {
       sort: sort || undefined,
     });
 
-  // ─── Search debounce ───────────────────────────────────────────────────────
   const debouncedSetSearch = useDebounce((val: string) => setSearch(val), 400);
 
   const handleSearchInput = (e: any) => {
     debouncedSetSearch(e.detail.value);
   };
 
-  // ─── Lazy load — fire when near bottom ────────────────────────────────────
   const handleScroll = (e: any) => {
     const { scrollTop, scrollHeight, clientHeight } = e.detail;
     const nearBottom = scrollHeight - scrollTop - clientHeight < 200;
@@ -66,6 +61,7 @@ const Courses: React.FC = () => {
     if (courses.length > 0) {
       courses.map((course) => {
         const category = categories.find((cat) => cat.id === course.id);
+
         if (!category) {
           setCategories([...categories, course.category]);
         }
