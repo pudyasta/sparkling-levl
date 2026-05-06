@@ -8,6 +8,9 @@ declare module '@lynx-js/types' {
     preferredTheme?: string;
     theme: string;
     isNotchScreen: boolean;
+    uuid: string;
+    token: string;
+    email: string;
   }
 
   interface IntrinsicElements extends Lynx.IntrinsicElements {

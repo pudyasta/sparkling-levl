@@ -200,7 +200,7 @@ const Courses: React.FC = () => {
                     bindTap={() =>
                       navigateTo('courseDetail.lynx.bundle', {
                         courseId: course.id,
-                        slug: course.slug,
+                        course_slug: course.slug,
                       })
                     }
                     course={{

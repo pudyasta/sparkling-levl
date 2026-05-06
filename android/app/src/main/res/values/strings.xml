@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Levl</string>
+    <string name="title_activity_verify_email">VerifyEmailActivity</string>
 </resources>

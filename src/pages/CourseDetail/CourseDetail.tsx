@@ -1,7 +1,8 @@
-import { type FC, useEffect } from '@lynx-js/react';
+import { type FC, useEffect, useLynxGlobalEventListener } from '@lynx-js/react';
 import { close } from 'sparkling-navigation';
 
 import { back } from '@/assets/images/icon';
+import { PullToRefresh } from '@/components/PullToRefresh/PullToRefresh';
 import Text from '@/components/Text';
 import { FontFamily, TextType } from '@/components/Text/types';
 import Button from '@/components/common/Button';
@@ -10,6 +11,7 @@ import CustomImage from '@/components/common/CustomImage/CustomImage';
 import Shimmer from '@/components/common/Shimmer/Shimmer';
 import { Colors } from '@/constant/style';
 import { useNativeBridge } from '@/context/NativeBridgeProvider';
+import { htmlToPlainText } from '@/lib/helper/htmlToLynx';
 
 import { Enroll } from './components/Enroll';
 import { UnitSection } from './components/Units';
@@ -88,110 +90,171 @@ const CourseDetailSkeleton = () => (
 );
 
 export const CourseDetail: FC = () => {
-  const { routerParams } = useNativeBridge();
+  const { routerParams, navigateTo } = useNativeBridge();
   const { courses, isLoading, refetch } = useGetCourseDetail({
-    slug: routerParams?.slug || '',
+    slug: routerParams?.course_slug || '',
   });
+
+  useLynxGlobalEventListener('nativePageResumed', (res) => {
+    console.log('back from page');
+    // refresh data here
+  });
+
+  const refetchAll = () => {
+    console.log(routerParams);
+    refetch();
+  };
+
+  const continueLearning = () => {
+    const lesson = courses.progress.last_accessed_lesson;
+    const unit = courses.progress.last_accessed_unit;
+
+    const currentUnit = courses.units.find((u) => u.id === courses.progress.last_accessed_unit.id);
+
+    console.log('currentUnit', currentUnit);
+    if (!currentUnit) {
+      return;
+    }
+
+    const currentLesson = currentUnit.elements.find(
+      (l) => l.id === courses.progress.last_accessed_lesson?.id
+    );
+    console.log('currentLesson', currentLesson);
+    if (!currentLesson) {
+      return;
+    }
+
+    const i = currentUnit?.elements.indexOf(currentLesson);
+
+    navigateTo('lessons.lynx.bundle', {
+      courseId: courses.id,
+      lesson_slug: lesson.slug,
+      unit_slug: unit.slug,
+      course_slug: courses.slug,
+      all_lessons: currentUnit.elements,
+      next_course: i < currentUnit.elements.length - 1 ? currentUnit.elements[i + 1].slug : null,
+      // back_course: i > 0 ? currentUnit.elements[i - 1].slug : null,
+      type: currentLesson.type,
+      assignment_id: lesson.id,
+    });
+  };
+  useEffect(() => {
+    console.log(routerParams);
+  }, []);
 
   return isLoading ? (
     <CourseDetailSkeleton />
   ) : (
-    <scroll-view className="h-full w-full bg-slate-50 animate-fade-in" scroll-y>
-      {/* 1. Hero Header */}
-      <view
-        className="bg-cover bg-center px-6 pb-[70px] pt-[50px]"
-        style={{
-          backgroundImage: `linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0) 100%), url(${courses.banner})`,
-        }}
-      >
-        <view className="mb-6 flex-row flex justify-between">
-          <view
-            className="h-10 w-10 items-center rounded-full bg-white/20 flex justify-center shadow-lg"
-            bindtap={() => close()}
-          >
-            <CustomImage src={back} className="h-[18px] w-[18px] text-white" />
-          </view>
-        </view>
-
+    <scroll-view className="h-full w-full animate-fade-in bg-slate-50">
+      <PullToRefresh onRefresh={async () => refetchAll()}>
+        {/* 1. Hero Header */}
         <view
-          className="mb-3 self-start rounded-lg px-3 py-1"
-          style={{ backgroundColor: Colors.Primary }}
+          className="bg-cover bg-center px-6 pb-[70px] pt-[50px]"
+          style={{
+            backgroundImage: `linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0) 100%), url(${courses?.banner})`,
+          }}
         >
-          <Text className="text-xs font-bold text-white" size={TextType.b3} color="white">
-            {courses.category.name}
+          <view className="mb-6 flex-row flex justify-between">
+            <view
+              className="h-10 w-10 items-center rounded-full bg-white/20 flex justify-center shadow-lg"
+              bindtap={() => close()}
+            >
+              <CustomImage src={back} className="h-[18px] w-[18px] text-white" />
+            </view>
+          </view>
+
+          <view
+            className="mb-3 self-start rounded-lg px-3 py-1"
+            style={{ backgroundColor: Colors.Primary }}
+          >
+            <Text className="text-xs font-bold text-white" size={TextType.b3} color="white">
+              {courses?.category.name}
+            </Text>
+          </view>
+
+          <Text
+            className="mb-4 text-[32px] font-extrabold leading-10 text-white"
+            size={TextType.h1}
+            fontFamily={FontFamily.jakarta}
+            color="white"
+          >
+            {courses?.title}
           </Text>
+
+          <Text className="mb-8 text-[15px] leading-6 text-white" size={TextType.b2} color="white">
+            {htmlToPlainText(courses?.short_desc)}
+          </Text>
+
+          <view className="flex-row items-center flex" />
         </view>
 
-        <Text
-          className="mb-4 text-[32px] font-extrabold leading-10 text-white"
-          size={TextType.h1}
-          fontFamily={FontFamily.jakarta}
-          color="white"
-        >
-          {courses.title}
-        </Text>
-
-        <Text className="mb-8 text-[15px] leading-6 text-white" size={TextType.b2} color="white">
-          {courses.short_desc}
-        </Text>
-
-        <view className="flex-row items-center flex" />
-      </view>
-
-      {/* 2. Overlapping Progress Card */}
-      <view className="-mt-[60px] px-5 pb-10">
-        <Card className="p-6 shadow-[0_10px_25px_rgba(0,0,0,0.1)]">
-          {courses.enrollment_status === 'active' || courses.enrollment_status === 'completed' ? (
-            <>
-              <view className="mb-3 flex-row gap-3 flex justify-between">
-                <Text className="text-base font-bold text-slate-800" size={TextType.b1}>
-                  Your Progress
-                </Text>
-                <Text className="text-lg font-extrabold" color={Colors.Primary} size={TextType.h2}>
-                  {courses.progress.percentage}%
-                </Text>
-              </view>
-              <view className="mb-5 h-[10px] rounded-full bg-slate-100 overflow-hidden">
-                <view
-                  className="h-[10px] rounded-full"
-                  style={{
-                    width: `${courses.progress.percentage}%`,
-                    backgroundColor: Colors.Primary,
+        {/* 2. Overlapping Progress Card */}
+        <view className="-mt-[60px] px-5 pb-10">
+          <Card className="p-6 shadow-[0_10px_25px_rgba(0,0,0,0.1)]">
+            {courses?.enrollment_status === 'active' ||
+            courses?.enrollment_status === 'completed' ? (
+              <>
+                <view className="mb-3 flex-row gap-3 flex justify-between">
+                  <Text className="text-base font-bold text-slate-800" size={TextType.b1}>
+                    Your Progress
+                  </Text>
+                  <Text
+                    className="text-lg font-extrabold"
+                    color={Colors.Primary}
+                    size={TextType.h2}
+                  >
+                    {courses?.progress?.percentage}%
+                  </Text>
+                </view>
+                <view className="mb-5 h-[10px] rounded-full bg-slate-100 overflow-hidden">
+                  <view
+                    className="h-[10px] rounded-full"
+                    style={{
+                      width: `${courses?.progress?.percentage}%`,
+                      backgroundColor: Colors.Primary,
+                    }}
+                  />
+                </view>
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  onPress={() => {
+                    continueLearning();
                   }}
-                />
-              </view>
-              <Button variant="outlined" color="primary">
-                Continue Learning
-              </Button>
-            </>
-          ) : (
-            <Enroll
-              courseSlug={courses.slug}
-              enrollmentType={courses.enrollment_type as EnrollmentType} // 'auto_accept' | 'key_based' | 'approval'
-              onEnrollSuccess={() => refetch()}
-            />
+                >
+                  Continue Learning
+                </Button>
+              </>
+            ) : (
+              <Enroll
+                courseSlug={courses?.slug}
+                enrollmentType={courses?.enrollment_type as EnrollmentType} // 'auto_accept' | 'key_based' | 'approval'
+                onEnrollSuccess={() => refetch()}
+              />
+            )}
+          </Card>
+
+          {/* 3. Course Units */}
+          {courses.units && (
+            <Text className="mb-3 mt-2.5 text-xl font-extrabold text-slate-800" size={TextType.h2}>
+              Course Units
+            </Text>
           )}
-        </Card>
 
-        {/* 3. Course Units */}
-        {courses.units && (
-          <Text className="mb-3 mt-2.5 text-xl font-extrabold text-slate-800" size={TextType.h2}>
-            Course Units
-          </Text>
-        )}
-
-        {courses.units?.map((unit) => (
-          <UnitSection
-            key={unit.id}
-            unit={unit}
-            isLastAccessed={
-              courses?.progress?.last_accessed_unit
-                ? unit.id == courses.progress.last_accessed_unit.id
-                : false
-            }
-          />
-        ))}
-      </view>
+          {courses.units?.map((unit) => (
+            <UnitSection
+              key={unit.id}
+              unit={unit}
+              isLastAccessed={
+                courses?.progress?.last_accessed_unit
+                  ? unit.id == courses.progress.last_accessed_unit.id
+                  : false
+              }
+              courseId={courses.id}
+            />
+          ))}
+        </view>
+      </PullToRefresh>
     </scroll-view>
   );
 };

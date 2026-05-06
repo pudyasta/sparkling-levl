@@ -1,3 +1,5 @@
+import { htmlToPlainText } from '@/lib/helper/htmlToLynx';
+
 import Text from '../Text';
 import { TextType } from '../Text/types';
 import Card from '../common/Card/Card';
@@ -49,7 +51,7 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, bindTap }) => {
         {/* Description */}
         {course.description && (
           <Text size={TextType.b3} className="leading-relaxed text-slate-400">
-            {course.description}
+            {htmlToPlainText(course.description).split(' ').slice(0, 35).join(' ') + '...'}
           </Text>
         )}
 

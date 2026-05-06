@@ -42,11 +42,15 @@ export default function LearningDashboard() {
     refetchGetRecommendedCourses();
   };
   const timeOfDay = getTimeOfDay();
+
+  useEffect(() => {
+    console.log(JSON.stringify(recentLearning, null, 2));
+  }, [recentLearning]);
+
   return (
-    recentLearning &&
     recommendedCourses && (
       <PullToRefresh onRefresh={async () => refetchAll()}>
-        <scroll-view className="flex-1 bg-slate-50 pb-10 animate-fade-in">
+        <scroll-view className="flex-1 animate-fade-in bg-slate-50 pb-10">
           {/* Header Section */}
           <view
             className="min-h-[20vh] flex-col px-4 pb-10 pt-8 flex"
@@ -106,85 +110,99 @@ export default function LearningDashboard() {
               )}
             </view>
           </view>
-
           <view className="mt-5 flex-col gap-4 px-4 flex">
             {/* Continue Learning */}
-            <view className="flex-col gap-3 flex">
-              <SectionHeader
-                title="Lanjut Belajar"
-                bindTap={() => navigateTo('myCourse.lynx.bundle')}
-              />
-              <Card
-                className="flex-row items-center gap-4 rounded-2xl bg-white p-1 flex shadow-sm"
-                bindTap={() =>
-                  navigateTo('courseDetail.lynx.bundle', {
-                    courseId: recentLearning[0].course.id,
-                    slug: recentLearning[0].course.slug,
-                  })
-                }
-              >
-                <view className="h-24 w-24 rounded-xl overflow-hidden">
-                  <CustomImage src={recentLearning[0].course.thumbnail} className="h-full w-full" />
-                </view>
-                <view className="flex-1 flex-col gap-1 flex">
-                  <Text size={TextType.b1} fontWeight="bold" className="text-slate-800">
-                    {recentLearning[0].course?.title || ''}
-                  </Text>
-                  <Text size={TextType.b3} color={Colors.Primary}>
-                    {recentLearning[0].progress.completed_lessons} of{' '}
-                    {recentLearning[0].progress.total_lessons} lessons
-                  </Text>
-                  <view className="mt-1 flex-row items-center gap-2 flex">
-                    <view className="h-2 flex-1 rounded-full bg-slate-100 overflow-hidden">
-                      <view
-                        className="h-full rounded-full"
-                        style={{
-                          backgroundColor: Colors.Primary,
-                          width: `${recentLearning[0].progress.percentage}%`,
-                        }}
-                      />
-                    </view>
-                    <Text size={TextType.b3} className="text-slate-400">
-                      {recentLearning[0].progress.percentage}%
-                    </Text>
+            {recentLearning && recentLearning.length > 0 && (
+              <view className="flex-col gap-3 flex">
+                <SectionHeader
+                  title="Lanjut Belajar"
+                  bindTap={() => navigateTo('myCourse.lynx.bundle')}
+                />
+                <Card
+                  className="flex-row items-center gap-4 rounded-2xl bg-white p-1 flex shadow-sm"
+                  bindTap={() =>
+                    navigateTo('courseDetail.lynx.bundle', {
+                      courseId: recentLearning[0].course.id,
+                      course_slug: recentLearning[0].course.slug,
+                    })
+                  }
+                >
+                  <view className="h-24 w-24 rounded-xl overflow-hidden">
+                    <CustomImage
+                      src={recentLearning[0].course?.thumbnail || ''}
+                      className="h-full w-full"
+                    />
                   </view>
-                </view>
-              </Card>
-            </view>
+                  <view className="flex-1 flex-col gap-1 flex">
+                    <Text size={TextType.b1} fontWeight="bold" className="text-slate-800">
+                      {recentLearning[0].course?.title || ''}
+                    </Text>
+                    <Text size={TextType.b3} color={Colors.Primary}>
+                      {recentLearning[0].progress.completed_lessons} of{' '}
+                      {recentLearning[0].progress.total_lessons} lessons
+                    </Text>
+                    <view className="mt-1 flex-row items-center gap-2 flex">
+                      <view className="h-2 flex-1 rounded-full bg-slate-100 overflow-hidden">
+                        <view
+                          className="h-full rounded-full"
+                          style={{
+                            backgroundColor: Colors.Primary,
+                            width: `${recentLearning[0].progress.percentage}%`,
+                          }}
+                        />
+                      </view>
+                      <Text size={TextType.b3} className="text-slate-400">
+                        {recentLearning[0].progress.percentage}%
+                      </Text>
+                    </view>
+                  </view>
+                </Card>
+              </view>
+            )}
 
             {/* Recent Achievements */}
-            <view className="flex-col gap-1 flex">
-              <SectionHeader title="Pencapaian Terbaru" />
-              <scroll-view scroll-x className="flex-row py-1 flex">
-                {achievements?.map((i, idx) => (
-                  <view key={idx} className="mr-4 w-[80px] flex-col items-center flex">
-                    <view className="mb-2 rounded-2xl border border-slate-50 bg-white overflow-hidden shadow-sm">
-                      <CustomImage className="h-20 w-20" src={i.icon_url} />
-                    </view>
-                    <Text className="text-slate-600 text-center" size={TextType.b3}>
-                      {i.name}
-                    </Text>
-                  </view>
-                ))}
-              </scroll-view>
-            </view>
+            {achievements && achievements.length > 0 && (
+              <view className="flex-col gap-1 flex">
+                <SectionHeader title="Pencapaian Terbaru" />
+                <scroll-view scroll-x className="flex-row py-1 flex">
+                  {achievements?.map((i, idx) => {
+                    return (
+                      <view key={idx} className="mr-4 w-[80px] flex-col items-center flex">
+                        <view className="mb-2 rounded-2xl border border-slate-50 bg-white overflow-hidden shadow-sm">
+                          <CustomImage className="h-20 w-20" src={i?.icon_url || ''} />
+                        </view>
+                        <Text className="text-slate-600 text-center" size={TextType.b3}>
+                          {i.name}
+                        </Text>
+                      </view>
+                    );
+                  })}
+                </scroll-view>
+              </view>
+            )}
 
             {/* Recommended Course */}
             <view className="flex-col gap-1 flex">
               <SectionHeader title="Rekomendasi Kursus" isSeeAll={false} />
               {recommendedCourses.map((course) => (
-                // <CourseCard
-                //   course={{
-                //       id: course.id.toString(),
-                //       title: course.title,
-                //       description: course.short_desc,
-                //       level: course.level_tag,
-                //       category: course.category?.name || '',
-                //       image: course.thumbnail,
-                //       lessons: course.units?.length || 0,
-                //     }}
-                // />
-                <></>
+                <CourseCard
+                  bindTap={() =>
+                    navigateTo('courseDetail.lynx.bundle', {
+                      courseId: course.id,
+                      course_slug: course.slug,
+                    })
+                  }
+                  key={course.id}
+                  course={{
+                    id: course.id.toString(),
+                    title: course.title,
+                    description: course.short_desc,
+                    level: course.level_tag,
+                    category: course.category?.name || '',
+                    image: course.thumbnail,
+                    lessons: course.units?.length || 0,
+                  }}
+                />
               ))}
             </view>
           </view>

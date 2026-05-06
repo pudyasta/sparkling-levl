@@ -12,8 +12,17 @@ export const useGetQuestion = (options?: Options) => {
   const { getQuestionApi } = useQuizRepo();
 
   const mutation = useMutation({
-    mutationFn: ({ submissionId, page }: { submissionId: number; page: number }) =>
-      getQuestionApi(submissionId, page),
+    mutationFn: ({
+      submissionId,
+      page,
+      sessionToken,
+    }: {
+      submissionId: number;
+      page: number;
+      sessionToken: string;
+    }) => {
+      return getQuestionApi(submissionId, page, sessionToken);
+    },
     onSuccess: (data) => options?.onSuccess?.(data),
     onError: (error: any) => {
       console.log('useGetQuestion error:', JSON.stringify(error, null, 2));

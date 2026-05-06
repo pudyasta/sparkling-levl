@@ -1,14 +1,20 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import Text from '@/components/Text';
 import { TextType } from '@/components/Text/types';
-import { Colors } from '@/constant/style';
 import { useNativeBridge } from '@/context/NativeBridgeProvider';
 
-import styles from '../CourseDetail.module.css';
 import type { Unit } from '../repository/type';
 
-export const UnitSection = ({ unit, isLastAccessed }: { unit: Unit; isLastAccessed: boolean }) => {
+export const UnitSection = ({
+  unit,
+  isLastAccessed,
+  courseId,
+}: {
+  unit: Unit;
+  isLastAccessed: boolean;
+  courseId: number;
+}) => {
   const [isOpen, setIsOpen] = useState(isLastAccessed);
   const { navigateTo } = useNativeBridge();
 
@@ -83,7 +89,6 @@ export const UnitSection = ({ unit, isLastAccessed }: { unit: Unit; isLastAccess
                   unit_slug: unit.slug,
                   course_slug: unit?.course_slug || '',
                   all_lessons: unit.elements,
-                  close: true,
                   next_course: i < unit.elements.length - 1 ? unit.elements[i + 1].slug : null,
                   back_course: i > 0 ? unit.elements[i - 1].slug : null,
                   type: lesson.type,

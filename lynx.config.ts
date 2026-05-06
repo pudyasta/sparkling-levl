@@ -18,6 +18,9 @@ export default defineConfig({
       forgotPassword: './src/pages/ForgotPassword/index.tsx',
       quiz: './src/pages/Quiz/index.tsx',
       myCourse: './src/pages/MyCourses/index.tsx',
+      profile: './src/pages/Profile/index.tsx',
+      verify: './src/pages/VerifyEmail/index.tsx',
+      quizResult: './src/pages/QuizResult/index.tsx',
     },
   },
   resolve: {

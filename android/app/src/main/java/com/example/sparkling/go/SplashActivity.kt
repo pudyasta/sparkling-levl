@@ -3,22 +3,35 @@
 // LICENSE file in the root directory of this source tree.
 package com.example.sparkling.go
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
-import com.example.sparkling.go.modules.NativeFilePicker
+import com.lynx.react.bridge.JavaOnlyArray
+import com.lynx.react.bridge.JavaOnlyMap
+import com.lynx.tasm.LynxView
 import com.tiktok.sparkling.Sparkling
 import com.tiktok.sparkling.SparklingContext
-import com.tiktok.sparkling.method.registry.api.SparklingBridge
 import com.tiktok.sparkling.method.registry.core.utils.JsonUtils
 
 class SplashActivity : AppCompatActivity() {
+    private lateinit var lynxView: LynxView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                Log.d("COBADEG","Cobs")
+
+                val params = JavaOnlyArray()
+                val data = JavaOnlyMap()
+                data.putString("source", "android_back")
+                params.pushMap(data)
+                lynxView.sendGlobalEvent("nativeBackPressed", params)
+            }
+        })
+
         gotoSparklingPage()
     }
-
     private fun gotoSparklingPage() {
         val initData = mapOf<Any, Any>()
         val initialData: String = JsonUtils.toJson(initData)

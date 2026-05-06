@@ -26,10 +26,13 @@ export default function LoginPage() {
       if (errors.login) emailRef.current?.setError(errors.login);
       if (errors.password) passwordRef.current?.setError(errors.password);
     },
-    onSuccess: () => {
+    onSuccess: (res) => {
       navigateTo('main.lynx.bundle', { hide_nav_bar: 1, close: true });
+      console.log(JSON.stringify(res, null, 2));
     },
     onError: (error) => {
+      console.log(JSON.stringify(error, null, 2));
+
       if (error.type !== 'VALIDATION_ERROR') {
         setIsModalOpen(true);
       }
@@ -79,7 +82,7 @@ export default function LoginPage() {
       </view>
 
       {/* Form Section */}
-      <view className="flex-col items-center gap-5 px-5 py-8 flex justify-center animate-fade-in">
+      <view className="animate-fade-in flex-col items-center gap-5 px-5 py-8 flex justify-center">
         <Input title="Email or username" variant="email" icon="mail" ref={emailRef} />
         <Input title="Password" variant="password" icon="lock" ref={passwordRef} />
 

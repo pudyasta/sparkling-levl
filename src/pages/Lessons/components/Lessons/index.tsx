@@ -4,6 +4,7 @@ import { TextType } from '@/components/Text/types';
 import Button from '@/components/common/Button';
 import NativeVideoPlayer from '@/components/common/VideoPlayer';
 import { Colors } from '@/constant/style';
+import { htmlToLynx } from '@/lib/helper/htmlToLynx';
 
 import type { LessonBlock, LessonData } from '../../repository/type/lessons';
 
@@ -16,11 +17,8 @@ const LessonContent = ({
   handleMarkAsDoneLessons: () => void;
   loading: boolean;
 }) => {
-  const stripHtml = (html: string) => html.replace(/<[^>]*>?/gm, '');
-
   return (
     <view className="flex-col pb-[50px] pt-[60px] flex">
-      {/* Header */}
       <view className="mb-6">
         <view className="mb-2 flex-row items-center flex">
           <view className="mr-2 rounded-md bg-green-100 px-2 py-1">
@@ -32,7 +30,7 @@ const LessonContent = ({
             Step {data.order}
           </Text>
         </view>
-        <Text size={TextType.h2} fontWeight={'bold'} className="leading-tight">
+        <Text size={TextType.h1} fontWeight={'bold'} className="leading-tight">
           {data.title}
         </Text>
       </view>
@@ -41,21 +39,13 @@ const LessonContent = ({
       {data.blocks?.map((block: LessonBlock) => (
         <view key={block.id} className="mb-5">
           {/* TEXT BLOCK */}
-          {block.block_type === 'text' && (
-            <Text size={TextType.b1} className="leading-6">
-              {block.content}
-            </Text>
-          )}
+          {block.block_type === 'text' && <>{htmlToLynx(block.content)}</>}
 
           {/* VIDEO BLOCK */}
           {block.block_type === 'video' && block.media && (
             <view className="rounded-xl bg-black overflow-hidden">
               <NativeVideoPlayer src={block.media.url} className="h-[210px] w-full" />
-              <view className="bg-white p-3">
-                <Text size={TextType.b2} color={Colors.Secondary}>
-                  {stripHtml(block.content)}
-                </Text>
-              </view>
+              <view className="bg-white p-3">{htmlToLynx(block.content)}</view>
             </view>
           )}
 
@@ -67,7 +57,7 @@ const LessonContent = ({
                 size={TextType.b2}
                 className="bg-[#f9f9f9] p-3 text-xs text-[#5f6368] text-center"
               >
-                {stripHtml(block.content) || block.media.file_name}
+                {htmlToLynx(block.content) || block.media.file_name}
               </Text>
             </view>
           )}
@@ -98,16 +88,11 @@ const LessonContent = ({
       <view className="mt-8">
         <Button
           onPress={handleMarkAsDoneLessons}
-          disabled={data.is_completed || loading}
+          disabled={data.is_completed}
           className="h-14 w-full"
+          isLoading={loading}
         >
-          {loading ? (
-            <Loading size={20} />
-          ) : data.is_completed ? (
-            '✓ Selesai'
-          ) : (
-            'Tandai Sudah Selesai'
-          )}
+          {data.is_completed ? '✓ Selesai' : 'Tandai Sudah Selesai'}
           {/* Selesai */}
         </Button>
       </view>

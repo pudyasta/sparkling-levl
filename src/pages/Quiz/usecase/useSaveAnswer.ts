@@ -4,6 +4,7 @@ import { useQuizRepo } from '../repo/useQuizRepo';
 import type { SaveAnswerPayload } from '../type/QuizData';
 
 interface Options {
+  sessionToken: string;
   onSuccess?: (data: any) => void;
   onError?: (error: any) => void;
 }
@@ -13,9 +14,8 @@ export const useSaveAnswer = (options?: Options) => {
 
   const mutation = useMutation({
     mutationFn: ({ submissionId, payload }: { submissionId: number; payload: SaveAnswerPayload }) =>
-      saveAnswerApi(submissionId, payload),
+      saveAnswerApi(submissionId, payload, options?.sessionToken || ''),
     onSuccess: (data) => {
-      console.log('answeXXr', JSON.stringify(data, null, 2));
       options?.onSuccess?.(data);
     },
     onError: (error: any) => {

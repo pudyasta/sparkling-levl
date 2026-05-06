@@ -1,4 +1,5 @@
 import { initComponent } from '@/context/AppProvider/initComponent';
-import RegisterPages from './RegisterPage';
 
-initComponent(RegisterPages);
+import registerPage from './RegisterPage';
+
+initComponent(registerPage);

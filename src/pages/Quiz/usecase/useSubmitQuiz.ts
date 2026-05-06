@@ -7,6 +7,7 @@ import { useQuizRepo } from '../repo/useQuizRepo';
 import type { SubmitQuizResponse } from '../type/QuizData';
 
 interface Options {
+  sessionToken: string;
   onSuccess?: (data: SubmitQuizResponse) => void;
   onError?: (error: any) => void;
 }
@@ -15,10 +16,9 @@ export const useSubmitQuiz = (options?: Options) => {
   const { submitQuizApi } = useQuizRepo();
 
   const mutation = useMutation({
-    mutationFn: (submissionId: number) => submitQuizApi(submissionId),
+    mutationFn: (submissionId: number) => submitQuizApi(submissionId, options?.sessionToken || ''),
     onSuccess: (data) => options?.onSuccess?.(data),
     onError: (error: any) => {
-      console.log('useSubmitQuiz error:', JSON.stringify(error, null, 2));
       options?.onError?.(error);
       setItem({ key: PrefKey.SubmissionId, biz: BizKey.Quiz, value: null }, () => {});
     },

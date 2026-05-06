@@ -3,7 +3,14 @@
 // LICENSE file in the root directory of this source tree.
 package com.example.sparkling.go
 
+import android.app.Activity
 import android.app.Application
+import android.os.Bundle
+import android.util.Log
+import android.view.View
+import android.view.ViewGroup
+import androidx.activity.ComponentActivity
+import androidx.activity.OnBackPressedCallback
 
 import com.facebook.drawee.backends.pipeline.Fresco
 import com.facebook.imagepipeline.core.ImagePipelineConfig
@@ -22,12 +29,17 @@ import com.tiktok.sparkling.method.router.open.RouterOpenMethod
 import com.tiktok.sparkling.method.router.utils.RouterProvider
 import com.example.sparkling.go.components.NativeSvgView
 import com.example.sparkling.go.components.VideoPlayerView
+import com.example.sparkling.go.modules.BackInterceptorMethod
+import com.example.sparkling.go.modules.GoBackMethod
 import com.example.sparkling.go.modules.NativeFilePicker
 import com.example.sparkling.go.modules.NativeFileUploader
+import com.lynx.react.bridge.JavaOnlyArray
+import com.lynx.react.bridge.JavaOnlyMap
 import com.lynx.service.devtool.LynxDevToolService
 import com.lynx.service.http.LynxHttpService
 import com.lynx.service.image.LynxImageService
 import com.lynx.tasm.LynxEnv
+import com.lynx.tasm.LynxView
 import com.lynx.tasm.service.LynxServiceCenter
 import com.tiktok.sparkling.method.storage.getItem.StorageGetItemMethod
 import com.tiktok.sparkling.method.storage.removeItem.StorageRemoveItemMethod
@@ -40,6 +52,7 @@ class SparklingApplication : Application() {
         super.onCreate()
         initFresco()
         initSparkling()
+        hookActivitiesForBack()
     }
 
     private fun initFresco() {
@@ -101,11 +114,87 @@ class SparklingApplication : Application() {
 
         SparklingBridgeManager.registerIDLMethod(NativeFileUploader::class.java)
         SparklingBridgeManager.registerIDLMethod(NativeFilePicker::class.java)
-
-
+        SparklingBridgeManager.registerIDLMethod(BackInterceptorMethod::class.java)
+        SparklingBridgeManager.registerIDLMethod(GoBackMethod::class.java)
 
         SparklingBridgeManager.registerIDLMethod(StorageSetItemMethod::class.java)
         SparklingBridgeManager.registerIDLMethod(StorageGetItemMethod::class.java)
         SparklingBridgeManager.registerIDLMethod(StorageRemoveItemMethod::class.java)
     }
+
+    private fun hookActivitiesForBack() {
+        registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
+            override fun onActivityCreated(activity: Activity, state: Bundle?) {
+                if (activity is ComponentActivity) {
+                    activity.onBackPressedDispatcher.addCallback(
+                        activity,
+                        object : OnBackPressedCallback(true) {
+                            override fun handleOnBackPressed() {
+                                if (!BackInterceptorMethod.isInterceptEnabled) {
+                                    isEnabled = false
+                                    activity.onBackPressedDispatcher.onBackPressed()
+                                    isEnabled = true  // re-arm for future presses
+                                    return
+                                }
+
+                                val lynxView = activity.window.decorView.findLynxView()
+                                if (lynxView == null) {
+                                    Log.d("BackInterceptor", "LynxView not found, falling back")
+                                    isEnabled = false
+                                    activity.onBackPressedDispatcher.onBackPressed()
+                                    isEnabled = true
+                                    return
+                                }
+
+                                val params = JavaOnlyArray()
+                                val data = JavaOnlyMap()
+                                data.putString("source", "android_back")
+                                params.pushMap(data)
+                                lynxView.sendGlobalEvent("nativeBackPressed", params)
+                            }
+                        }
+                    )
+                }
+            }
+
+            override fun onActivityResumed(activity: Activity) {
+                val lynxView = activity.window.decorView.findLynxView() ?: return
+
+                val pending = DeepLinkHolder.consume() ?: return
+
+                Log.d("DeepLink", "Dispatching to LynxView: $pending")
+
+                val params = JavaOnlyArray()
+                val data   = JavaOnlyMap().apply {
+                    putString("userId", pending["userId"] ?: "")
+                    putString("email",  pending["email"]  ?: "")
+                    putString("uuid",   pending["uuid"]   ?: "")
+                    putString("token",  pending["token"]  ?: "")
+                }
+                params.pushMap(data)
+
+                lynxView.updateGlobalProps(data)
+            }
+            override fun onActivityStarted(a: Activity) {
+
+            }
+            override fun onActivityPaused(a: Activity) {}
+            override fun onActivityStopped(a: Activity) {}
+            override fun onActivitySaveInstanceState(a: Activity, b: Bundle) {}
+            override fun onActivityDestroyed(a: Activity) {}
+        })
+    }
+    private fun View.findLynxView(): LynxView? {
+        if (this is LynxView) return this
+
+        if (this is ViewGroup) {
+            for (i in 0 until childCount) {
+                val found = getChildAt(i).findLynxView()
+                if (found != null) return found
+            }
+        }
+
+        return null
+    }
+
 }

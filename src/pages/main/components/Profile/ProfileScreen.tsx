@@ -12,18 +12,12 @@ import { useGetAchievements, useGetGamificationStats } from '../../usecase/useGe
 import styles from './Profile.module.css';
 import AchievementItem from './components/Achievements';
 import { ProfileHeader } from './components/ProfileHeader';
-import RecentActivityItem from './components/RecentActivities';
 import StatsCard from './components/StatsCard';
 
 export const ProfileScreen: FC = () => {
   const { user, logout } = useNativeBridge();
-  const { stats, isError, error, isLoading } = useGetGamificationStats();
-  const {
-    achievements,
-    isError: isErrorAchievements,
-    error: errorAchievements,
-    isLoading: isLoadingAchievements,
-  } = useGetAchievements();
+  const { stats, isLoading } = useGetGamificationStats();
+  const { achievements, isLoading: isLoadingAchievements } = useGetAchievements();
 
   if (isLoading || isLoadingAchievements) {
     return (
@@ -62,7 +56,7 @@ export const ProfileScreen: FC = () => {
                 {stats.level.name}
               </Text>
               <Text size={TextType.b3}>
-                {stats.level.xp_to_next_level} XP to Level {stats.level.current + 1}
+                {stats.level.xp_to_next_level} XP untuk Level {stats.level.current + 1}
               </Text>
             </view>
             <view className={styles.levelBadge}>
@@ -82,17 +76,25 @@ export const ProfileScreen: FC = () => {
         {/* Stats Grid */}
         <view className={styles.statsGrid}>
           <StatsCard label="Total XP" value={stats.xp.total} iconUrl={xp} />
-          <StatsCard label="Courses" value={stats.xp.period} iconUrl={courses} />
-          <StatsCard label="Hours Learned" value={stats.xp.period} iconUrl={time} />
-          <StatsCard label="Longest Streak" value={stats.activity.longest_streak} iconUrl={date} />
+          <StatsCard
+            label="Total Kursus"
+            value={stats.activity.total_course_enrolled}
+            iconUrl={courses}
+          />
+          <StatsCard label="Total Jam Belajar" value={stats.xp.period} iconUrl={time} />
+          <StatsCard
+            label="Streak Terpanjang"
+            value={stats.activity.longest_streak}
+            iconUrl={date}
+          />
         </view>
 
         {/* Achievements */}
         <view className={styles.sectionHeader}>
           <Text size={TextType.h2} fontWeight="bold" fontFamily={FontFamily.jakarta}>
-            Achievements
+            Pencapaian
           </Text>
-          <Text>See All</Text>
+          <Text>Lihat Semua</Text>
         </view>
         <view className={styles.achievementRow}>
           {achievements.map((achievement, index) => {
@@ -101,7 +103,7 @@ export const ProfileScreen: FC = () => {
                 <AchievementItem
                   key={achievement.id}
                   title={achievement.name}
-                  iconUrl={achievement.icon_url}
+                  iconUrl={achievement?.icon_url || ''}
                   color={'blue'}
                   isActive={true}
                 />
@@ -109,28 +111,6 @@ export const ProfileScreen: FC = () => {
             }
             return null;
           })}
-        </view>
-
-        {/* Recent Activity */}
-        <view className={styles.sectionHeader}>
-          <Text size={TextType.h2} fontWeight="bold" fontFamily={FontFamily.jakarta}>
-            Recent Activity
-          </Text>
-          <Text>See All</Text>
-        </view>
-        <view className={styles.activityList}>
-          <RecentActivityItem
-            title="Completed React Hooks Quiz"
-            timestamp="2 hours ago"
-            xpGain={90}
-            iconUrl="🏆"
-          />
-          <RecentActivityItem
-            title="Finished Props and Data Flow"
-            timestamp="5 hours ago"
-            xpGain={50}
-            iconUrl="📖"
-          />
         </view>
       </view>
       <view className={styles.content}>

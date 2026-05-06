@@ -4,9 +4,10 @@ import Text from '@/components/Text';
 import { TextType } from '@/components/Text/types';
 import Button from '@/components/common/Button';
 import { useNativeBridge } from '@/context/NativeBridgeProvider';
+import { htmlToPlainText } from '@/lib/helper/htmlToLynx';
 
-import { useQuizRepo } from './repo/useQuizRepo';
-import type { QuizAnswerResource, QuizSubmissionResource } from './type/QuizData';
+import { useQuizRepo } from '../Quiz/repo/useQuizRepo';
+import type { QuizAnswerResource, QuizSubmissionResource } from '../Quiz/type/QuizData';
 
 const formatSeconds = (seconds: number | null) => {
   if (!seconds) return '—';
@@ -65,8 +66,8 @@ const AnswerReviewItem = ({ answer, index }: { answer: QuizAnswerResource; index
   const statusLabel = isPendingGrade
     ? '⏳ Pending'
     : answer.score && answer.score > 0
-      ? '✓ Correct'
-      : '✗ Incorrect';
+      ? 'Benar'
+      : 'Salah';
 
   return (
     <view className="mb-3 rounded-2xl border border-slate-100 bg-white overflow-hidden">
@@ -84,7 +85,7 @@ const AnswerReviewItem = ({ answer, index }: { answer: QuizAnswerResource; index
             </text>
           </view>
           <Text size={TextType.b2} className="flex-1 text-slate-700">
-            {question?.content ?? '—'}
+            {htmlToPlainText(question?.content ?? '—')}
           </Text>
         </view>
         <view className="flex-row items-center gap-2 flex">
@@ -102,16 +103,22 @@ const AnswerReviewItem = ({ answer, index }: { answer: QuizAnswerResource; index
             Your answer:
           </Text>
           <Text size={TextType.b2} className="mb-3 text-slate-700">
-            {isEssay ? (answer.content ?? '—') : (answer.selected_options?.join(', ') ?? '—')}
+            {isEssay
+              ? (answer.content ?? '—')
+              : (answer.selected_options
+                  ?.map((o) => {
+                    return answer.question?.options[0].text;
+                  })
+                  .join(', ') ?? '—')}
           </Text>
 
           {/* Score */}
           <view className="flex-row items-center gap-2 flex">
             <Text size={TextType.b3} className="text-slate-400">
-              Score:
+              Skor Anda:
             </Text>
             <Text size={TextType.b2} fontWeight="bold" className="text-slate-800">
-              {answer.score ?? (isPendingGrade ? 'Awaiting manual grade' : '0')}
+              {answer.score ?? (isPendingGrade ? 'Pending penilaian manual' : '0')}
               {!isPendingGrade && ` / ${question?.max_score ?? '—'}`}
             </Text>
           </view>
@@ -191,16 +198,6 @@ const QuizResultPage = () => {
 
   return (
     <view className="h-screen w-full flex-col bg-[#F8F9FA] flex">
-      {/* Header */}
-      <view className="bg-white px-5 pb-4 pt-12 shadow-sm">
-        <Text size={TextType.h2} fontWeight="bold" className="text-slate-800">
-          Quiz Result
-        </Text>
-        <Text size={TextType.b2} className="text-slate-400">
-          {submission.quiz?.title ?? '—'}
-        </Text>
-      </view>
-
       <scroll-view className="flex-1 px-5 pt-6" scroll-y>
         {/* Score ring */}
         <view className="mb-6 items-center rounded-3xl bg-white p-6 shadow-sm">
@@ -225,7 +222,8 @@ const QuizResultPage = () => {
                   Essay Pending Review
                 </Text>
                 <Text size={TextType.b3} className="text-amber-600">
-                  Your essay answers are being graded manually. Final score may change.
+                  Jawaban essay Anda sedang menunggu penilaian manual. Skor akhir akan diperbarui
+                  setelah penilaian selesai.
                 </Text>
               </view>
             </view>
@@ -236,7 +234,7 @@ const QuizResultPage = () => {
         {answers.length > 0 && (
           <view className="mb-6">
             <Text size={TextType.h3} fontWeight="bold" className="mb-3 text-slate-800">
-              Answer Review
+              Review Jawaban
             </Text>
             {answers.map((answer, i) => (
               <AnswerReviewItem key={answer.id} answer={answer} index={i} />

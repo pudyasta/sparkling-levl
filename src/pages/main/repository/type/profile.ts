@@ -43,6 +43,7 @@ export interface LeaderboardRank {
 export interface ActivityStats {
   current_streak: number;
   longest_streak: number;
+  total_course_enrolled: number;
 }
 
 export interface GamificationShort {
@@ -69,12 +70,7 @@ export interface Badge {
   awarded_at: string; // ISO 8601 Date String
 }
 
-export type BadgeType =
-  | 'habit'
-  | 'speed'
-  | 'quality'
-  | 'completion'
-  | 'milestone';
+export type BadgeType = 'habit' | 'speed' | 'quality' | 'completion' | 'milestone';
 
 export interface BadgeMeta {
   pagination: Pagination;
