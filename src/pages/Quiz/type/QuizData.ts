@@ -244,7 +244,7 @@ export type SaveAnswerResponse = ApiResponse<QuizAnswerResource>;
 
 export type SubmitQuizResponse = ApiResponse<QuizSubmissionResource>;
 
-export type GetQuizSubmissionsResponse = ApiResponse<QuizSubmissionResource[]>;
+export type GetQuizSubmissionsResponse = ApiResponse<QuizSubmissionResource>;
 
 export type GetQuizSubmissionDetailResponse = ApiResponse<QuizSubmissionResource>;
 

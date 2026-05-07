@@ -21,7 +21,7 @@ export interface QuizCoreProps {
 }
 
 const QuizContent = ({ data }: { data: QuizStudentResponse }) => {
-  const { navigateTo } = useNativeBridge();
+  const { navigateTo, routerParams } = useNativeBridge();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [existingSubmission, setExistingSubmission] = useState<QuizCoreProps | null>(null);
 
@@ -29,7 +29,6 @@ const QuizContent = ({ data }: { data: QuizStudentResponse }) => {
 
   const { execute: takeover, isLoading: isTakingOver } = useTakeoverQuiz({
     onSuccess: (data) => {
-      console.log(JSON.stringify(data, null, 2));
       let timeLeft = 0;
       if (!data.duration) {
         timeLeft = -1;
@@ -50,6 +49,8 @@ const QuizContent = ({ data }: { data: QuizStudentResponse }) => {
         () => {
           navigateTo('quiz.lynx.bundle', {
             quizId: data?.id,
+            courseId: routerParams?.courseId,
+            course_slug: routerParams?.course_slug,
           });
         }
       );
@@ -59,7 +60,6 @@ const QuizContent = ({ data }: { data: QuizStudentResponse }) => {
 
   const { execute: startQuiz } = useStartQuiz({
     onSuccess: (res) => {
-      console.log(JSON.stringify(res, null, 2));
       if (!res.success) {
         if (res.data.submission_id) {
           setExistingID(res.data.submission_id);
@@ -68,19 +68,27 @@ const QuizContent = ({ data }: { data: QuizStudentResponse }) => {
         return;
       }
 
-      const endTime = Date.now() + (res.data?.duration || 0) * 60 * 1000;
+      let timeLeft = res.data.duration;
+      if (!res.data.duration) {
+        timeLeft = -1;
+      }
 
       setItem(
         {
           key: PrefKey.SubmissionId + res.data.id,
           biz: BizKey.Quiz,
-          data: { submissionId: res.data.id, endTime, sessionToken: res.data?.session_token || '' },
+          data: {
+            quizId: data.id,
+            submissionId: res.data.id,
+            sessionToken: res.data.session_token,
+            timeLeft: timeLeft,
+          },
         },
         (res) => {
-          console.log('saving', JSON.stringify(res, null, 2));
           navigateTo('quiz.lynx.bundle', {
-            totalQuestions: data?.questions_count || 0,
             quizId: data?.id,
+            courseId: routerParams?.courseId,
+            lesson_slug: routerParams?.lesson_slug,
           });
         }
       );
@@ -95,8 +103,6 @@ const QuizContent = ({ data }: { data: QuizStudentResponse }) => {
   }, []);
 
   const handleStartQuiz = () => {
-    console.log('gasss');
-
     // if (existingSubmission) {
     //   navigateTo('quiz.lynx.bundle', {
     //     totalQuestions: data?.questions_count || 0,
@@ -109,14 +115,13 @@ const QuizContent = ({ data }: { data: QuizStudentResponse }) => {
   };
 
   const handleTakeoverQuiz = () => {
-    console.log(existingSubmission);
     takeover(existingID);
     setIsModalOpen(false);
   };
 
   return (
     data && (
-      <view className="h-[100vh] flex-col px-5 pb-[40px] pt-[70px] flex">
+      <view className="mt-5 h-[100vh] flex-col px-5 pb-[40px] pt-[60px] flex">
         {/* Header Section */}
         <view className="mb-6">
           <view className="mb-2 flex-row items-center flex">
@@ -126,7 +131,7 @@ const QuizContent = ({ data }: { data: QuizStudentResponse }) => {
               </text>
             </view>
             <Text size={TextType.b2} color={Colors.Primary}>
-              Quiz • {data?.questions_count} Pertanyaan
+              Materi Ke-{data.order}
             </Text>
           </view>
           <Text size={TextType.h2} fontWeight={'bold'} className="leading-tight">

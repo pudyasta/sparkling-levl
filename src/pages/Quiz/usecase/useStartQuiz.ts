@@ -13,7 +13,10 @@ export const useStartQuiz = (options?: Options) => {
 
   const mutation = useMutation({
     mutationFn: (quizId: number) => startQuizApi(quizId),
-    onSuccess: (data) => options?.onSuccess?.(data),
+    onSuccess: (data) => {
+      console.log('useStartQuiz onSuccess', JSON.stringify(data, null, 2));
+      options?.onSuccess?.(data);
+    },
     onError: (error: any) => {
       options?.onError?.(error);
     },

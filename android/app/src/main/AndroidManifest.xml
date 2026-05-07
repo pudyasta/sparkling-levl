@@ -3,6 +3,8 @@
   xmlns:tools="http://schemas.android.com/tools">
 
   <uses-permission android:name="android.permission.INTERNET" />
+  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+    android:maxSdkVersion="28" />
 
   <application
     android:name=".SparklingApplication"
@@ -11,6 +13,7 @@
     android:roundIcon="@mipmap/ic_launcher_round"
     android:supportsRtl="true"
     tools:targetApi="31">
+
     <activity
       android:name=".SplashActivity"
       android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
@@ -32,6 +35,17 @@
           android:scheme="levl" />
       </intent-filter>
     </activity>
+
+    <provider
+      android:name="androidx.core.content.FileProvider"
+      android:authorities="com.example.sparkling.go.fileprovider"
+      android:exported="false"
+      android:grantUriPermissions="true">
+      <meta-data
+        android:name="android.support.FILE_PROVIDER_PATHS"
+        android:resource="@xml/fileproviderpaths" />
+    </provider>
+
   </application>
 
 </manifest>

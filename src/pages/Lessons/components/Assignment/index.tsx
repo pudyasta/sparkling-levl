@@ -43,7 +43,7 @@ const AssignmentContent = ({
 
   return (
     data && (
-      <view className="flex-col pb-[40px] pt-[60px] flex">
+      <view className="mt-5 flex-col pb-[40px] pt-[60px] flex">
         {/* 1. Header & Title */}
         <view className="mb-6">
           <view className="mb-2 flex-row items-center flex">
@@ -51,7 +51,7 @@ const AssignmentContent = ({
               <text className="uppercase text-[10px] font-bold text-orange-600">Tugas</text>
             </view>
             <Text size={TextType.b2} color={Colors.Primary}>
-              Step {data.order}
+              Materi Ke-{data.order}
             </Text>
           </view>
           <Text size={TextType.h2} fontWeight={'bold'} className="leading-tight">

@@ -30,7 +30,12 @@ export const ProfileHeader = ({
       <view className={styles.streakBadge}>
         <text className={styles.streakText}>🔥 {streak} Day Streak</text>
       </view>
-      <Button onPress={() => navigateTo('profile.lynx.bundle')}>Edit Profile</Button>
+      <view
+        bindtap={() => navigateTo('profile.lynx.bundle')}
+        className="h-[60px] w-[60px] items-center rounded-full border border-white/30 bg-white/20 flex absolute right-5 top-5 justify-center"
+      >
+        <text className="text-xl font-bold text-white">⚙️</text>
+      </view>
     </view>
   );
 };

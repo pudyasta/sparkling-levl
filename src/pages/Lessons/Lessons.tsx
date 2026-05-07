@@ -173,9 +173,9 @@ const LessonPage = () => {
   });
 
   useEffect(() => {
-    // console.log(JSON.stringify(lessons, null, 2));
+    console.log('routerParams', JSON.stringify(routerParams, null, 2));
     // console.log(JSON.stringify(currentParams, null, 2));
-  }, [lessons]);
+  }, []);
 
   return (
     !isLoadingApi && (

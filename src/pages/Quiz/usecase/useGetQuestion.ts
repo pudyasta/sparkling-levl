@@ -23,7 +23,10 @@ export const useGetQuestion = (options?: Options) => {
     }) => {
       return getQuestionApi(submissionId, page, sessionToken);
     },
-    onSuccess: (data) => options?.onSuccess?.(data),
+    onSuccess: (data) => {
+      console.log('useGetQuestion success:', JSON.stringify(data, null, 2));
+      options?.onSuccess?.(data);
+    },
     onError: (error: any) => {
       console.log('useGetQuestion error:', JSON.stringify(error, null, 2));
       options?.onError?.(error);

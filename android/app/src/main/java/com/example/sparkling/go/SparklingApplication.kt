@@ -30,7 +30,9 @@ import com.tiktok.sparkling.method.router.utils.RouterProvider
 import com.example.sparkling.go.components.NativeSvgView
 import com.example.sparkling.go.components.VideoPlayerView
 import com.example.sparkling.go.modules.BackInterceptorMethod
+import com.example.sparkling.go.modules.FileOpenMethod
 import com.example.sparkling.go.modules.GoBackMethod
+import com.example.sparkling.go.modules.NativeFileDownloader
 import com.example.sparkling.go.modules.NativeFilePicker
 import com.example.sparkling.go.modules.NativeFileUploader
 import com.lynx.react.bridge.JavaOnlyArray
@@ -116,6 +118,8 @@ class SparklingApplication : Application() {
         SparklingBridgeManager.registerIDLMethod(NativeFilePicker::class.java)
         SparklingBridgeManager.registerIDLMethod(BackInterceptorMethod::class.java)
         SparklingBridgeManager.registerIDLMethod(GoBackMethod::class.java)
+        SparklingBridgeManager.registerIDLMethod(NativeFileDownloader::class.java)
+        SparklingBridgeManager.registerIDLMethod(FileOpenMethod::class.java)
 
         SparklingBridgeManager.registerIDLMethod(StorageSetItemMethod::class.java)
         SparklingBridgeManager.registerIDLMethod(StorageGetItemMethod::class.java)

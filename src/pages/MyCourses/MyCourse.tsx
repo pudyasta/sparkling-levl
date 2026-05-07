@@ -38,12 +38,9 @@ const MyCourse: React.FC = () => {
           <Text size={TextType.h1} fontWeight="bold" color="white" fontFamily={FontFamily.jakarta}>
             Kursus Saya
           </Text>
-          <Text size={TextType.b2} color="white">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-          </Text>
         </view>
       </view>
-      <scroll-view scroll-y className="h-full w-full animate-fade-in pt-2">
+      <scroll-view scroll-y className="h-full w-full animate-fade-in pt-5">
         <view className="flex-col gap-1 px-4 flex">
           {myCourseData.data.map((item) => (
             <Card

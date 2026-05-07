@@ -20,15 +20,15 @@ import type {
 } from './type';
 
 const EP = {
-  PROFILE: '/api/v1/profile',
-  AVATAR: '/api/v1/profile/avatar',
-  PASSWORD: '/api/v1/profile/password',
-  EMAIL_CHANGE: '/api/v1/profile/email/change',
-  EMAIL_VERIFY: '/api/v1/profile/email/change/verify',
-  PRIVACY: '/api/v1/profile/privacy',
-  DELETE_REQUEST: '/api/v1/profile/account/delete/request',
-  DELETE_CONFIRM: '/api/v1/profile/account/delete/confirm',
-  RESTORE: '/api/v1/profile/account/restore',
+  PROFILE: '/profile',
+  AVATAR: '/profile/avatar',
+  PASSWORD: '/profile/password',
+  EMAIL_CHANGE: '/profile/email/change',
+  EMAIL_VERIFY: '/profile/email/change/verify',
+  PRIVACY: '/profile/privacy',
+  DELETE_REQUEST: '/profile/account/delete/request',
+  DELETE_CONFIRM: '/profile/account/delete/confirm',
+  RESTORE: '/profile/account/restore',
 };
 
 export const useProfileRepo = () => {

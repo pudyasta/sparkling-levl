@@ -10,6 +10,7 @@ export const useGetProfile = () => {
     queryKey: ['profile'],
     queryFn: async (): Promise<ProfileResource> => {
       const res = await getProfileApi();
+      console.log('getProfile', JSON.stringify(res, null, 2));
       return res.data;
     },
   });

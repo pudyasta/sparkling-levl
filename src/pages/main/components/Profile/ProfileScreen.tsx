@@ -90,12 +90,14 @@ export const ProfileScreen: FC = () => {
         </view>
 
         {/* Achievements */}
-        <view className={styles.sectionHeader}>
-          <Text size={TextType.h2} fontWeight="bold" fontFamily={FontFamily.jakarta}>
-            Pencapaian
-          </Text>
-          <Text>Lihat Semua</Text>
-        </view>
+        {achievements?.length > 0 && (
+          <view className={styles.sectionHeader}>
+            <Text size={TextType.h2} fontWeight="bold" fontFamily={FontFamily.jakarta}>
+              Pencapaian
+            </Text>
+            <Text>Lihat Semua</Text>
+          </view>
+        )}
         <view className={styles.achievementRow}>
           {achievements.map((achievement, index) => {
             if (index < 9) {
@@ -112,16 +114,6 @@ export const ProfileScreen: FC = () => {
             return null;
           })}
         </view>
-      </view>
-      <view className={styles.content}>
-        <Button
-          color="primary"
-          onPress={() => {
-            logout();
-          }}
-        >
-          Logout
-        </Button>
       </view>
     </scroll-view>
   );

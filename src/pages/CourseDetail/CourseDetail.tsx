@@ -111,15 +111,12 @@ export const CourseDetail: FC = () => {
 
     const currentUnit = courses.units.find((u) => u.id === courses.progress.last_accessed_unit.id);
 
-    console.log('currentUnit', currentUnit);
     if (!currentUnit) {
       return;
     }
-
     const currentLesson = currentUnit.elements.find(
       (l) => l.id === courses.progress.last_accessed_lesson?.id
     );
-    console.log('currentLesson', currentLesson);
     if (!currentLesson) {
       return;
     }
@@ -250,6 +247,7 @@ export const CourseDetail: FC = () => {
                   ? unit.id == courses.progress.last_accessed_unit.id
                   : false
               }
+              courseSlug={courses.slug}
               courseId={courses.id}
             />
           ))}

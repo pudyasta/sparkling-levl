@@ -16,7 +16,7 @@ import {
   useGetDashboardSummary,
   useGetRecommendedCourses,
 } from '../../usecase/useGetAllDashboard';
-import { useGetAchievements, useGetGamificationStats } from '../../usecase/useGetProfile';
+import { useGetAchievements } from '../../usecase/useGetProfile';
 import style from './Home.module.css';
 
 export default function LearningDashboard() {

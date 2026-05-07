@@ -26,11 +26,12 @@ interface InputProps {
   title: string;
   variant?: string;
   icon?: string;
+  placeholder?: string;
   bindChange?: () => void;
 }
 
 const Input = forwardRef<InputRef, InputProps>(
-  ({ id, initialValue, title, variant, icon, bindChange }, ref) => {
+  ({ id, initialValue, title, variant, icon, bindChange, placeholder }, ref) => {
     const [focused, setFocused] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const timerRef = useRef<number | null>(null);
@@ -41,7 +42,7 @@ const Input = forwardRef<InputRef, InputProps>(
 
     useEffect(() => {
       setError(null);
-      setDebouncedValue(initialValue || '');
+      // setDebouncedValue(initialValue || '');
       return () => {
         if (timerRef.current) {
           clearTimeout(timerRef.current);
@@ -58,9 +59,7 @@ const Input = forwardRef<InputRef, InputProps>(
       () => ({
         getValue: () => debouncedValue,
         setValue: (newValue) => {
-          console.log('newVal', newValue);
           setDebouncedValue(newValue);
-
           if (timerRef.current) clearTimeout(timerRef.current);
         },
         setError: (message: string | null) => setError(message ? [message] : null),
@@ -114,6 +113,8 @@ const Input = forwardRef<InputRef, InputProps>(
               fontSize: `${handleFontSize({ size: TextType.h3 })}px`,
               minHeight: '20px',
             }}
+            placeholder={debouncedValue === '' ? placeholder : ''}
+            value={debouncedValue}
           />
           {variant === 'password' && (
             <text

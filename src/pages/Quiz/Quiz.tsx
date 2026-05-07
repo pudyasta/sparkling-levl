@@ -94,7 +94,6 @@ const QuizPage = () => {
     if (timeLeft === 0 && !hasAutoSubmitted.current && submission.current) {
       hasAutoSubmitted.current = true;
       stopTimer();
-      setPhase('submitting');
       submitQuiz(submission.current.submissionId);
     }
   }, [timeLeft]);
@@ -160,6 +159,8 @@ const QuizPage = () => {
         is_passed: data.data.is_passed,
         time_spent: data.data.time_spent_seconds,
         close: true,
+        courseId: routerParams?.courseId,
+        course_slug: routerParams?.course_slug,
       });
     },
     onError: () => {
@@ -239,7 +240,6 @@ const QuizPage = () => {
             fetchQuestion(currentPage + 1);
           } else {
             stopTimer();
-            setPhase('submitting');
             submitQuiz(submission.current.submissionId);
           }
         },
@@ -322,7 +322,7 @@ const QuizPage = () => {
 
   if (phase === 'submitting') {
     return (
-      <view className="flex-1 items-center bg-[#F8F9FA] justify-center">
+      <view className="h-[100vh] items-center bg-[#F8F9FA] flex justify-center">
         <text className="mb-3 text-4xl">📤</text>
         <Text size={TextType.b1} className="text-slate-400">
           {timeLeft === 0 ? "Time's up! Submitting your quiz..." : 'Submitting your quiz...'}
@@ -434,6 +434,11 @@ const QuizPage = () => {
       </view>
     );
   };
+
+  useEffect(() => {
+    console.log(JSON.stringify(routerParams, null, 2));
+    // console.log(JSON.stringify(currentParams, null, 2));
+  }, [routerParams]);
 
   return (
     <view className="h-screen w-full flex-col bg-[#F8F9FA] flex relative">
