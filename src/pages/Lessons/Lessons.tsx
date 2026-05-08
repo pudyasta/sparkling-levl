@@ -1,12 +1,11 @@
-import { useEffect, useState } from '@lynx-js/react';
+import { useEffect, useLynxGlobalEventListener, useState } from '@lynx-js/react';
 import pipe from 'sparkling-method';
-import { close } from 'sparkling-navigation';
 
-import Button from '@/components/common/Button';
 import { Loading } from '@/components/Loading/Loading';
 import { Modal, ModalTemplate } from '@/components/Modal/Modal.view';
 import Text from '@/components/Text';
 import { TextType } from '@/components/Text/types';
+import Button from '@/components/common/Button';
 import { Colors } from '@/constant/style';
 import { useNativeBridge } from '@/context/NativeBridgeProvider';
 
@@ -37,8 +36,10 @@ const LessonPage = () => {
   const [completedLessons, setCompletedLessons] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [isButtonLoading, setIsButtonLoading] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isBackModalOpen, setIsBackModalOpen] = useState(false);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 
   let allLessons = routerParams?.all_lessons || [];
 
@@ -46,7 +47,6 @@ const LessonPage = () => {
     data: lessons,
     isLoading: isLoadingApi,
     refetch,
-    error,
   } = useGetLessons({
     course_slug: currentParams.course_slug,
     unit_slug: currentParams.unit_slug,
@@ -89,11 +89,6 @@ const LessonPage = () => {
   }, []);
 
   useEffect(() => {
-    console.log(JSON.stringify(error, null, 2));
-    console.log(JSON.stringify(lessons, null, 2));
-  }, [lessons]);
-
-  useEffect(() => {
     const handleBackPress = () => {
       setIsBackModalOpen(true);
     };
@@ -105,8 +100,10 @@ const LessonPage = () => {
 
   const handleConfirmBack = () => {
     setIsBackModalOpen(false);
-    setRouterParams({ ...routerParams, all_lessons: allLessons });
-    close({ containerID: lynx.__globalProps.containerID });
+    setIsConfirmModalOpen(false);
+    pipe.call('navigation.setBackInterceptor', { enabled: false }, () => {
+      pipe.call('navigation.goBack', {}, (res) => {});
+    });
   };
 
   const handleBottomSheetHeight = (length: number) => {
@@ -119,7 +116,6 @@ const LessonPage = () => {
     setIsButtonLoading(true);
     execute(currentParams.lesson_slug, {
       onSuccess: (data) => {
-        console.log(data);
         setIsButtonLoading(false);
         refetch();
         allLessons[lessons!.data?.order - 1].is_completed = true;
@@ -165,10 +161,26 @@ const LessonPage = () => {
     }
   };
 
+  useEffect(() => {
+    pipe.call('navigation.setBackInterceptor', { enabled: true }, (res) => {});
+    return () => {
+      pipe.call('navigation.setBackInterceptor', { enabled: false }, () => {});
+    };
+  }, []);
+
+  useLynxGlobalEventListener('nativeBackPressed', () => {
+    setIsBackModalOpen(true);
+  });
+
+  useEffect(() => {
+    console.log('routerParams', JSON.stringify(routerParams, null, 2));
+    // console.log(JSON.stringify(currentParams, null, 2));
+  }, []);
+
   return (
     !isLoadingApi && (
       <view className="h-screen w-full relative">
-        <scroll-view className="h-full w-full p-5" scroll-y>
+        <scroll-view className="h-full w-full" scroll-y>
           {isLoading ? (
             <view className="h-[100vh] items-center flex justify-center">
               <Loading size={32} />
@@ -194,7 +206,7 @@ const LessonPage = () => {
             </Text>
             <Text>{isSheetOpen ? '▼' : '▲'}</Text>
           </view>
-          <view className="bg-[#f1f3f4] h-1.5 w-full rounded-full">
+          <view className="h-1.5 w-full rounded-full bg-[#f1f3f4]">
             <view
               className={`h-full rounded-full transition duration-300 ease-in-out`}
               style={{ backgroundColor: Colors.Primary, width: `${progressPercentage}%` }}
@@ -204,7 +216,7 @@ const LessonPage = () => {
 
         {/* Bottom Sheet List */}
         <view
-          className={`duration-[350ms] z-[105] w-full overflow-hidden rounded-b-3xl bg-white p-4 absolute top-0 shadow-2xl transition-transform ease-[cubic-bezier(0.25,0.1,0.25,1)] ${isSheetOpen ? 'translate-y-[60px]' : '-translate-y-full'}`}
+          className={`z-[105] w-full rounded-b-3xl bg-white p-4 absolute top-0 overflow-hidden shadow-2xl transition-transform duration-[350ms] ease-[cubic-bezier(0.25,0.1,0.25,1)] ${isSheetOpen ? 'translate-y-[60px]' : '-translate-y-full'}`}
           style={{ height: handleBottomSheetHeight(routerParams?.all_lessons?.length || 0) }}
         >
           <scroll-view className="h-full w-full px-1" scroll-y>
@@ -241,18 +253,20 @@ const LessonPage = () => {
           </scroll-view>
         </view>
         {currentParams.type === 'lesson' && (
-          <Modal
-            template={ModalTemplate.Sad}
-            visible={isModalOpen}
-            onClose={() => setIsModalOpen(false)}
-            title="Yeay kamu berhasil"
-            body={`Kamu mendapatkan +${lessons?.data.xp_reward} XP`}
-            buttonText="Lanjut ke lesson selanjutnya"
-            onButtonPress={() => {
-              console.log('index', lessons!.data.order);
-              handlePageChange(lessons!.data.order);
-            }}
-          />
+          <>
+            <Modal
+              template={ModalTemplate.Sad}
+              visible={isModalOpen}
+              onClose={() => setIsModalOpen(false)}
+              title="Yeay kamu berhasil"
+              body={`Kamu mendapatkan +${lessons?.data.xp_reward} XP`}
+              buttonText="Lanjut ke lesson selanjutnya"
+              onButtonPress={() => {
+                console.log('index', lessons!.data.order);
+                handlePageChange(lessons!.data.order);
+              }}
+            />
+          </>
         )}
 
         <Modal
@@ -260,18 +274,23 @@ const LessonPage = () => {
           visible={isBackModalOpen}
           onClose={() => setIsBackModalOpen(false)}
         >
-          <view className="flex flex-col gap-4 p-5">
-            <Text size={TextType.h3} fontWeight="600" className="text-center">
+          <view className="flex-col gap-4 flex">
+            <Text size={TextType.h2} fontWeight="600" className="text-center">
               Keluar dari halaman ini?
             </Text>
-            <Text className="text-center text-[#5f6368]">
-              Kemajuan kamu tidak akan hilang.
+            <Text className="text-[#5f6368] text-center">
+              Kemajuan kamu akan hilang jika kamu keluar.
             </Text>
-            <view className="flex flex-col gap-3">
-              <Button variant="filled" color="primary" onPress={handleConfirmBack}>
+            <view className="flex-col gap-3 flex">
+              <Button size="small" variant="filled" color="primary" onPress={handleConfirmBack}>
                 Keluar
               </Button>
-              <Button variant="outlined" color="primary" onPress={() => setIsBackModalOpen(false)}>
+              <Button
+                size="small"
+                variant="outlined"
+                color="primary"
+                onPress={() => setIsBackModalOpen(false)}
+              >
                 Tetap di sini
               </Button>
             </view>

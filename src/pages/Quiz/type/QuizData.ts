@@ -87,6 +87,7 @@ export interface QuizSubmissionResource {
   duration: number | null;
   quiz?: QuizResource;
   answers?: QuizAnswerResource[];
+  session_token?: string;
   // Instructor-only fields
   quiz_id?: number;
   user_id?: number;
@@ -100,6 +101,7 @@ export interface QuizSubmissionResource {
   };
   created_at?: string;
   updated_at?: string;
+  submission_id?: number;
 }
 
 export interface QuizQuestionResource {
@@ -108,7 +110,7 @@ export interface QuizQuestionResource {
   type: string;
   type_label: string;
   content: string;
-  options: string[] | null;
+  options: QuestionOptionItem[];
   answer_key?: string[] | null;
   weight: number;
   order: number;
@@ -120,6 +122,13 @@ export interface QuizQuestionResource {
     url: string;
   }>;
   created_at: string;
+}
+
+export interface QuestionOptionItem {
+  id: number;
+  text: string;
+  image_url: string | null;
+  image_alt: string | null;
 }
 
 export interface QuizAnswerResource {
@@ -235,7 +244,7 @@ export type SaveAnswerResponse = ApiResponse<QuizAnswerResource>;
 
 export type SubmitQuizResponse = ApiResponse<QuizSubmissionResource>;
 
-export type GetQuizSubmissionsResponse = ApiResponse<QuizSubmissionResource[]>;
+export type GetQuizSubmissionsResponse = ApiResponse<QuizSubmissionResource>;
 
 export type GetQuizSubmissionDetailResponse = ApiResponse<QuizSubmissionResource>;
 
@@ -244,3 +253,21 @@ export interface SaveAnswerPayload {
   selected_options: number[] | null;
   content: string | null;
 }
+
+export interface TakeoverQuizResource {
+  id: number;
+  attempt_number: number;
+  status: string;
+  status_label: string;
+  grading_status: string;
+  grading_status_label: string;
+  score: number | null;
+  final_score: number | null;
+  started_at: string | null;
+  submitted_at: string | null;
+  time_spent_seconds: number | null;
+  duration: number | null;
+  session_token: string;
+}
+
+export type TakeoverQuizResponse = ApiResponse<TakeoverQuizResource>;

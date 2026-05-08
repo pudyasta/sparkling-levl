@@ -1,48 +1,44 @@
 import { useEffect, useRef, useState } from '@lynx-js/react';
+import { getItem } from 'sparkling-storage';
 
+import Input, { type InputRef } from '@/components/Input/Input';
 import { Loading } from '@/components/Loading/Loading';
-import { getItem, setItem } from 'sparkling-storage';
-
-import Input from '@/components/Input/Input';
 import Text from '@/components/Text';
 import { TextType } from '@/components/Text/types';
 import Button from '@/components/common/Button';
 import { useNativeBridge } from '@/context/NativeBridgeProvider';
+import { htmlToPlainText } from '@/lib/helper/htmlToLynx';
 import { BizKey, PrefKey } from '@/lib/helper/localStorage';
 
+import type { QuizCoreProps } from '../Lessons/components/Quiz';
 import type {
   GetQuestionByPageResponse,
+  QuestionOptionItem,
   QuizQuestionResource,
   SaveAnswerPayload,
 } from './type/QuizData';
 import { useGetQuestion } from './usecase/useGetQuestion';
 import { useSaveAnswer } from './usecase/useSaveAnswer';
-import { useStartQuiz } from './usecase/useStartQuiz';
 import { useSubmitQuiz } from './usecase/useSubmitQuiz';
-
-const QUIZ_DURATION_SECONDS = 2 * 60 * 60; // 2 hours
 
 const QuizPage = () => {
   const { routerParams, navigateTo } = useNativeBridge();
   const quizId: number = routerParams?.quizId;
 
-  // ─── Session state ────────────────────────────────────────────────────────
   const [currentPage, setCurrentPage] = useState(1);
   const [totalQuestions, setTotalQuestions] = useState<number>(0);
-  const submissionId = useRef<number | null>(null);
+  const submission = useRef<QuizCoreProps | null>(null);
+  const inputRef = useRef<InputRef>(null);
 
-  // ─── Timer state ──────────────────────────────────────────────────────────
-  const [timeLeft, setTimeLeft] = useState(QUIZ_DURATION_SECONDS);
+  const [timeLeft, setTimeLeft] = useState(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const hasAutoSubmitted = useRef(false);
 
-  // ─── Question state ───────────────────────────────────────────────────────
   const [question, setQuestion] = useState<QuizQuestionResource | null>(null);
   const [meta, setMeta] = useState<GetQuestionByPageResponse['data']['meta'] | null>(null);
   const [currentAnswer, setCurrentAnswer] = useState<any>(null);
   const [flaggedQuestions, setFlaggedQuestions] = useState<number[]>([]);
 
-  // ─── UI state ─────────────────────────────────────────────────────────────
   const [isSaving, setIsSaving] = useState(false);
   const [phase, setPhase] = useState<'loading' | 'quiz' | 'submitting' | 'error'>('loading');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -53,7 +49,6 @@ const QuizPage = () => {
     setIsNavVisible(true);
     setTimeout(() => setIsNavAnimated(true), 16);
   };
-
   const closeNav = () => {
     setIsNavAnimated(false);
     setTimeout(() => setIsNavVisible(false), 300);
@@ -96,41 +91,19 @@ const QuizPage = () => {
 
   // ─── Auto-submit when timer hits 0 ───────────────────────────────────────
   useEffect(() => {
-    if (timeLeft === 0 && !hasAutoSubmitted.current && submissionId.current) {
+    if (timeLeft === 0 && !hasAutoSubmitted.current && submission.current) {
       hasAutoSubmitted.current = true;
       stopTimer();
-      setPhase('submitting');
-      submitQuiz(submissionId.current);
+      submitQuiz(submission.current.submissionId);
     }
   }, [timeLeft]);
-
-  // ─── Cleanup timer on unmount ─────────────────────────────────────────────
-  useEffect(() => {
-    return () => stopTimer();
-  }, []);
-
-  // ─── Hooks ────────────────────────────────────────────────────────────────
-  const { execute: startQuiz } = useStartQuiz({
-    onSuccess: (data) => {
-      submissionId.current = data.data.id;
-      setItem(
-        { key: PrefKey.SubmissionId, biz: BizKey.Quiz, data: { submissionId: data.data.id } },
-        () => {}
-      );
-      fetchQuestion(1);
-      startTimer(); // ← start timer after quiz begins
-    },
-    onError: () => {
-      setErrorMessage('Failed to start quiz. Please try again.');
-      setPhase('error');
-    },
-  });
 
   const { execute: fetchQuestionMutation } = useGetQuestion({
     onSuccess: (res) => {
       const q = res.data.data;
       const nav = res.data.meta.pagination;
       const existingAnswer = res.data.answer;
+      console.log('Fetched question:', JSON.stringify(res, null, 2));
 
       setQuestion(q);
       setMeta({
@@ -150,27 +123,35 @@ const QuizPage = () => {
             : (existingAnswer.selected_options[0] ?? null)
         );
       } else if (existingAnswer?.content) {
-        setCurrentAnswer(existingAnswer.content);
+        if (q.type === 'essay') {
+          console.log('setValue');
+          inputRef.current?.setValue(existingAnswer.content);
+          setCurrentAnswer(existingAnswer.content);
+        } else {
+          setCurrentAnswer(existingAnswer.content);
+        }
       } else {
         setCurrentAnswer(q.type === 'checkbox' ? [] : null);
       }
 
       setPhase('quiz');
     },
-    onError: () => {
+    onError: (err) => {
       setErrorMessage('Failed to load question.');
       setPhase('error');
     },
   });
 
   const { execute: saveAnswer } = useSaveAnswer({
+    sessionToken: submission.current?.sessionToken || '',
     onError: (e) => console.log('Save answer failed silently:', e),
   });
 
   const { execute: submitQuiz } = useSubmitQuiz({
+    sessionToken: submission.current?.sessionToken || '',
     onSuccess: (data) => {
       stopTimer();
-      navigateTo('quiz-result.lynx.bundle', {
+      navigateTo('quizResult.lynx.bundle', {
         submission_id: data.data.id,
         quiz_id: quizId,
         score: data.data.score,
@@ -178,6 +159,8 @@ const QuizPage = () => {
         is_passed: data.data.is_passed,
         time_spent: data.data.time_spent_seconds,
         close: true,
+        courseId: routerParams?.courseId,
+        course_slug: routerParams?.course_slug,
       });
     },
     onError: () => {
@@ -188,38 +171,44 @@ const QuizPage = () => {
 
   // ─── Init ─────────────────────────────────────────────────────────────────
   useEffect(() => {
-    getItem({ key: PrefKey.SubmissionId, biz: BizKey.Quiz }, (res) => {
+    getItem({ key: PrefKey.SubmissionId + quizId, biz: BizKey.Quiz }, (res) => {
       const savedId = res.data.data?.submissionId;
       if (savedId) {
-        submissionId.current = savedId;
+        submission.current = res.data.data;
         fetchQuestion(1);
-        startTimer(); // ← resume timer on re-entry
-        return;
-      }
-      startQuiz(quizId);
-    });
-  }, []);
+        setTimeLeft(2000);
 
-  useEffect(() => {
-    if (!submissionId.current) return;
-    saveAnswer({ submissionId: submissionId.current, payload: buildPayload() });
-  }, [question]);
+        if (res.data.data.timeLeft > 0) {
+          setTimeLeft(res.data.data.timeLeft);
+          startTimer();
+        } else {
+          setTimeLeft(-1);
+        }
+      }
+    });
+    return () => stopTimer();
+  }, []);
 
   // ─── Helpers ──────────────────────────────────────────────────────────────
   const fetchQuestion = (page: number) => {
-    if (!submissionId.current) return;
+    if (!submission.current) return;
     setPhase('loading');
     setCurrentPage(page);
-    fetchQuestionMutation({ submissionId: submissionId.current, page });
+    fetchQuestionMutation({
+      submissionId: submission.current.submissionId,
+      page,
+      sessionToken: submission.current?.sessionToken || '',
+    });
   };
 
   const buildPayload = (): SaveAnswerPayload => {
+    console.log('build payload', currentAnswer);
     if (!question) return {} as SaveAnswerPayload;
     if (question.type === 'essay') {
       return {
         quiz_question_id: question.id,
         selected_options: null,
-        content: currentAnswer as string,
+        content: inputRef.current?.getValue() || '',
       };
     }
     if (question.type === 'checkbox') {
@@ -237,23 +226,21 @@ const QuizPage = () => {
   };
 
   const handleNext = async () => {
-    if (!submissionId.current || !question) return;
+    if (!submission.current || !question) return;
     const payload = buildPayload();
     if (!payload) return;
-
     setIsSaving(true);
     saveAnswer(
-      { submissionId: submissionId.current, payload },
+      { submissionId: submission.current.submissionId, payload },
       {
         onSettled: () => {
-          if (!submissionId.current) return;
+          if (!submission.current) return;
           setIsSaving(false);
           if (meta?.pagination.has_next) {
             fetchQuestion(currentPage + 1);
           } else {
             stopTimer();
-            setPhase('submitting');
-            submitQuiz(submissionId.current);
+            submitQuiz(submission.current.submissionId);
           }
         },
       }
@@ -261,12 +248,39 @@ const QuizPage = () => {
   };
 
   const handleBack = () => {
-    if (currentPage > 1) fetchQuestion(currentPage - 1);
+    if (!submission.current || !question) return;
+    const payload = buildPayload();
+    if (!payload) return;
+    setIsSaving(true);
+    saveAnswer(
+      { submissionId: submission.current.submissionId, payload },
+      {
+        onSettled: () => {
+          if (!submission.current) return;
+          setIsSaving(false);
+          if (currentPage > 1) {
+            fetchQuestion(currentPage - 1);
+          }
+        },
+      }
+    );
   };
 
   const handleJumpTo = (page: number) => {
     setIsNavVisible(false);
-    fetchQuestion(page + 1);
+    if (!submission.current || !question) return;
+    const payload = buildPayload();
+    if (!payload) return;
+    setIsSaving(true);
+    saveAnswer(
+      { submissionId: submission.current.submissionId, payload },
+      {
+        onSettled: () => {
+          setIsSaving(false);
+          fetchQuestion(page + 1);
+        },
+      }
+    );
   };
 
   const toggleFlag = () => {
@@ -277,19 +291,20 @@ const QuizPage = () => {
     );
   };
 
-  const handleSelection = (optionId: number) => {
+  const handleSelection = (optionId: string) => {
     if (!question) return;
     if (question.type === 'checkbox') {
       const prev = Array.isArray(currentAnswer) ? currentAnswer : [];
       setCurrentAnswer(
-        prev.includes(optionId) ? prev.filter((id: number) => id !== optionId) : [...prev, optionId]
+        prev.includes(optionId) ? prev.filter((id: string) => id !== optionId) : [...prev, optionId]
       );
     } else {
+      console.log(optionId);
       setCurrentAnswer(optionId);
     }
   };
 
-  const isSelected = (optionId: number) => {
+  const isSelected = (optionId: string) => {
     if (question?.type === 'checkbox') {
       return Array.isArray(currentAnswer) && currentAnswer.includes(optionId);
     }
@@ -307,7 +322,7 @@ const QuizPage = () => {
 
   if (phase === 'submitting') {
     return (
-      <view className="flex-1 items-center bg-[#F8F9FA] justify-center">
+      <view className="h-[100vh] items-center bg-[#F8F9FA] flex justify-center">
         <text className="mb-3 text-4xl">📤</text>
         <Text size={TextType.b1} className="text-slate-400">
           {timeLeft === 0 ? "Time's up! Submitting your quiz..." : 'Submitting your quiz...'}
@@ -319,16 +334,16 @@ const QuizPage = () => {
   // ─── Renderers ────────────────────────────────────────────────────────────
   const renderOptions = () => (
     <view className="flex-col gap-3 flex">
-      {(options as any[]).map((option) => {
-        const active = isSelected(option);
+      {(options as QuestionOptionItem[]).map((option, index) => {
+        const active = isSelected(index.toString());
         const isCheckbox = question?.type === 'checkbox';
         return (
           <view
-            key={option.id}
+            key={index}
             className={`flex-row items-center rounded-2xl border-2 p-4 flex ${
               active ? 'border-blue-500 bg-blue-50/30' : 'border-slate-100 bg-white'
             }`}
-            bindtap={() => handleSelection(option)}
+            bindtap={() => handleSelection(index.toString())}
           >
             <view
               className={`mr-4 h-6 w-6 items-center border-2 justify-center ${
@@ -341,11 +356,7 @@ const QuizPage = () => {
                 />
               )}
             </view>
-            <text
-              className={`flex-1 text-sm ${active ? 'font-bold text-blue-600' : 'text-slate-600'}`}
-            >
-              {option}
-            </text>
+            <Text size={TextType.b2}>{option.text}</Text>
           </view>
         );
       })}
@@ -353,25 +364,102 @@ const QuizPage = () => {
   );
 
   const renderEssay = () => (
-    <view className="flex-col flex">
-      <Input title="Tuliskan jawaban Anda:" />
+    <view className="h-full flex-col flex">
+      <Input ref={inputRef} title="" id="answerField" initialValue={currentAnswer} />
     </view>
   );
+
+  const renderTrueFalse = () => {
+    const tfOptions = [
+      { label: 'Benar', hint: 'Pilih jika pernyataan benar', isTrue: true },
+      { label: 'Salah', hint: 'Pilih jika pernyataan salah', isTrue: false },
+    ];
+
+    return (
+      <view className="flex-col gap-3 flex">
+        {tfOptions.map((option, index) => {
+          const active = isSelected(index.toString());
+
+          return (
+            <view
+              key={index}
+              className={`flex-row items-center rounded-2xl border-2 p-5 flex ${
+                active
+                  ? option.isTrue
+                    ? 'border-green-500 bg-green-50'
+                    : 'border-red-400 bg-red-50'
+                  : 'border-slate-100 bg-white'
+              }`}
+              bindtap={() => handleSelection(index.toString())}
+            >
+              {/* Icon */}
+              <view
+                className={`mr-4 h-10 w-10 items-center rounded-full justify-center ${
+                  active ? (option.isTrue ? 'bg-green-500' : 'bg-red-400') : 'bg-slate-100'
+                }`}
+              >
+                <text className={`text-base font-bold ${active ? 'text-white' : 'text-slate-400'}`}>
+                  {active ? (option.isTrue ? '✓' : '✗') : option.isTrue ? 'B' : 'S'}
+                </text>
+              </view>
+
+              {/* Label */}
+              <view className="flex-1 flex-col flex">
+                <Text
+                  size={TextType.b1}
+                  fontWeight="bold"
+                  className={
+                    active ? (option.isTrue ? 'text-green-700' : 'text-red-600') : 'text-slate-700'
+                  }
+                >
+                  {option.label}
+                </Text>
+              </view>
+
+              {/* Selected dot */}
+              <view
+                className={`h-6 w-6 items-center rounded-full border-2 justify-center ${
+                  active
+                    ? option.isTrue
+                      ? 'border-green-500 bg-green-500'
+                      : 'border-red-400 bg-red-400'
+                    : 'border-slate-200 bg-white'
+                }`}
+              >
+                {active && <view className="h-2 w-2 rounded-full bg-white" />}
+              </view>
+            </view>
+          );
+        })}
+      </view>
+    );
+  };
+
+  useEffect(() => {
+    console.log(JSON.stringify(routerParams, null, 2));
+    // console.log(JSON.stringify(currentParams, null, 2));
+  }, [routerParams]);
 
   return (
     <view className="h-screen w-full flex-col bg-[#F8F9FA] flex relative">
       {/* Header */}
       <view className="bg-white px-5 py-4 shadow-sm">
-        <view className="mb-4 flex-row items-center flex justify-between">
+        <view
+          className={`mb-4 flex-row items-center flex ${timeLeft > 0 ? 'justify-between' : 'justify-end'}`}
+        >
           {/* Timer pill */}
-          <view
-            className={`flex-row items-center gap-2 rounded-full px-3 py-1 flex ${timerColor.bg}`}
-          >
-            <view className={`h-1.5 w-1.5 rounded-full ${timerColor.dot}`} />
-            <Text size={TextType.b2} fontWeight="bold" className={timerColor.text}>
-              {formatTime(timeLeft)}
-            </Text>
-          </view>
+          {timeLeft > 0 && (
+            <view
+              className={`flex-row items-center gap-2 rounded-full px-3 py-1 flex ${timerColor.bg}`}
+            >
+              <>
+                <view className={`h-1.5 w-1.5 rounded-full ${timerColor.dot}`} />
+                <Text size={TextType.b2} fontWeight="bold" className={timerColor.text}>
+                  {formatTime(timeLeft)}
+                </Text>
+              </>
+            </view>
+          )}
 
           {/* Question nav pill */}
           <view
@@ -422,11 +510,19 @@ const QuizPage = () => {
               </view>
             </view>
 
-            <Text size={TextType.h2} fontWeight="bold" className="my-6 leading-tight text-slate-800">
-              {question?.content}
+            <Text
+              size={TextType.h2}
+              fontWeight="bold"
+              className="my-6 leading-tight text-slate-800"
+            >
+              {htmlToPlainText(question?.content || '')}
             </Text>
 
-            {question?.type === 'essay' ? renderEssay() : renderOptions()}
+            {question?.type === 'essay'
+              ? renderEssay()
+              : question?.type === 'true_false'
+                ? renderTrueFalse()
+                : renderOptions()}
           </view>
         )}
       </scroll-view>

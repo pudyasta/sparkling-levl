@@ -38,12 +38,9 @@ const MyCourse: React.FC = () => {
           <Text size={TextType.h1} fontWeight="bold" color="white" fontFamily={FontFamily.jakarta}>
             Kursus Saya
           </Text>
-          <Text size={TextType.b2} color="white">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-          </Text>
         </view>
       </view>
-      <scroll-view scroll-y className="h-full w-full pt-2 animate-fade-in">
+      <scroll-view scroll-y className="h-full w-full animate-fade-in pt-5">
         <view className="flex-col gap-1 px-4 flex">
           {myCourseData.data.map((item) => (
             <Card
@@ -51,7 +48,7 @@ const MyCourse: React.FC = () => {
               bindTap={() =>
                 navigateTo('courseDetail.lynx.bundle', {
                   courseId: item.id,
-                  slug: item.slug,
+                  course_slug: item.slug,
                 })
               }
             >

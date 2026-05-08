@@ -1,3 +1,6 @@
+import { Colors } from '@/constant/style';
+import { htmlToPlainText } from '@/lib/helper/htmlToLynx';
+
 import Text from '../Text';
 import { TextType } from '../Text/types';
 import Card from '../common/Card/Card';
@@ -35,9 +38,9 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, bindTap }) => {
         {/* Level badge */}
         {course.level && (
           <view className="self-start rounded-full bg-blue-50 px-3 py-1">
-            <text className="uppercase text-[10px] font-bold tracking-wider text-blue-500">
-              {course.level}
-            </text>
+            <Text size={TextType.b3} fontWeight="bold" color={Colors.Primary}>
+              {course.level.toUpperCase()}
+            </Text>
           </view>
         )}
 
@@ -49,22 +52,14 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, bindTap }) => {
         {/* Description */}
         {course.description && (
           <Text size={TextType.b3} className="leading-relaxed text-slate-400">
-            {course.description}
+            {htmlToPlainText(course.description).split(' ').slice(0, 35).join(' ') + '...'}
           </Text>
         )}
 
         {/* Footer meta row */}
-        <view className="flex-row items-center pt-1 flex justify-between">
+        <view className="flex-row items-center pt-1 flex justify-end">
           <view className="flex-row items-center gap-1 flex">
-            <text className="text-xs">📚</text>
-            <Text size={TextType.b3} className="text-slate-500">
-              {course.lessons} lessons
-            </Text>
-          </view>
-
-          {/* CTA hint */}
-          <view className="flex-row items-center gap-1 flex">
-            <Text size={TextType.b3} className="font-semibold text-blue-500">
+            <Text size={TextType.b3} color={Colors.Primary}>
               View Course
             </Text>
           </view>

@@ -1,4 +1,7 @@
-import { useQuery, type QueryOptions } from '@tanstack/react-query';
+import { type QueryOptions, useQuery } from '@tanstack/react-query';
+
+import { useMainRepository } from '../repository/MainRepository';
+import type { CourseData, CourseResponse } from '../repository/type/course';
 import type {
   DashboardData,
   DashboardResponse,
@@ -7,17 +10,15 @@ import type {
   RecommendedCourse,
   RecommendedCoursesResponse,
 } from '../repository/type/dashboard';
-import { useMainRepository } from '../repository/MainRepository';
 
-export const useGetDashboardSummary = <T = DashboardData>(
-  options?: QueryOptions<T>,
-) => {
+export const useGetDashboardSummary = <T = DashboardData>(options?: QueryOptions<T>) => {
   const { getDashboardSummaryApi } = useMainRepository();
 
   const query = useQuery({
     queryKey: ['dashboard-summary'],
     queryFn: async (): Promise<DashboardResponse> => {
       const response = await getDashboardSummaryApi();
+      console.log(JSON.stringify(response, null, 2));
       return response;
     },
   });
@@ -30,7 +31,7 @@ export const useGetDashboardSummary = <T = DashboardData>(
 };
 
 export const useGetDashboardRecentLearning = <T = LearningActivity[]>(
-  options?: QueryOptions<T>,
+  options?: QueryOptions<T>
 ) => {
   const { getDashboardRecentLearningApi } = useMainRepository();
 
@@ -49,14 +50,12 @@ export const useGetDashboardRecentLearning = <T = LearningActivity[]>(
   };
 };
 
-export const useGetRecommendedCourses = <T = RecommendedCourse[]>(
-  options?: QueryOptions<T>,
-) => {
+export const useGetRecommendedCourses = <T = CourseData[]>(options?: QueryOptions<T>) => {
   const { getDashboardRecommendedCoursesApi } = useMainRepository();
 
   const query = useQuery({
     queryKey: ['recommended-courses'],
-    queryFn: async (): Promise<RecommendedCoursesResponse> => {
+    queryFn: async (): Promise<CourseResponse> => {
       const response = await getDashboardRecommendedCoursesApi();
       return response;
     },

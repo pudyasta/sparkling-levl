@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import com.caverock.androidsvg.SVG
 import com.caverock.androidsvg.SVGImageView
-import com.caverock.androidsvg.SVGParseException
 import com.lynx.tasm.behavior.LynxContext
 import com.lynx.tasm.behavior.LynxProp
 import com.lynx.tasm.behavior.ui.LynxUI

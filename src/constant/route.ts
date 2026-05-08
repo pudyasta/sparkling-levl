@@ -13,7 +13,8 @@ const AUTH_RESEND_VERIFY_EMAIL_ENDPOINT = '/auth/email/verify/send';
 // Dashboard route
 const DASHBOARD_SUMMARY_ENDPOINT = '/dashboard';
 const DASHBOARD_RECENT_LEARNING_ENDPOINT = '/dashboard/recent-learning';
-const DASHBOARD_RECOMMENDED_COURSES_ENDPOINT = '/dashboard/recommended-courses';
+const DASHBOARD_RECOMMENDED_COURSES_ENDPOINT =
+  '/dashboard/recommended-courses?include=units,category,tags';
 const DASHBOARD_RECENT_ACHIEVEMENTS_ENDPOINT = '/dashboard/recent-achievements';
 
 // Course route
@@ -28,6 +29,8 @@ const QUIZ_DETAIL_ENDPOINT = '/quizzes/QUIZ_ID';
 const QUIZ_SUBMISSION_START_ENDPOINT = '/quizzes/QUIZ_ID/submissions/start';
 
 const MY_COURSE_ENDPOINT = '/my-courses?search=';
+
+const TAKEOVER_QUIZ_ENDPOINT = '/quiz-submissions/SUBMISSION_ID/takeover';
 
 export {
   SIGNIN_ROUTE,
@@ -50,5 +53,6 @@ export {
   QUIZ_DETAIL_ENDPOINT,
   QUIZ_SUBMISSION_START_ENDPOINT,
   MY_COURSE_ENDPOINT,
+  TAKEOVER_QUIZ_ENDPOINT,
   SUBMIT_ASSIGNMENT_DETAIL_ENDPOINT,
 };

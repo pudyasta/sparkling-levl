@@ -1,0 +1,12 @@
+.container {
+  width: 100%;
+  min-height: 20px;
+}
+
+.input {
+  transition: all 0.3s;
+  display: flex;
+  border-radius: 12px;
+  border-width: 2px;
+  padding: 12px;
+}

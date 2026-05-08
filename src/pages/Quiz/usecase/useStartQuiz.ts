@@ -13,9 +13,11 @@ export const useStartQuiz = (options?: Options) => {
 
   const mutation = useMutation({
     mutationFn: (quizId: number) => startQuizApi(quizId),
-    onSuccess: (data) => options?.onSuccess?.(data),
+    onSuccess: (data) => {
+      console.log('useStartQuiz onSuccess', JSON.stringify(data, null, 2));
+      options?.onSuccess?.(data);
+    },
     onError: (error: any) => {
-      console.log('useStartQuiz error:', JSON.stringify(error, null, 2));
       options?.onError?.(error);
     },
   });
@@ -23,7 +25,7 @@ export const useStartQuiz = (options?: Options) => {
   return {
     execute: mutation.mutate,
     isLoading: mutation.isPending,
-    data: mutation.data,
+    data: mutation.data as StartQuizResponse,
     error: mutation.error,
   };
 };

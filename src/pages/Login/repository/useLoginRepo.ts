@@ -1,17 +1,19 @@
 import { POST_METHOD } from '@/constant/api';
-import { useApiClient } from '@/lib/api/core';
-import type { LoginRequest } from './type';
 import { AUTH_LOGIN_ENDPOINT } from '@/constant/route';
+import { useApiClient } from '@/lib/api/core';
+
+import type { LoginRequest } from './type';
 
 export const useLoginRepo = () => {
   const { guestAPIClient } = useApiClient();
 
   const loginApi = (data: LoginRequest) => {
-    return guestAPIClient(AUTH_LOGIN_ENDPOINT, {
+    const res = guestAPIClient(AUTH_LOGIN_ENDPOINT, {
       method: POST_METHOD,
       data,
-      timeout: 8000,
     });
+    console.log('loginApi response', JSON.stringify(res, null, 2));
+    return res;
   };
 
   return { loginApi };

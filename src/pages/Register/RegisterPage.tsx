@@ -103,14 +103,14 @@ export default function RegisterPage() {
       </view>
 
       {/* Form Section */}
-      <view className="flex-col items-center gap-4 px-5 py-8 flex justify-center animate-fade-in">
+      <view className="animate-fade-in flex-col items-center gap-4 px-5 py-8 flex justify-center">
         <Input title="Name" variant="text" icon="user" ref={nameRef} />
         <Input title="Email" variant="email" icon="mail" ref={emailRef} />
         <Input title="Username" variant="text" icon="user" ref={usernameRef} />
         <Input title="Password" variant="password" icon="lock" ref={passwordRef} />
         <Input title="Confirm Password" variant="password" icon="lock" ref={confirmPasswordRef} />
 
-        <Button onPress={autoFillForm} disabled={isLoading}>
+        <Button onPress={registerUser} disabled={isLoading}>
           {isLoading ? <Loading size={32} /> : 'Sign Up'}
         </Button>
 

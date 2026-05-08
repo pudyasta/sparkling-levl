@@ -13,6 +13,7 @@ export const useCourseDetailApi = () => {
     const response = await api(url, {
       method: GET_METHOD,
     });
+    console.log(JSON.stringify(response, null, 2));
 
     return response?.data as CourseResponse;
   };

@@ -1,10 +1,11 @@
 import { useState } from '@lynx-js/react';
+import { useRef } from 'node_modules/@lynx-js/react/runtime/lib/hooks/react';
+import { type RefObject, useEffect } from 'react';
 
-import Input from '@/components/Input/Input';
+import Input, { type InputRef } from '@/components/Input/Input';
 import Text from '@/components/Text';
 import { TextType } from '@/components/Text/types';
 import Button from '@/components/common/Button';
-import Card from '@/components/common/Card/Card';
 
 import type { EnrollmentType } from '../type/enrollment';
 import { useEnrollCourse } from '../usecase/useEnrollCourse';
@@ -16,9 +17,9 @@ interface EnrollProps {
 }
 
 export const Enroll = ({ courseSlug, enrollmentType, onEnrollSuccess }: EnrollProps) => {
-  const [enrollmentKey, setEnrollmentKey] = useState('');
   const [keyError, setKeyError] = useState<string | null>(null);
   const [showPendingInfo, setShowPendingInfo] = useState(false);
+  const inputRef = useRef<InputRef>(null);
 
   const { execute, isLoading } = useEnrollCourse({
     onSuccess: (data) => {
@@ -30,24 +31,26 @@ export const Enroll = ({ courseSlug, enrollmentType, onEnrollSuccess }: EnrollPr
       onEnrollSuccess?.();
     },
     onValidationError: (errors) => {
-      setKeyError('Invalid enrollment key. Please try again.');
+      setKeyError('Kode pendaftaran tidak valid. Coba lagi.');
     },
     onError: () => {
-      setKeyError('Something went wrong. Please try again.');
+      setKeyError('Kesalahan server. Coba lagi.');
     },
   });
 
   const handleEnroll = () => {
     setKeyError(null);
 
-    if (enrollmentType === 'key_based' && !enrollmentKey.trim()) {
-      setKeyError('Please enter your enrollment key.');
+    if (enrollmentType === 'key_based' && !inputRef.current?.getValue()?.trim()) {
+      setKeyError('Masukkan kode pendaftaran.');
       return;
     }
-
     execute({
       courseSlug,
-      payload: enrollmentType === 'key_based' ? { enrollment_key: enrollmentKey } : undefined,
+      payload:
+        enrollmentType === 'key_based'
+          ? { enrollment_key: inputRef.current?.getValue() || '' }
+          : undefined,
     });
   };
 
@@ -66,6 +69,10 @@ export const Enroll = ({ courseSlug, enrollmentType, onEnrollSuccess }: EnrollPr
     );
   }
 
+  useEffect(() => {
+    console.log(JSON.stringify(inputRef.current?.getValue(), null, 2));
+  }, [inputRef.current]);
+
   return (
     <>
       {enrollmentType === 'auto_accept' && (
@@ -74,11 +81,10 @@ export const Enroll = ({ courseSlug, enrollmentType, onEnrollSuccess }: EnrollPr
 
       {enrollmentType === 'key_based' && (
         <KeyBasedView
-          enrollmentKey={enrollmentKey}
           keyError={keyError}
           isLoading={isLoading}
-          onChangeKey={setEnrollmentKey}
           onEnroll={handleEnroll}
+          inputRef={inputRef}
         />
       )}
 
@@ -94,7 +100,6 @@ export const Enroll = ({ courseSlug, enrollmentType, onEnrollSuccess }: EnrollPr
 const AutoAcceptView = ({ isLoading, onEnroll }: { isLoading: boolean; onEnroll: () => void }) => (
   <view>
     <view className="mb-4 flex-row items-center gap-2">
-      <text className="text-2xl">🎓</text>
       <Text className="text-lg font-extrabold text-slate-800" size={TextType.h2}>
         Daftar untuk mulai belajar!
       </Text>
@@ -109,21 +114,18 @@ const AutoAcceptView = ({ isLoading, onEnroll }: { isLoading: boolean; onEnroll:
 );
 
 const KeyBasedView = ({
-  enrollmentKey,
   keyError,
   isLoading,
-  onChangeKey,
   onEnroll,
+  inputRef,
 }: {
-  enrollmentKey: string;
   keyError: string | null;
   isLoading: boolean;
-  onChangeKey: (v: string) => void;
   onEnroll: () => void;
+  inputRef: RefObject<InputRef>;
 }) => (
   <view>
     <view className="mb-4 flex-row items-center gap-2">
-      <text className="text-2xl">🔑</text>
       <Text className="text-lg font-extrabold text-slate-800" size={TextType.h2}>
         Input kode pendaftaran
       </Text>
@@ -133,18 +135,24 @@ const KeyBasedView = ({
     </Text>
 
     {/* Key input */}
-    <Input title="" />
+    <Input title="" ref={inputRef} />
 
     {keyError && (
-      <Text className="mb-3 text-xs text-red-400" size={TextType.b3}>
+      <Text className="mt-2 text-red-400" size={TextType.b3} color={'red'}>
         {keyError}
       </Text>
     )}
 
     <view className="mb-5" />
 
-    <Button variant="filled" color="primary" onPress={onEnroll} disabled={isLoading}>
-      {isLoading ? 'Verifying...' : 'Daftar'}
+    <Button
+      variant="filled"
+      color="primary"
+      onPress={onEnroll}
+      disabled={isLoading}
+      isLoading={isLoading}
+    >
+      Daftar
     </Button>
   </view>
 );
