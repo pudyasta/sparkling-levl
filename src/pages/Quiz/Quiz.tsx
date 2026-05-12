@@ -1,14 +1,17 @@
 import { useEffect, useRef, useState } from '@lynx-js/react';
+import pipe from 'sparkling-method';
 import { getItem } from 'sparkling-storage';
 
 import Input, { type InputRef } from '@/components/Input/Input';
 import { Loading } from '@/components/Loading/Loading';
+import { Modal, ModalTemplate } from '@/components/Modal/Modal.view';
 import Text from '@/components/Text';
 import { TextType } from '@/components/Text/types';
 import Button from '@/components/common/Button';
 import { useNativeBridge } from '@/context/NativeBridgeProvider';
 import { htmlToPlainText } from '@/lib/helper/htmlToLynx';
 import { BizKey, PrefKey } from '@/lib/helper/localStorage';
+import { callToast } from '@/lib/helper/showToast';
 
 import type { QuizCoreProps } from '../Lessons/components/Quiz';
 import type {
@@ -38,6 +41,8 @@ const QuizPage = () => {
   const [meta, setMeta] = useState<GetQuestionByPageResponse['data']['meta'] | null>(null);
   const [currentAnswer, setCurrentAnswer] = useState<any>(null);
   const [flaggedQuestions, setFlaggedQuestions] = useState<number[]>([]);
+  const [answeredQuestions, setAnsweredQuestions] = useState<number[]>([]);
+  const [isBackModalOpen, setIsBackModalOpen] = useState(false);
 
   const [isSaving, setIsSaving] = useState(false);
   const [phase, setPhase] = useState<'loading' | 'quiz' | 'submitting' | 'error'>('loading');
@@ -137,6 +142,7 @@ const QuizPage = () => {
       setPhase('quiz');
     },
     onError: (err) => {
+      console.log('Fetched question:', JSON.stringify(err, null, 2));
       setErrorMessage('Failed to load question.');
       setPhase('error');
     },
@@ -151,20 +157,23 @@ const QuizPage = () => {
     sessionToken: submission.current?.sessionToken || '',
     onSuccess: (data) => {
       stopTimer();
-      navigateTo('quizResult.lynx.bundle', {
-        submission_id: data.data.id,
-        quiz_id: quizId,
-        score: data.data.score,
-        final_score: data.data.final_score,
-        is_passed: data.data.is_passed,
-        time_spent: data.data.time_spent_seconds,
-        close: true,
-        courseId: routerParams?.courseId,
-        course_slug: routerParams?.course_slug,
-      });
+      callToast('Jawaban berhasil di kirim.', 'success');
+      setTimeout(() => {
+        navigateTo('quizResult', {
+          submission_id: data.data.id,
+          quiz_id: quizId,
+          score: data.data.score,
+          final_score: data.data.final_score,
+          is_passed: data.data.is_passed,
+          time_spent: data.data.time_spent_seconds,
+          close: true,
+          courseId: routerParams?.courseId,
+          course_slug: routerParams?.course_slug,
+        });
+      }, 1000);
     },
     onError: () => {
-      setErrorMessage('Failed to submit quiz. Please try again.');
+      callToast('Jawaban gagal di kirim.', 'error');
       setPhase('error');
     },
   });
@@ -173,6 +182,7 @@ const QuizPage = () => {
   useEffect(() => {
     getItem({ key: PrefKey.SubmissionId + quizId, biz: BizKey.Quiz }, (res) => {
       const savedId = res.data.data?.submissionId;
+      console.log(JSON.stringify(res, null, 2));
       if (savedId) {
         submission.current = res.data.data;
         fetchQuestion(1);
@@ -188,6 +198,34 @@ const QuizPage = () => {
     });
     return () => stopTimer();
   }, []);
+
+  useEffect(() => {
+    pipe.call('navigation.setBackInterceptor', { enabled: true }, (res) => {
+      console.log('object');
+    });
+    return () => {
+      pipe.call('navigation.setBackInterceptor', { enabled: false }, () => {});
+    };
+  }, []);
+
+  // useEffect(() => {
+  //   const handleBackPress = () => {
+  //     setIsBackModalOpen(true);
+  //   };
+  //   pipe.on('backandroid', handleBackPress);
+  //   return () => {
+  //     pipe.off('backandroid', handleBackPress);
+  //   };
+  // }, []);
+
+  const handleConfirmBack = () => {
+    setIsBackModalOpen(false);
+    pipe.call('navigation.setBackInterceptor', { enabled: false }, () => {
+      pipe.call('navigation.goBack', {}, (res) => {
+        console.log('object');
+      });
+    });
+  };
 
   // ─── Helpers ──────────────────────────────────────────────────────────────
   const fetchQuestion = (page: number) => {
@@ -316,6 +354,11 @@ const QuizPage = () => {
     if (!question) return true;
   };
 
+  useEffect(() => {
+    console.log(JSON.stringify(routerParams, null, 2));
+    // console.log(JSON.stringify(currentParams, null, 2));
+  }, [routerParams]);
+
   const progressWidth = totalQuestions > 0 ? (currentPage / totalQuestions) * 100 : 0;
   const options = Array.isArray(question?.options) ? question!.options : [];
   const isFlagged = flaggedQuestions.includes(currentPage - 1);
@@ -334,7 +377,7 @@ const QuizPage = () => {
   // ─── Renderers ────────────────────────────────────────────────────────────
   const renderOptions = () => (
     <view className="flex-col gap-3 flex">
-      {(options as QuestionOptionItem[]).map((option, index) => {
+      {options.map((option, index) => {
         const active = isSelected(index.toString());
         const isCheckbox = question?.type === 'checkbox';
         return (
@@ -356,7 +399,7 @@ const QuizPage = () => {
                 />
               )}
             </view>
-            <Text size={TextType.b2}>{option.text}</Text>
+            <Text size={TextType.b2}>{option}</Text>
           </view>
         );
       })}
@@ -434,11 +477,6 @@ const QuizPage = () => {
       </view>
     );
   };
-
-  useEffect(() => {
-    console.log(JSON.stringify(routerParams, null, 2));
-    // console.log(JSON.stringify(currentParams, null, 2));
-  }, [routerParams]);
 
   return (
     <view className="h-screen w-full flex-col bg-[#F8F9FA] flex relative">
@@ -585,7 +623,11 @@ const QuizPage = () => {
                     <view
                       key={i}
                       className={`h-12 w-12 items-center rounded-xl border-2 flex relative justify-center ${
-                        isCurrent ? 'border-blue-600 bg-blue-50' : 'border-slate-100 bg-slate-50'
+                        isCurrent
+                          ? 'border-blue-600 bg-blue-50'
+                          : answeredQuestions.includes(i)
+                            ? 'border-slate-100 bg-slate-50'
+                            : 'border-transparent'
                       }`}
                       bindtap={() => {
                         closeNav();
@@ -608,6 +650,33 @@ const QuizPage = () => {
               </view>
             </scroll-view>
           </view>
+          <Modal
+            template={ModalTemplate.Custom}
+            visible={isBackModalOpen}
+            onClose={() => setIsBackModalOpen(false)}
+          >
+            <view className="flex-col gap-4 flex">
+              <Text size={TextType.h2} fontWeight="600" className="text-center">
+                Keluar dari halaman ini?
+              </Text>
+              <Text className="text-[#5f6368] text-center">
+                Kemajuan kamu akan hilang jika kamu keluar.
+              </Text>
+              <view className="flex-col gap-3 flex">
+                <Button size="small" variant="filled" color="primary" onPress={handleConfirmBack}>
+                  Keluar
+                </Button>
+                <Button
+                  size="small"
+                  variant="outlined"
+                  color="primary"
+                  onPress={() => setIsBackModalOpen(false)}
+                >
+                  Tetap di sini
+                </Button>
+              </view>
+            </view>
+          </Modal>
         </view>
       )}
     </view>

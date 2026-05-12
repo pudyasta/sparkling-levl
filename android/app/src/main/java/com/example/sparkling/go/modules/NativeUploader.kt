@@ -51,7 +51,8 @@ class NativeFileUploader : AbsUploadFileMethodIDL() {
                     files = params.files ?: emptyList(),
                     uploadUrl = params.url,
                     answerText = params.answerText ?: "",
-                    extraHeaders = params.headers ?: emptyMap()
+                    extraHeaders = params.headers ?: emptyMap(),
+                    method = params.method
                 )
                 val result = UploadFileResultModel::class.java.createXModel().apply {
                     responseBody = response
@@ -69,13 +70,14 @@ class NativeFileUploader : AbsUploadFileMethodIDL() {
         files: List<AbsUploadFileMethodIDL.BridgeBeanUploadFile>,
         uploadUrl: String,
         answerText: String,
-        extraHeaders: Map<String, String>
+        extraHeaders: Map<String, String>,
+        method:String
     ): String {
         val boundary = "----FormBoundary${UUID.randomUUID().toString().replace("-", "")}"
         val lineEnd = "\r\n"
 
         val connection = (URL(uploadUrl).openConnection() as HttpURLConnection).apply {
-            requestMethod = "POST"
+            requestMethod = method
             doOutput = true
             doInput = true
             useCaches = false

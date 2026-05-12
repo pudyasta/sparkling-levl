@@ -1,4 +1,5 @@
-import { useRef, useState } from '@lynx-js/react';
+import { useCallback, useRef, useState } from '@lynx-js/react';
+import * as storage from 'sparkling-storage';
 
 import { hiMascot } from '@/assets/images/mascot';
 import { loginBanner } from '@/assets/images/pages';
@@ -27,12 +28,9 @@ export default function LoginPage() {
       if (errors.password) passwordRef.current?.setError(errors.password);
     },
     onSuccess: (res) => {
-      navigateTo('main.lynx.bundle', { hide_nav_bar: 1, close: true });
-      console.log(JSON.stringify(res, null, 2));
+      navigateTo('main', { hide_nav_bar: 1, close: true });
     },
     onError: (error) => {
-      console.log(JSON.stringify(error, null, 2));
-
       if (error.type !== 'VALIDATION_ERROR') {
         setIsModalOpen(true);
       }
@@ -83,7 +81,7 @@ export default function LoginPage() {
 
       {/* Form Section */}
       <view className="animate-fade-in flex-col items-center gap-5 px-5 py-8 flex justify-center">
-        <Input title="Email or username" variant="email" icon="mail" ref={emailRef} />
+        <Input title="Email atau username" variant="email" icon="mail" ref={emailRef} />
         <Input title="Password" variant="password" icon="lock" ref={passwordRef} />
 
         <Text
@@ -92,7 +90,7 @@ export default function LoginPage() {
           style={{
             color: Colors.Primary,
           }}
-          onClick={() => navigateTo('forgotPassword.lynx.bundle', { close: true })}
+          onClick={() => navigateTo('forgotPassword', { close: true })}
         >
           Lupa Password?
         </Text>
@@ -105,7 +103,7 @@ export default function LoginPage() {
         <Text
           typeof={TextType.b1}
           onClick={() => {
-            navigateTo('register.lynx.bundle', { close: true });
+            navigateTo('register', { close: true });
           }}
         >
           Udah punya akun?{' '}
@@ -118,7 +116,7 @@ export default function LoginPage() {
       <Modal
         visible={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title="Oops! Something went wrong"
+        title="Oops! Ada kesalahan pada permintaan kamu"
         body="We're sorry, something went wrong. Please try again."
         template={ModalTemplate.Sad}
       />

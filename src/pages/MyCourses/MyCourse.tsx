@@ -46,7 +46,7 @@ const MyCourse: React.FC = () => {
             <Card
               className="flex-row items-center gap-2 rounded-2xl bg-white p-4 flex shadow-sm"
               bindTap={() =>
-                navigateTo('courseDetail.lynx.bundle', {
+                navigateTo('courseDetail', {
                   courseId: item.id,
                   course_slug: item.slug,
                 })

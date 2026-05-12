@@ -95,8 +95,8 @@ const Button = ({
         borderStyle: 'solid',
         boxSizing: 'border-box',
         // Layout/Sizing
-        paddingTop: size === 'small' ? '8px' : size === 'medium' ? '14px' : '20px',
-        paddingBottom: size === 'small' ? '8px' : size === 'medium' ? '14px' : '20px',
+        paddingTop: size === 'small' ? '10px' : size === 'medium' ? '14px' : '20px',
+        paddingBottom: size === 'small' ? '10px' : size === 'medium' ? '14px' : '20px',
         // Colors
         backgroundColor,
         borderColor,

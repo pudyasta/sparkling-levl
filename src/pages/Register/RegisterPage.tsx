@@ -26,7 +26,7 @@ export default function RegisterPage() {
   const { kbHeight } = useKeyboardShift('panel');
   const { isLoading, error, execute } = useRegister({
     onSuccess: () => {
-      navigateTo('emailConfirmation.lynx.bundle', { close: true });
+      navigateTo('emailConfirmation', { close: true });
     },
     onValidationError: (errors) => {
       if (errors) {
@@ -115,7 +115,7 @@ export default function RegisterPage() {
         </Button>
 
         {/* Login Redirect */}
-        <Text typeof={TextType.b1} onClick={() => navigateTo('login.lynx.bundle', { close: true })}>
+        <Text typeof={TextType.b1} onClick={() => navigateTo('login', { close: true })}>
           Udah punya akun?{' '}
           <Text typeof={TextType.b1} style={{ color: Colors.Primary }}>
             Masuk disini

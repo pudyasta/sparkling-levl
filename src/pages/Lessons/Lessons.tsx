@@ -8,6 +8,7 @@ import { TextType } from '@/components/Text/types';
 import Button from '@/components/common/Button';
 import { Colors } from '@/constant/style';
 import { useNativeBridge } from '@/context/NativeBridgeProvider';
+import { callToast } from '@/lib/helper/showToast';
 
 import AssignmentContent from './components/Assignment';
 import LessonContent from './components/Lessons';
@@ -18,11 +19,12 @@ import type { QuizStudentResponse } from './repository/type/quiz';
 import { useGetLessons } from './usecase/useGetLessons';
 import { useMarkAsDone } from './usecase/useMarkAsDone';
 import { type SubmitAssignmentRequest, useSubmitAssignment } from './usecase/useSubmitAssignment';
+import { useSubmitFinalAssignment } from './usecase/useSubmitFinalAssignment';
 
 const LessonPage = () => {
-  const { routerParams, setRouterParams } = useNativeBridge();
+  const { routerParams } = useNativeBridge();
   const { execute } = useMarkAsDone();
-  const { execute: submitAssignment } = useSubmitAssignment();
+
   const [currentParams, setCurrentParams] = useState({
     lesson_slug: routerParams?.lesson_slug || '',
     unit_slug: routerParams?.unit_slug || '',
@@ -30,16 +32,14 @@ const LessonPage = () => {
     assignment_id: routerParams?.assignment_id || 0,
     type: routerParams?.type || '',
   });
-
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [progressPercentage, setProgressPercentage] = useState(0);
   const [completedLessons, setCompletedLessons] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [isButtonLoading, setIsButtonLoading] = useState(false);
   const [isBackModalOpen, setIsBackModalOpen] = useState(false);
-
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
 
   let allLessons = routerParams?.all_lessons || [];
 
@@ -54,6 +54,13 @@ const LessonPage = () => {
     assignment_id: currentParams.assignment_id,
     type: currentParams.type,
     quiz_id: currentParams.assignment_id,
+  });
+
+  const { execute: submitAssignment } = useSubmitAssignment({
+    onSuccess: (data: any) => {
+      refetch();
+      callToast('Tugas berhasil disimpan sebagai draft', 'success');
+    },
   });
 
   const handlePageChange = (index: number) => {
@@ -88,24 +95,6 @@ const LessonPage = () => {
     handleSetCompleted();
   }, []);
 
-  useEffect(() => {
-    const handleBackPress = () => {
-      setIsBackModalOpen(true);
-    };
-    pipe.on('backandroid', handleBackPress);
-    return () => {
-      pipe.off('backandroid', handleBackPress);
-    };
-  }, []);
-
-  const handleConfirmBack = () => {
-    setIsBackModalOpen(false);
-    setIsConfirmModalOpen(false);
-    pipe.call('navigation.setBackInterceptor', { enabled: false }, () => {
-      pipe.call('navigation.goBack', {}, (res) => {});
-    });
-  };
-
   const handleBottomSheetHeight = (length: number) => {
     if (length <= 2) return '25vh';
     if (length <= 4) return '40vh';
@@ -136,7 +125,7 @@ const LessonPage = () => {
   };
 
   const handleSubmitAssignment = (request: SubmitAssignmentRequest) => {
-    submitAssignment({ ...request, assignmentID: lessons!.data.id });
+    submitAssignment({ ...request });
   };
 
   const renderContent = () => {
@@ -146,6 +135,7 @@ const LessonPage = () => {
           <AssignmentContent
             data={lessons?.data as AssignmentStudentResponse}
             onSubmit={handleSubmitAssignment}
+            onSubmitFinal={handleOpenSubmitModal}
           />
         );
       case 'quiz':
@@ -161,6 +151,13 @@ const LessonPage = () => {
     }
   };
 
+  const handleConfirmBack = () => {
+    setIsBackModalOpen(false);
+    pipe.call('navigation.setBackInterceptor', { enabled: false }, () => {
+      pipe.call('navigation.goBack', {}, (res) => {});
+    });
+  };
+
   useEffect(() => {
     pipe.call('navigation.setBackInterceptor', { enabled: true }, (res) => {});
     return () => {
@@ -173,10 +170,35 @@ const LessonPage = () => {
   });
 
   useEffect(() => {
-    console.log('routerParams', JSON.stringify(routerParams, null, 2));
-    // console.log(JSON.stringify(currentParams, null, 2));
-  }, []);
+    console.log('lessons', JSON.stringify(lessons, null, 2));
+  }, [lessons]);
 
+  const { execute: submitFinalAssignment, isLoading: isSubmittingFinal } = useSubmitFinalAssignment(
+    {
+      onSuccess: () => {
+        setIsSubmitModalOpen(false);
+        refetch();
+      },
+      onError: () => {
+        setIsSubmitModalOpen(false);
+      },
+    }
+  );
+
+  const handleOpenSubmitModal = () => {
+    setIsSubmitModalOpen(true);
+  };
+
+  const handleConfirmFinalSubmit = () => {
+    const quizData = lessons?.data as AssignmentStudentResponse;
+    const submissionId = quizData.submissions[quizData.submissions.length - 1]?.id;
+
+    if (!submissionId) {
+      callToast('Submission tidak ditemukan', 'error');
+      return;
+    }
+    submitFinalAssignment({ submission_id: submissionId });
+  };
   return (
     !isLoadingApi && (
       <view className="h-screen w-full relative">
@@ -292,6 +314,41 @@ const LessonPage = () => {
                 onPress={() => setIsBackModalOpen(false)}
               >
                 Tetap di sini
+              </Button>
+            </view>
+          </view>
+        </Modal>
+
+        <Modal
+          template={ModalTemplate.Custom}
+          visible={isSubmitModalOpen}
+          onClose={() => setIsSubmitModalOpen(false)}
+        >
+          <view className="flex-col gap-4 flex">
+            <Text size={TextType.h2} fontWeight="600" className="text-center">
+              Kumpulkan tugas?
+            </Text>
+            <Text className="text-[#5f6368] text-center">
+              Setelah dikumpulkan, kamu tidak bisa mengubah jawaban lagi. Pastikan semua sudah benar
+              ya.
+            </Text>
+            <view className="flex-col gap-3 flex">
+              <Button
+                size="small"
+                variant="filled"
+                color="primary"
+                onPress={handleConfirmFinalSubmit}
+                isLoading={isSubmittingFinal}
+              >
+                Kumpulkan sekarang
+              </Button>
+              <Button
+                size="small"
+                variant="outlined"
+                color="primary"
+                onPress={() => setIsSubmitModalOpen(false)}
+              >
+                Periksa lagi
               </Button>
             </view>
           </view>

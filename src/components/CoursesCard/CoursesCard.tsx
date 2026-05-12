@@ -60,7 +60,7 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, bindTap }) => {
         <view className="flex-row items-center pt-1 flex justify-end">
           <view className="flex-row items-center gap-1 flex">
             <Text size={TextType.b3} color={Colors.Primary}>
-              View Course
+              Lihat Seleengkapnya
             </Text>
           </view>
         </view>

@@ -35,6 +35,7 @@ const QuizContent = ({ data }: { data: QuizStudentResponse }) => {
       } else {
         timeLeft = data.duration - (data.time_spent_seconds || 0);
       }
+      console.log('takeover', JSON.stringify(data, null, 2));
       setItem(
         {
           key: PrefKey.SubmissionId + data.id,
@@ -46,8 +47,9 @@ const QuizContent = ({ data }: { data: QuizStudentResponse }) => {
           },
           biz: BizKey.Quiz,
         },
-        () => {
-          navigateTo('quiz.lynx.bundle', {
+        (res) => {
+          console.log('navigate', JSON.stringify(res, null, 2));
+          navigateTo('quiz', {
             quizId: data?.id,
             courseId: routerParams?.courseId,
             course_slug: routerParams?.course_slug,
@@ -60,6 +62,8 @@ const QuizContent = ({ data }: { data: QuizStudentResponse }) => {
 
   const { execute: startQuiz } = useStartQuiz({
     onSuccess: (res) => {
+      console.log('RES', JSON.stringify(res, null, 2));
+
       if (!res.success) {
         if (res.data.submission_id) {
           setExistingID(res.data.submission_id);
@@ -75,20 +79,23 @@ const QuizContent = ({ data }: { data: QuizStudentResponse }) => {
 
       setItem(
         {
-          key: PrefKey.SubmissionId + res.data.id,
-          biz: BizKey.Quiz,
+          key: PrefKey.SubmissionId + data?.id,
           data: {
             quizId: data.id,
             submissionId: res.data.id,
             sessionToken: res.data.session_token,
             timeLeft: timeLeft,
           },
+          biz: BizKey.Quiz,
         },
         (res) => {
-          navigateTo('quiz.lynx.bundle', {
+          console.log('navigate', JSON.stringify(res, null, 2));
+          navigateTo('quiz', {
             quizId: data?.id,
             courseId: routerParams?.courseId,
             lesson_slug: routerParams?.lesson_slug,
+            course_slug: routerParams?.course_slug,
+            close: true,
           });
         }
       );
@@ -103,14 +110,6 @@ const QuizContent = ({ data }: { data: QuizStudentResponse }) => {
   }, []);
 
   const handleStartQuiz = () => {
-    // if (existingSubmission) {
-    //   navigateTo('quiz.lynx.bundle', {
-    //     totalQuestions: data?.questions_count || 0,
-    //     quizId: data?.id,
-    //   });
-    //   return;
-    // }
-
     startQuiz(data?.id);
   };
 
@@ -152,18 +151,28 @@ const QuizContent = ({ data }: { data: QuizStudentResponse }) => {
         {/* Info Cards Grid */}
         <view className="mb-8 flex-row gap-4 flex">
           <view className="flex-1 flex-col items-center rounded-2xl border border-[#e8eaed] bg-[#f8f9fa] p-4 flex">
-            <Text size={TextType.b2} color={Colors.Primary}>
+            <Text size={TextType.b2} color={Colors.Primary} className="text-center">
               Waktu
             </Text>
-            <Text size={TextType.h2} fontWeight={'bold'} className="mt-1">
-              {data.time_limit_minutes} Menit
+            <Text size={TextType.h2} fontWeight={'bold'} className="mt-3 text-center">
+              {data.time_limit_minutes ? `${data.time_limit_minutes} Menit` : '-'}
             </Text>
           </view>
+          {
+            <view className="flex-1 flex-col items-center rounded-2xl border border-[#e8eaed] bg-[#f8f9fa] p-4 flex">
+              <Text size={TextType.b2} color={Colors.Primary}>
+                Status
+              </Text>
+              <Text size={TextType.h3} fontWeight={'bold'} className="mt-3 text-center">
+                {data.submission_status_label || '-'}
+              </Text>
+            </view>
+          }
           <view className="flex-1 flex-col items-center rounded-2xl border border-[#e8eaed] bg-[#f8f9fa] p-4 flex">
-            <Text size={TextType.b2} color={Colors.Primary}>
+            <Text size={TextType.b2} color={Colors.Primary} className="text-center">
               Passing Grade
             </Text>
-            <Text size={TextType.h2} fontWeight={'bold'} className="mt-1 text-green-600">
+            <Text size={TextType.h3} fontWeight={'bold'} className="mt-3 text-center">
               {data.passing_grade}%
             </Text>
           </view>

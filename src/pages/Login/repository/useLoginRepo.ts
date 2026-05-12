@@ -12,7 +12,6 @@ export const useLoginRepo = () => {
       method: POST_METHOD,
       data,
     });
-    console.log('loginApi response', JSON.stringify(res, null, 2));
     return res;
   };
 

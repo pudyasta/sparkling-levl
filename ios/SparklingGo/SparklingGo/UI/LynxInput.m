@@ -3,13 +3,14 @@
 // LICENSE file in the root directory of this source tree.
 
 #import "LynxInput.h"
-#import <Lynx/LynxComponentRegistry.h>
 #import <Lynx/LynxPropsProcessor.h>
 #import <Lynx/LynxUIOwner.h>
 #import "UIHelper.h"
+#import <Lynx/LynxComponentRegistry.h>
 
 @implementation LynxTextField
 
+LYNX_LAZY_REGISTER_UI("input")
 - (UIEditingInteractionConfiguration)editingInteractionConfiguration API_AVAILABLE(ios(13.0)) {
   return UIEditingInteractionConfigurationNone;
 }

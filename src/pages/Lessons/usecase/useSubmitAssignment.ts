@@ -1,5 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 
+import { callToast } from '@/lib/helper/showToast';
+
 import type { MediaFile } from '../components/Assignment';
 import type { AssignmentSubmissionType } from '../repository/type/assignment';
 import { useSubmitAssignmentRepo } from '../repository/useSumbitAssignmentRepo';
@@ -15,6 +17,7 @@ export interface SubmitAssignmentRequest {
   type: AssignmentSubmissionType;
   answerText?: string;
   files: MediaFile[];
+  method: 'POST' | 'PUT';
 }
 
 export const useSubmitAssignment = (options?: UseSubmitAssigmentProps) => {
@@ -25,12 +28,13 @@ export const useSubmitAssignment = (options?: UseSubmitAssigmentProps) => {
       return submitAssignment(request);
     },
     onSuccess: (data) => {
-      console.log('data', JSON.stringify(data, null, 2));
       options?.onSuccess?.(data);
+      console.log(JSON.stringify(data, null, 2));
+      callToast('Tugas berhasil disimpan sebagai draft', 'success');
     },
     onError: (error: any) => {
       console.log('ERRRR', JSON.stringify(error, null, 2));
-      options?.onError?.(error);
+      callToast('Tugas gagal disimpan sebagai draft, coba lagi ya!', 'error');
     },
   });
 

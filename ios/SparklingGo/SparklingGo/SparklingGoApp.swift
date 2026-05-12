@@ -8,6 +8,8 @@ import Sparkling
 import SDWebImage
 import SDWebImageWebPCoder
 import SparklingMethod
+import DebugRouter
+import LynxService
 
 class AppDelegate: NSObject, UIApplicationDelegate {
     var window: UIWindow?
@@ -16,15 +18,18 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         window = UIWindow(frame: UIScreen.main.bounds)
         let webPCoder = SDImageWebPCoder.shared
         SDImageCodersManager.shared.addCoder(webPCoder)
+
+        DebugRouter().enableAllSessions()
+
+        
         SPKServiceRegister.registerAll()
         SPKExecuteAllPrepareBootTask()
+        SPKKit.DIContainer.register(SPKResourceLoaderProtocol.self, scope: .transient) {
+            HTTPSResourceLoaderImpl()
+        }
         SPKKit.DIContainer.register(SPKTrackerService.self, scope: ServiceScope.transient) {
             SparklingGoTrackerService()
         }
-        let lynxEnv = LynxEnv.sharedInstance()
-        lynxEnv.lynxDebugEnabled = true
-        lynxEnv.devtoolEnabled = true
-        lynxEnv.logBoxEnabled = true
         return true
     }
 }

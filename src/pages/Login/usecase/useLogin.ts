@@ -34,12 +34,11 @@ export const useLogin = (options?: UseLoginOptions) => {
       if (!data.data?.access_token || !data.data?.refresh_token) {
         throw new Error('Invalid token response');
       }
-      console.log(data.data.refresh_token);
+      console.log('refresh_token', data.data.refresh_token);
       setAccessToken({
         access_token: data.data.access_token,
         refresh_token: data.data.refresh_token,
-        // expires_in: data.data.expires_in,
-        expires_in: 3,
+        expires_in: data.data.expires_in,
       });
 
       setUser({
@@ -58,6 +57,7 @@ export const useLogin = (options?: UseLoginOptions) => {
       options?.onSuccess?.(data);
     },
     onError: (error: any) => {
+      console.log(JSON.stringify(error, null, 2));
       if (error.type === 'VALIDATION_ERROR') {
         options?.onValidationError?.(error.errors);
       }

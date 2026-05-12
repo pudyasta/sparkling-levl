@@ -6,6 +6,7 @@ import Input, { type InputRef } from '@/components/Input/Input';
 import Text from '@/components/Text';
 import { TextType } from '@/components/Text/types';
 import Button from '@/components/common/Button';
+import { callToast } from '@/lib/helper/showToast';
 
 import type { EnrollmentType } from '../type/enrollment';
 import { useEnrollCourse } from '../usecase/useEnrollCourse';
@@ -23,18 +24,19 @@ export const Enroll = ({ courseSlug, enrollmentType, onEnrollSuccess }: EnrollPr
 
   const { execute, isLoading } = useEnrollCourse({
     onSuccess: (data) => {
-      console.log('hasil enroll', JSON.stringify(data, null, 2));
       if (data.data.status === 'pending') {
+        callToast('Permintaan terkirim!', 'info');
         setShowPendingInfo(true);
         return;
       }
       onEnrollSuccess?.();
+      callToast('Pendaftaranmu berhasil!', 'success');
     },
     onValidationError: (errors) => {
       setKeyError('Kode pendaftaran tidak valid. Coba lagi.');
     },
     onError: () => {
-      setKeyError('Kesalahan server. Coba lagi.');
+      callToast('Oops, permintaan kamu gagal dikirim. Coba lagi.', 'error');
     },
   });
 
@@ -107,8 +109,14 @@ const AutoAcceptView = ({ isLoading, onEnroll }: { isLoading: boolean; onEnroll:
     <Text className="mb-5 text-sm text-slate-400" size={TextType.b2}>
       Kursus ini terbuka buat semua orang. Gabung sekarang yuk!
     </Text>
-    <Button variant="filled" color="primary" onPress={onEnroll} disabled={isLoading}>
-      {isLoading ? 'Enrolling...' : 'Daftar'}
+    <Button
+      variant="filled"
+      color="primary"
+      onPress={onEnroll}
+      disabled={isLoading}
+      isLoading={isLoading}
+    >
+      Daftar
     </Button>
   </view>
 );
@@ -160,7 +168,6 @@ const KeyBasedView = ({
 const ApprovalView = ({ isLoading, onEnroll }: { isLoading: boolean; onEnroll: () => void }) => (
   <view>
     <view className="mb-4 flex-row items-center gap-2">
-      <text className="text-2xl">📋</text>
       <Text className="text-lg font-extrabold text-slate-800" size={TextType.h2}>
         Minta untuk bergabung
       </Text>

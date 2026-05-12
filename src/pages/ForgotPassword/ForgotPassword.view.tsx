@@ -13,7 +13,7 @@ import { useNativeBridge } from '@/context/NativeBridgeProvider';
 import { useKeyboardShift } from '@/hooks/useKeyboardShift';
 import { useLogin } from '@/pages/Login/usecase/useLogin';
 
-export default function LoginPage() {
+export default function ForgotPasswordPageß() {
   const emailRef = useRef<InputRef>(null);
   const passwordRef = useRef<InputRef>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -27,7 +27,7 @@ export default function LoginPage() {
       if (errors.password) passwordRef.current?.setError(errors.password);
     },
     onSuccess: () => {
-      navigateTo('main.lynx.bundle', { hide_nav_bar: 1, close: true });
+      navigateTo('main', { hide_nav_bar: 1, close: true });
     },
     onError: (error) => {
       if (error.type !== 'VALIDATION_ERROR') {
@@ -79,7 +79,7 @@ export default function LoginPage() {
       </view>
 
       {/* Form Section */}
-      <view className="flex-col items-center gap-5 px-5 py-8 flex justify-center animate-fade-in">
+      <view className="animate-fade-in flex-col items-center gap-5 px-5 py-8 flex justify-center">
         <Input title="Email or username" variant="email" icon="mail" ref={emailRef} />
 
         <Text
@@ -88,7 +88,7 @@ export default function LoginPage() {
           style={{
             color: Colors.Primary,
           }}
-          onClick={() => navigateTo('forgotPassword.lynx.bundle', { close: true })}
+          onClick={() => navigateTo('forgotPassword', { close: true })}
         >
           Lupa Password?
         </Text>
@@ -101,12 +101,12 @@ export default function LoginPage() {
         <Text
           typeof={TextType.b1}
           onClick={() => {
-            navigateTo('register.lynx.bundle', { close: true });
+            console.log('object');
           }}
         >
           Udah punya akun?{' '}
           <Text typeof={TextType.b1} style={{ color: Colors.Primary }}>
-            Daftar disini
+            Daftar disini wkwkwk
           </Text>
         </Text>
       </view>

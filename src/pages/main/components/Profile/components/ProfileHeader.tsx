@@ -1,3 +1,6 @@
+import { setting } from '@/assets/images/icon';
+import Text from '@/components/Text';
+import { TextType } from '@/components/Text/types';
 import Button from '@/components/common/Button';
 import CustomImage from '@/components/common/CustomImage/CustomImage';
 import { useNativeBridge } from '@/context/NativeBridgeProvider';
@@ -22,7 +25,7 @@ export const ProfileHeader = ({
         {avatarUrl ? (
           <CustomImage className={styles.avatarImage} src={avatarUrl} />
         ) : (
-          <text>{initials}</text>
+          <Text size={TextType.h1}>{initials}</Text>
         )}
       </view>
       <text className={styles.profileName}>{name}</text>
@@ -31,10 +34,10 @@ export const ProfileHeader = ({
         <text className={styles.streakText}>🔥 {streak} Day Streak</text>
       </view>
       <view
-        bindtap={() => navigateTo('profile.lynx.bundle')}
-        className="h-[60px] w-[60px] items-center rounded-full border border-white/30 bg-white/20 flex absolute right-5 top-5 justify-center"
+        bindtap={() => navigateTo('profile')}
+        className="items-center rounded-full border border-white/30 bg-white/20 p-3 flex absolute right-5 top-5 justify-center"
       >
-        <text className="text-xl font-bold text-white">⚙️</text>
+        <CustomImage className="h-[25px] w-[25px]" src={setting} />
       </view>
     </view>
   );

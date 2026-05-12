@@ -110,7 +110,7 @@ export interface QuizQuestionResource {
   type: string;
   type_label: string;
   content: string;
-  options: QuestionOptionItem[];
+  options: string[];
   answer_key?: string[] | null;
   weight: number;
   order: number;

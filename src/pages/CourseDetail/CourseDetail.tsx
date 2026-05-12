@@ -123,7 +123,7 @@ export const CourseDetail: FC = () => {
 
     const i = currentUnit?.elements.indexOf(currentLesson);
 
-    navigateTo('lessons.lynx.bundle', {
+    navigateTo('lessons', {
       courseId: courses.id,
       lesson_slug: lesson.slug,
       unit_slug: unit.slug,
@@ -142,7 +142,7 @@ export const CourseDetail: FC = () => {
   return isLoading ? (
     <CourseDetailSkeleton />
   ) : (
-    <scroll-view className="h-full w-full animate-fade-in bg-slate-50">
+    <scroll-view className="h-[100vh] animate-fade-in flex-col bg-slate-50 flex" scroll-y>
       <PullToRefresh onRefresh={async () => refetchAll()}>
         {/* 1. Hero Header */}
         <view
@@ -193,7 +193,7 @@ export const CourseDetail: FC = () => {
               <>
                 <view className="mb-3 flex-row gap-3 flex justify-between">
                   <Text className="text-base font-bold text-slate-800" size={TextType.b1}>
-                    Your Progress
+                    Progres Kamu
                   </Text>
                   <Text
                     className="text-lg font-extrabold"
@@ -212,15 +212,15 @@ export const CourseDetail: FC = () => {
                     }}
                   />
                 </view>
-                <Button
-                  variant="outlined"
-                  color="primary"
-                  onPress={() => {
-                    continueLearning();
-                  }}
-                >
-                  Continue Learning
-                </Button>
+                {/* <Button
+                    variant="outlined"
+                    color="primary"
+                    onPress={() => {
+                      continueLearning();
+                    }}
+                  >
+                    Continue Learning
+                  </Button> */}
               </>
             ) : (
               <Enroll

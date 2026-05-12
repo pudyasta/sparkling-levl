@@ -23,6 +23,7 @@ type NativeBridgeContextType = {
   routerParams: Record<string, any> | null;
   setRouterParams: (p: Record<string, any> | null) => void;
   navigateTo: (activity: string, params?: Record<string, any>, callback?: () => void) => void;
+  setParams: (p: Record<string, any> | null) => void;
 };
 
 const NativeBridgeContext = createContext<NativeBridgeContextType | null>(null);
@@ -103,7 +104,7 @@ export const NativeBridgeProvider = ({ children }: { children: React.ReactNode }
       if (res.code !== 1) return;
       setItem({ key: PrefKey.User, data: {}, biz: BizKey.Authorization }, (res) => {});
     });
-    navigateTo('login.lynx.bundle');
+    navigateTo('login');
   };
 
   const setParams = (params: Record<string, any> | null) => {
@@ -118,17 +119,18 @@ export const NativeBridgeProvider = ({ children }: { children: React.ReactNode }
   ) => {
     if (isNavigating) return;
     setIsNavigating(true);
+    setParams(params);
     router.navigate(
       {
-        path: activity,
-        options: { params: { ...params, hide_nav_bar: 1 } },
+        path: activity + '.lynx.bundle',
+        options: {
+          params: { ...params, hide_nav_bar: 1 },
+          replace: params.close,
+          replaceType: 'alwaysCloseBeforeOpen',
+        },
       },
       () => {
-        if (params.close == true) {
-          router.close({ containerID: lynx.__globalProps.containerID });
-        }
         callback?.();
-        setParams(params);
         setIsNavigating(false);
       }
     );
@@ -149,6 +151,8 @@ export const NativeBridgeProvider = ({ children }: { children: React.ReactNode }
           setRouterParams: setParams,
           navigateTo,
           isRefreshing,
+
+          setParams,
         }}
       >
         {children}

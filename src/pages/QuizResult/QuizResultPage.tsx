@@ -1,4 +1,5 @@
 import { useEffect, useState } from '@lynx-js/react';
+import * as router from 'sparkling-navigation';
 
 import { Loading } from '@/components/Loading/Loading';
 import Text from '@/components/Text';
@@ -146,7 +147,7 @@ const AnswerReviewItem = ({ answer, index }: { answer: QuizAnswerResource; index
 };
 
 const QuizResultPage = () => {
-  const { routerParams, navigateTo } = useNativeBridge();
+  const { routerParams, navigateTo, setParams } = useNativeBridge();
   const { getResultsApi } = useQuizRepo();
 
   const submissionId: number = routerParams?.submission_id;
@@ -155,6 +156,7 @@ const QuizResultPage = () => {
   const [phase, setPhase] = useState<'loading' | 'done' | 'error'>('loading');
 
   useEffect(() => {
+    console.log(JSON.stringify(routerParams, null, 2));
     const load = async () => {
       try {
         const res = await getResultsApi(submissionId);
@@ -187,7 +189,7 @@ const QuizResultPage = () => {
           Oops, Kami baru tidak bisa memuat hasil quiz
         </Text>
         <Button
-          onPress={() => navigateTo('main.lynx.bundle', { close: true })}
+          onPress={() => navigateTo('main', { close: true })}
           className="h-12 w-full rounded-2xl"
         >
           Kembali ke materi
@@ -254,13 +256,10 @@ const QuizResultPage = () => {
       <view className="border-t border-slate-100 bg-white p-5 pb-10">
         <Button
           className="h-14 w-full rounded-2xl bg-blue-600"
-          onPress={() =>
-            navigateTo('courseDetail.lynx.bundle', {
-              close: true,
-              courseId: routerParams?.courseId,
-              course_slug: routerParams?.course_slug,
-            })
-          }
+          onPress={() => {
+            setParams({ courseId: routerParams?.courseId, course_slug: routerParams?.course_slug });
+            router.close();
+          }}
         >
           Kembali ke Materi
         </Button>

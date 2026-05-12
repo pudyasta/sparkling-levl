@@ -2,6 +2,7 @@ import pipe from 'sparkling-method';
 
 import type { MediaFile } from '@/pages/Lessons/components/Assignment';
 import type { AssignmentSubmissionType } from '@/pages/Lessons/repository/type/assignment';
+import type { NativeSubmitFileParams } from '@/pages/Lessons/repository/useSumbitAssignmentRepo';
 
 export const uploadFiles = (
   url: string,
@@ -30,8 +31,9 @@ interface SubmitParams {
   assignmentId: number;
   type: AssignmentSubmissionType;
   answerText?: string;
-  files?: MediaFile[];
+  files?: NativeSubmitFileParams[];
   headers?: Record<string, string>;
+  method?: 'POST' | 'PUT';
   callback?: (res: any) => void;
 }
 
@@ -49,6 +51,7 @@ const submitText = (params: SubmitParams) => {
       answerText: params.answerText,
       files: [],
       headers: params.headers,
+      method: params.method,
     },
     (res) => {
       params.callback?.(res);
@@ -68,6 +71,7 @@ const submitFiles = (params: SubmitParams) => {
       answerText: '',
       files: params.files,
       headers: params.headers,
+      method: params.method,
     },
     (res) => {
       params.callback?.(res);
@@ -78,10 +82,11 @@ const submitFiles = (params: SubmitParams) => {
 
 // Mixed — both answerText and files required
 const submitMixed = (params: SubmitParams) => {
+  console.log(JSON.stringify(params, null, 2));
   if (!params.answerText?.trim()) {
-    console.error('answerText is required for mixed submission');
     return;
   }
+  console.log(JSON.stringify(params, null, 2));
 
   pipe.call(
     'FileUploader.uploadFile',
@@ -90,6 +95,7 @@ const submitMixed = (params: SubmitParams) => {
       answerText: params.answerText,
       files: params.files,
       headers: params.headers,
+      method: params.method,
     },
     (res) => {
       params.callback?.(res);

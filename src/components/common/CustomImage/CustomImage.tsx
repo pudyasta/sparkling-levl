@@ -1,4 +1,4 @@
-import type { FC } from '@lynx-js/react';
+import { type FC } from '@lynx-js/react';
 
 interface CustomImage {
   src: string;
