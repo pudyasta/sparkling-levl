@@ -70,7 +70,7 @@ const QuizPage = () => {
   const timerColor = (() => {
     if (timeLeft <= 60) return { bg: 'bg-red-50', text: 'text-red-600', dot: 'bg-red-500' };
     if (timeLeft <= 300) return { bg: 'bg-amber-50', text: 'text-amber-600', dot: 'bg-amber-500' };
-    return { bg: 'bg-blue-50', text: 'text-blue-600', dot: 'bg-blue-500' };
+    return { bg: 'bg-[#e8f0fe]', text: 'text-[#1a73e8]', dot: 'bg-[#1a73e8]' };
   })();
 
   const startTimer = () => {
@@ -391,7 +391,7 @@ const QuizPage = () => {
             <view
               className={`mr-4 h-6 w-6 items-center border-2 justify-center ${
                 isCheckbox ? 'rounded-md' : 'rounded-full'
-              } ${active ? 'border-blue-500 bg-blue-500' : 'border-slate-200'}`}
+              } ${active ? 'border-[#1a73e8] bg-[#1a73e8]' : 'border-slate-200'}`}
             >
               {active && (
                 <view
@@ -579,7 +579,7 @@ const QuizPage = () => {
           <Button
             disabled={isNextDisabled()}
             onPress={handleNext}
-            className={`h-14 flex-1 rounded-2xl ${isNextDisabled() ? 'bg-slate-200' : 'bg-blue-600'}`}
+            className={`h-14 flex-1 rounded-2xl ${isNextDisabled() ? 'bg-slate-200' : 'bg-[#1a73e8]'}`}
           >
             <text className={`font-bold ${isNextDisabled() ? 'text-slate-400' : 'text-white'}`}>
               {isSaving ? 'Saving...' : meta?.pagination.has_next ? 'Next' : 'Finish Quiz ✓'}

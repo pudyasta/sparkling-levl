@@ -52,7 +52,7 @@ function Leaderboard() {
     >
       <view
         style={{
-          background: 'linear-gradient(180deg, #2d7cf1 0%, #1a5bb9 100%)',
+          background: 'linear-gradient(180deg, #1a73e8 0%, #1557b0 100%)',
           padding: '1.5rem',
           display: 'flex',
           gap: '1rem',
@@ -80,7 +80,7 @@ function Leaderboard() {
               justifyContent: 'space-around',
               paddingTop: '12px',
               borderBottomWidth: '1px',
-              borderBottomColor: '#eeeeee',
+              borderBottomColor: '#e5e7eb',
               display: 'flex',
             }}
           >

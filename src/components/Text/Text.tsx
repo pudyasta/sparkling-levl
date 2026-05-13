@@ -2,8 +2,9 @@ import handleFontSize from './utils/handleFontSize';
 import handleLineHeight from './utils/handleLineHeight';
 import handleLetterSpacing from './utils/handleLetterSpacing';
 import handleColor from './utils/handleColor';
-import { FontFamily, type TypographyProps } from './types';
-import handleFontFamily from './utils/handleFontFamily';
+import { FontFamily, TextType, type TypographyProps } from './types';
+
+const HEADING_SIZES = new Set([TextType.display, TextType.h1, TextType.h2, TextType.h3]);
 
 const Text = ({
   asSpan = false,
@@ -12,7 +13,7 @@ const Text = ({
   children,
   color,
   disabled = false,
-  fontFamily = FontFamily.inter,
+  fontFamily,
   link = '',
   main = false,
   margin = '',
@@ -23,11 +24,21 @@ const Text = ({
   className = '',
   style = {},
 }: TypographyProps) => {
+  // Auto-select Jakarta for headings unless explicitly overridden
+  const resolvedFamily =
+    fontFamily !== undefined
+      ? fontFamily === FontFamily.jakarta
+        ? 'jakarta'
+        : 'inter'
+      : size && HEADING_SIZES.has(size)
+        ? 'jakarta'
+        : 'inter';
+
   return (
     <text
       class={className}
       style={{
-        fontFamily: handleFontFamily(fontFamily),
+        fontFamily: resolvedFamily,
         display: link || asSpan ? 'linear' : 'block',
         position: 'relative',
         fontWeight: fontWeight,

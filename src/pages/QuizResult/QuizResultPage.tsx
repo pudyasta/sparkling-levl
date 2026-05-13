@@ -4,7 +4,9 @@ import * as router from 'sparkling-navigation';
 import { Loading } from '@/components/Loading/Loading';
 import Text from '@/components/Text';
 import { TextType } from '@/components/Text/types';
+import Badge from '@/components/common/Badge/Badge';
 import Button from '@/components/common/Button';
+import { Colors } from '@/constant/style';
 import { useNativeBridge } from '@/context/NativeBridgeProvider';
 import { htmlToPlainText } from '@/lib/helper/htmlToLynx';
 
@@ -19,35 +21,58 @@ const formatSeconds = (seconds: number | null) => {
 };
 
 const ScoreRing = ({ percentage, isPassed }: { percentage: number; isPassed: boolean }) => {
-  const color = isPassed ? '#22c55e' : '#ef4444';
+  const ringColor = isPassed ? Colors.Success : Colors.Error;
   return (
-    <view className="mb-6 items-center justify-center">
+    <view style={{ marginBottom: '24px', alignItems: 'center', justifyContent: 'center' }}>
       <view
-        className="h-36 w-36 items-center rounded-full border-8 p-5 justify-center"
-        style={{ borderColor: color }}
+        style={{
+          height: '144px',
+          width: '144px',
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderRadius: '9999px',
+          borderWidth: '8px',
+          borderStyle: 'solid',
+          borderColor: ringColor,
+          padding: '20px',
+        }}
       >
-        <text className="text-4xl font-extrabold" style={{ color }}>
+        <text
+          style={{
+            fontSize: '32px',
+            fontWeight: '700',
+            fontFamily: 'jakarta',
+            color: ringColor,
+            textAlign: 'center',
+          }}
+        >
           {parseInt(percentage.toString())}
         </text>
       </view>
-      <view
-        className="mt-3 rounded-full px-4 py-1"
-        style={{ backgroundColor: isPassed ? '#dcfce7' : '#fee2e2' }}
-      >
-        <text className="text-sm font-bold" style={{ color: isPassed ? '#15803d' : '#b91c1c' }}>
+      <view style={{ marginTop: '12px' }}>
+        <Badge variant={isPassed ? 'success' : 'danger'}>
           {isPassed ? 'Lulus' : 'Belum Lulus'}
-        </text>
+        </Badge>
       </view>
     </view>
   );
 };
 
 const StatCard = ({ label, value }: { label: string; value: string }) => (
-  <view className="flex-1 flex-col items-center rounded-2xl border border-slate-100 bg-slate-50 p-4 flex">
-    <Text size={TextType.b2} className="text-slate-400">
-      {label}
-    </Text>
-    <Text size={TextType.h2} fontWeight="bold" className="mt-1 text-slate-800">
+  <view
+    style={{
+      flex: 1,
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      borderRadius: '12px',
+      border: `1px solid ${Colors.Border}`,
+      backgroundColor: Colors.Canvas,
+      padding: '16px',
+    }}
+  >
+    <Text size={TextType.p} color={Colors.TextTertiary}>{label}</Text>
+    <Text size={TextType.h3} fontWeight="700" color={Colors.N900} style={{ marginTop: '4px' }}>
       {value}
     </Text>
   </view>
@@ -60,52 +85,85 @@ const AnswerReviewItem = ({ answer, index }: { answer: QuizAnswerResource; index
   const isTrueFalse = question?.type === 'true_false';
   const isPendingGrade = isEssay && answer.score === null;
 
-  const statusColor = isPendingGrade
-    ? '#f59e0b'
+  const statusVariant = isPendingGrade
+    ? 'warning'
     : answer.score && answer.score > 0
-      ? '#22c55e'
-      : '#ef4444';
+      ? 'success'
+      : 'danger';
+
+  const statusColor = isPendingGrade
+    ? Colors.Warning
+    : answer.score && answer.score > 0
+      ? Colors.Success
+      : Colors.Error;
 
   const statusLabel = isPendingGrade
-    ? '⏳ Pending'
+    ? 'Pending'
     : answer.score && answer.score > 0
       ? 'Benar'
       : 'Salah';
 
   return (
-    <view className="mb-3 rounded-2xl border border-slate-100 bg-white overflow-hidden">
+    <view
+      style={{
+        marginBottom: '12px',
+        borderRadius: '12px',
+        border: `1px solid ${Colors.Border}`,
+        backgroundColor: Colors.Surface,
+        overflow: 'hidden',
+      }}
+    >
       <view
-        className="flex-row items-center p-4 flex justify-between"
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+          padding: '16px',
+          justifyContent: 'space-between',
+        }}
         bindtap={() => setIsOpen(!isOpen)}
       >
-        <view className="flex-1 flex-row items-center gap-3 flex">
+        <view style={{ flex: 1, display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '12px' }}>
           <view
-            className="h-8 w-8 items-center rounded-full justify-center"
-            style={{ backgroundColor: `${statusColor}20` }}
+            style={{
+              height: '32px',
+              width: '32px',
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderRadius: '9999px',
+              backgroundColor: `${statusColor}20`,
+            }}
           >
-            <text className="text-xs font-bold" style={{ color: statusColor }}>
+            <text style={{ fontSize: '11px', fontWeight: '700', fontFamily: 'inter', color: statusColor }}>
               {index + 1}
             </text>
           </view>
-          <Text size={TextType.b2} className="flex-1 text-slate-700">
+          <Text size={TextType.b2} color={Colors.N700} style={{ flex: 1 }}>
             {htmlToPlainText(question?.content ?? '—')}
           </Text>
         </view>
-        <view className="flex-row items-center gap-2 flex">
-          <text className="text-xs font-bold" style={{ color: statusColor }}>
-            {statusLabel}
-          </text>
-          <text className="text-slate-300">{isOpen ? '▲' : '▼'}</text>
+        <view style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '8px' }}>
+          <Badge variant={statusVariant}>{statusLabel}</Badge>
+          <text style={{ fontSize: '12px', color: Colors.N300 }}>{isOpen ? '▲' : '▼'}</text>
         </view>
       </view>
 
       {isOpen && (
-        <view className="border-t border-slate-100 px-4 pb-4 pt-3">
-          {/* Your answer */}
-          <Text size={TextType.b3} className="mb-1 text-slate-400">
+        <view
+          style={{
+            borderTopWidth: '1px',
+            borderTopStyle: 'solid',
+            borderTopColor: Colors.Border,
+            paddingLeft: '16px',
+            paddingRight: '16px',
+            paddingTop: '12px',
+            paddingBottom: '16px',
+          }}
+        >
+          <Text size={TextType.p} color={Colors.TextTertiary} style={{ marginBottom: '4px' }}>
             Jawaban kamu:
           </Text>
-          <Text size={TextType.b2} className="mb-3 text-slate-700">
+          <Text size={TextType.b2} color={Colors.N700} style={{ marginBottom: '12px' }}>
             {isEssay
               ? (answer.content ?? '—')
               : isTrueFalse
@@ -115,29 +173,28 @@ const AnswerReviewItem = ({ answer, index }: { answer: QuizAnswerResource; index
                     return Number(selected) === 0 ? 'Benar' : 'Salah';
                   })()
                 : (answer.selected_options
-                    ?.map((o) => {
-                      return answer.question?.options[Number(o)]?.text ?? o;
-                    })
+                    ?.map((o) => answer.question?.options[Number(o)]?.text ?? o)
                     .join(', ') ?? '—')}
           </Text>
 
-          {/* Score */}
-          <view className="flex-row items-center gap-2 flex">
-            <Text size={TextType.b3} className="text-slate-400">
-              Skor:
-            </Text>
-            <Text size={TextType.b2} fontWeight="bold" className="text-slate-800">
+          <view style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '8px' }}>
+            <Text size={TextType.p} color={Colors.TextTertiary}>Skor:</Text>
+            <Text size={TextType.b2} fontWeight="700" color={Colors.N900}>
               {answer.score ?? (isPendingGrade ? 'Pending penilaian manual' : '0')}
               {!isPendingGrade && ` / ${question?.max_score ?? '—'}`}
             </Text>
           </view>
 
-          {/* Feedback */}
           {answer.feedback && (
-            <view className="mt-3 rounded-xl bg-blue-50 p-3">
-              <Text size={TextType.b3} className="text-blue-600">
-                {answer.feedback}
-              </Text>
+            <view
+              style={{
+                marginTop: '12px',
+                borderRadius: '8px',
+                backgroundColor: Colors.InfoBg,
+                padding: '12px',
+              }}
+            >
+              <Text size={TextType.p} color={Colors.InfoBadgeText}>{answer.feedback}</Text>
             </view>
           )}
         </view>
@@ -172,9 +229,18 @@ const QuizResultPage = () => {
 
   if (phase === 'loading') {
     return (
-      <view className="h-[100vh] flex-1 items-center bg-[#F8F9FA] justify-center">
+      <view
+        style={{
+          height: '100vh',
+          flex: 1,
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: Colors.Canvas,
+          gap: '12px',
+        }}
+      >
         <Loading />
-        <Text size={TextType.b1} className="text-slate-400">
+        <Text size={TextType.b2} color={Colors.TextTertiary}>
           Kami sedang memproses hasil quiz kamu...
         </Text>
       </view>
@@ -183,15 +249,24 @@ const QuizResultPage = () => {
 
   if (phase === 'error' || !submission) {
     return (
-      <view className="h-screen flex-col items-center bg-[#F8F9FA] px-8 flex justify-center">
-        <text className="mb-3 text-5xl">⚠️</text>
-        <Text size={TextType.h2} fontWeight="bold" className="mb-6 text-slate-800 text-center">
+      <view
+        style={{
+          height: '100vh',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: Colors.Canvas,
+          paddingLeft: '32px',
+          paddingRight: '32px',
+        }}
+      >
+        <text style={{ fontSize: '48px', marginBottom: '12px' }}>⚠️</text>
+        <Text size={TextType.h2} fontWeight="700" color={Colors.N900}
+          style={{ marginBottom: '24px', textAlign: 'center' }}>
           Oops, Kami baru tidak bisa memuat hasil quiz
         </Text>
-        <Button
-          onPress={() => navigateTo('main', { close: true })}
-          className="h-12 w-full rounded-2xl"
-        >
+        <Button onPress={() => navigateTo('main', { close: true })}>
           Kembali ke materi
         </Button>
       </view>
@@ -204,16 +279,25 @@ const QuizResultPage = () => {
   const hasEssay = answers.some((a) => a.question?.type === 'essay');
 
   return (
-    <view className="h-screen w-full flex-col bg-[#F8F9FA] flex">
+    <view style={{ height: '100vh', width: '100%', display: 'flex', flexDirection: 'column', backgroundColor: Colors.Canvas }}>
       <scroll-view className="flex-1 px-5 pt-6" scroll-y>
-        {/* Score ring */}
-        <view className="mb-6 items-center rounded-3xl bg-white p-6 shadow-sm">
+        {/* Score ring card */}
+        <view
+          style={{
+            marginBottom: '24px',
+            alignItems: 'center',
+            borderRadius: '16px',
+            backgroundColor: Colors.Surface,
+            padding: '24px',
+            border: `1px solid ${Colors.Border}`,
+          }}
+        >
           <ScoreRing percentage={percentage} isPassed={isPassed} />
 
           {/* Stat row */}
-          <view className="flex-row gap-3 flex">
+          <view style={{ display: 'flex', flexDirection: 'row', gap: '12px', width: '100%' }}>
             <StatCard label="Waktu" value={formatSeconds(submission.time_spent_seconds)} />
-            <StatCard label="Perobaan ke" value={`#${submission.attempt_number}`} />
+            <StatCard label="Percobaan ke" value={`#${submission.attempt_number}`} />
             <StatCard
               label="Status"
               value={submission.grading_status_label ?? submission.status_label}
@@ -222,13 +306,25 @@ const QuizResultPage = () => {
 
           {/* Essay pending notice */}
           {hasEssay && submission.grading_status !== 'graded' && (
-            <view className="mt-4 w-full flex-row items-center gap-2 rounded-2xl bg-amber-50 p-4 flex">
-              <text className="text-xl">⏱️</text>
-              <view className="flex-1">
-                <Text size={TextType.b2} fontWeight="bold" className="text-amber-700">
+            <view
+              style={{
+                marginTop: '16px',
+                width: '100%',
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: '8px',
+                borderRadius: '12px',
+                backgroundColor: Colors.WarningBg,
+                padding: '16px',
+              }}
+            >
+              <text style={{ fontSize: '20px' }}>⏱️</text>
+              <view style={{ flex: 1 }}>
+                <Text size={TextType.b2} fontWeight="700" color={Colors.WarningBadgeText}>
                   Essay Pending Review
                 </Text>
-                <Text size={TextType.b3} className="text-amber-600">
+                <Text size={TextType.b3} color={Colors.WarningBadgeText}>
                   Jawaban essay Anda sedang menunggu penilaian manual. Skor akhir akan diperbarui
                   setelah penilaian selesai.
                 </Text>
@@ -239,8 +335,8 @@ const QuizResultPage = () => {
 
         {/* Answer review */}
         {answers.length > 0 && (
-          <view className="mb-6">
-            <Text size={TextType.h3} fontWeight="bold" className="mb-3 text-slate-800">
+          <view style={{ marginBottom: '24px' }}>
+            <Text size={TextType.h3} fontWeight="700" color={Colors.N900} style={{ marginBottom: '12px' }}>
               Review Jawaban
             </Text>
             {answers.map((answer, i) => (
@@ -249,13 +345,22 @@ const QuizResultPage = () => {
           </view>
         )}
 
-        <view className="h-10" />
+        <view style={{ height: '40px' }} />
       </scroll-view>
 
       {/* Footer */}
-      <view className="border-t border-slate-100 bg-white p-5 pb-10">
+      <view
+        style={{
+          borderTopWidth: '1px',
+          borderTopStyle: 'solid',
+          borderTopColor: Colors.Border,
+          backgroundColor: Colors.Surface,
+          padding: '20px',
+          paddingBottom: '36px',
+        }}
+      >
         <Button
-          className="h-14 w-full rounded-2xl bg-blue-600"
+          size="lg"
           onPress={() => {
             setParams({ courseId: routerParams?.courseId, course_slug: routerParams?.course_slug });
             router.close();

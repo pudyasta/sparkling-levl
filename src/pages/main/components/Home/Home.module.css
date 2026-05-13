@@ -33,7 +33,8 @@
 }
 
 .greetingText {
-  color: red;
+  color: #202124;
+  opacity: 0.9;
 }
 
 .userName {
@@ -154,7 +155,7 @@
 }
 
 .courseMeta {
-  color: #4a90e2;
+  color: #1a73e8;
   font-size: 14px;
   margin: 2px 0;
 }

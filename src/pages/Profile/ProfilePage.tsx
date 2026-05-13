@@ -89,7 +89,7 @@ const ToggleRow = ({
     </view>
     <view
       bindtap={onToggle}
-      className={`h-6 w-12 rounded-full justify-center ${value ? 'bg-blue-500' : 'bg-slate-200'}`}
+      className={`h-6 w-12 rounded-full justify-center ${value ? 'bg-[#1a73e8]' : 'bg-slate-200'}`}
       style={{ alignItems: value ? 'flex-end' : 'flex-start', padding: '2px' }}
     >
       <view className="h-5 w-5 rounded-full bg-white shadow-sm" />
@@ -268,7 +268,7 @@ const ProfilePage = () => {
     return (
       <view className="h-screen w-full flex-col bg-slate-50 flex">
         {/* Hero skeleton */}
-        <view className="bg-blue-600 px-5 pb-6 pt-12">
+        <view className="bg-[#1a73e8] px-5 pb-6 pt-12">
           <view className="flex-row items-center gap-4 flex">
             {/* Avatar circle */}
             <Shimmer isRound width={80} height={80} />
@@ -284,7 +284,7 @@ const ProfilePage = () => {
             {[1, 2, 3, 4].map((i) => (
               <view
                 key={i}
-                className="flex-1 flex-col items-center gap-1 rounded-xl bg-blue-500/30 py-3 flex"
+                className="flex-1 flex-col items-center gap-1 rounded-xl bg-white/10 py-3 flex"
               >
                 <Shimmer height={20} width={32} />
                 <Shimmer height={12} width={48} />
@@ -331,10 +331,10 @@ const ProfilePage = () => {
         style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, flex: 1 }}
       >
         {/* Hero header */}
-        <view className="bg-blue-600 px-5 pb-6 pt-12">
+        <view className="bg-[#1a73e8] px-5 pb-6 pt-12">
           <view className="flex-row items-center gap-4 flex">
             <view className="relative">
-              <view className="h-20 w-20 items-center rounded-full bg-blue-400 justify-center overflow-hidden">
+              <view className="h-20 w-20 items-center rounded-full bg-[#1557b0] justify-center overflow-hidden">
                 {profile.avatar_url ? (
                   <image src={profile.avatar_url} className="h-full w-full" />
                 ) : (
@@ -358,7 +358,7 @@ const ProfilePage = () => {
               <Text size={TextType.b2} className="text-blue-200">
                 @{profile.username}
               </Text>
-              <view className="mt-1 self-start rounded-full bg-blue-500 px-2 py-0.5">
+              <view className="mt-1 self-start rounded-full bg-white/20 px-2 py-0.5">
                 <text className="uppercase text-[10px] font-bold text-blue-100">
                   {profile.role}
                 </text>
@@ -376,7 +376,7 @@ const ProfilePage = () => {
               ].map((stat) => (
                 <view
                   key={stat.label}
-                  className="flex-1 items-center rounded-xl bg-blue-500/50 py-2"
+                  className="flex-1 items-center rounded-xl bg-white/20 py-2"
                 >
                   <Text size={TextType.h3} fontWeight="bold" className="text-white">
                     {stat.value}
@@ -450,7 +450,7 @@ const ProfilePage = () => {
               )}
 
               <Button
-                className="h-12 w-full rounded-2xl bg-blue-600"
+                className="h-12 w-full"
                 disabled={isSavingProfile}
                 onPress={() => updateProfile({ name, phone, bio, location })}
                 isLoading={isSavingProfile}
@@ -495,7 +495,7 @@ const ProfilePage = () => {
               )}
 
               <Button
-                className="h-12 w-full rounded-2xl bg-blue-600"
+                className="h-12 w-full"
                 disabled={isSavingPw || !currentPw || newPw !== confirmPw}
                 onPress={() => {
                   setPwError(null);
@@ -519,7 +519,7 @@ const ProfilePage = () => {
                   </Text>
                   <Input title="Email baru" initialValue={newEmail} variant="email" />
                   <Button
-                    className="h-12 w-full rounded-2xl bg-blue-600"
+                    className="h-12 w-full"
                     disabled={isSendingEmail || !newEmail}
                     onPress={() => changeEmail({ new_email: newEmail })}
                     isLoading={isSendingEmail}
@@ -536,7 +536,7 @@ const ProfilePage = () => {
                   </view>
                   <Input title="Verification token" initialValue={emailToken} />
                   <Button
-                    className="h-12 w-full rounded-2xl bg-blue-600"
+                    className="h-12 w-full"
                     disabled={isVerifyingEmail || !emailToken || !emailUuid}
                     onPress={() => verifyEmail({ uuid: emailUuid!, token: emailToken })}
                     isLoading={isVerifyingEmail}
@@ -566,7 +566,7 @@ const ProfilePage = () => {
                   bindtap={() => setPrivacyForm((p) => ({ ...p, profile_visibility: v }))}
                   className={`flex-row items-center gap-3 rounded-xl border-2 p-4 flex ${
                     privacyForm.profile_visibility === v
-                      ? 'border-blue-500 bg-blue-50'
+                      ? 'border-[#1a73e8] bg-[#e8f0fe]'
                       : 'border-slate-100 bg-white'
                   }`}
                 >
@@ -575,7 +575,7 @@ const ProfilePage = () => {
                     size={TextType.b2}
                     fontWeight={privacyForm.profile_visibility === v ? 'bold' : 'normal'}
                     className={
-                      privacyForm.profile_visibility === v ? 'text-blue-600' : 'text-slate-600'
+                      privacyForm.profile_visibility === v ? 'text-[#1a73e8]' : 'text-[#4b5563]'
                     }
                   >
                     {v === 'public' ? 'Public' : v === 'private' ? 'Private' : 'Friends only'}
@@ -636,7 +636,7 @@ const ProfilePage = () => {
             )}
 
             <Button
-              className="h-14 w-full rounded-2xl bg-blue-600"
+              className="h-14 w-full"
               disabled={isSavingPrivacy}
               onPress={() => updatePrivacy(privacyForm)}
               isLoading={isSavingPrivacy}

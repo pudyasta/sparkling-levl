@@ -4,19 +4,28 @@ import { Colors } from '@/constant/style';
 
 import { Loading } from '../Loading/Loading';
 
-// Assuming your palette is exported from here
-
 interface ButtonProps {
   children: ReactNode;
-  color?: 'primary' | 'secondary' | 'white';
+  /** Visual variant — use 'danger' for destructive actions, 'ghost' for tertiary */
+  color?: 'primary' | 'secondary' | 'white' | 'danger';
+  variant?: 'filled' | 'outlined' | 'ghost';
+  size?: 'small' | 'medium' | 'large' | 'sm' | 'md' | 'lg';
   onPress?: () => void;
   disabled?: boolean;
-  variant?: 'filled' | 'outlined';
-  size?: 'small' | 'medium' | 'large';
   className?: string;
   rounded?: boolean;
   isLoading?: boolean;
+  style?: Record<string, string | number>;
 }
+
+const PADDING: Record<string, { paddingTop: string; paddingBottom: string; paddingLeft: string; paddingRight: string; fontSize: string }> = {
+  sm:     { paddingTop: '6px',  paddingBottom: '6px',  paddingLeft: '12px', paddingRight: '12px', fontSize: '12px' },
+  small:  { paddingTop: '6px',  paddingBottom: '6px',  paddingLeft: '12px', paddingRight: '12px', fontSize: '12px' },
+  md:     { paddingTop: '10px', paddingBottom: '10px', paddingLeft: '16px', paddingRight: '16px', fontSize: '14px' },
+  medium: { paddingTop: '10px', paddingBottom: '10px', paddingLeft: '16px', paddingRight: '16px', fontSize: '14px' },
+  lg:     { paddingTop: '14px', paddingBottom: '14px', paddingLeft: '24px', paddingRight: '24px', fontSize: '15px' },
+  large:  { paddingTop: '14px', paddingBottom: '14px', paddingLeft: '24px', paddingRight: '24px', fontSize: '15px' },
+};
 
 const Button = ({
   children,
@@ -28,59 +37,61 @@ const Button = ({
   className = '',
   rounded = false,
   isLoading = false,
+  style: styleProp = {},
 }: ButtonProps) => {
-  const [animate, setAnimate] = useState(false);
-
-  const theme = {
-    primary: Colors.Primary, // #1A73E8
-    secondary: Colors.Secondary, // #FFC107
-    white: '#FFFFFF',
-    neutral: Colors.Neutral, // #202124
-    disabled: Colors.Disabled, // #9AA0A6
-  };
-  const borderColorStyles = {
-    primary: Colors.Neutral,
-    secondary: Colors.Neutral,
-    white: Colors.Neutral,
-    neutral: Colors.Accent,
-    disabled: Colors.Disabled,
-  };
+  const [pressed, setPressed] = useState(false);
 
   const handleTap = () => {
-    if (disabled) return;
-    setAnimate(true);
+    if (disabled || isLoading) return;
+    setPressed(true);
     onPress?.();
-    setTimeout(() => setAnimate(false), 200);
+    setTimeout(() => setPressed(false), 150);
   };
 
-  const getStyles = () => {
+  const getColorStyles = () => {
     if (disabled) {
       return {
-        backgroundColor: '#F5F5F5',
-        borderColor: theme.disabled,
-        color: theme.disabled,
+        backgroundColor: Colors.N200,
+        borderColor: Colors.N200,
+        color: Colors.TextDisabled,
       };
     }
 
-    const baseColor = theme[color];
-    const isWhite = color === 'white';
-
-    if (variant === 'filled') {
-      return {
-        backgroundColor: baseColor,
-        borderColor: borderColorStyles[color],
-        color: color === 'primary' ? '#FFFFFF' : '#000000',
-      };
-    } else {
+    if (variant === 'ghost') {
       return {
         backgroundColor: 'transparent',
-        borderColor: baseColor,
-        color: isWhite ? '#FFFFFF' : baseColor,
+        borderColor: 'transparent',
+        color: Colors.Primary,
       };
+    }
+
+    if (variant === 'outlined') {
+      const borderColor =
+        color === 'danger' ? Colors.Error
+        : color === 'secondary' ? Colors.Secondary
+        : Colors.Primary;
+      return {
+        backgroundColor: 'transparent',
+        borderColor,
+        color: borderColor,
+      };
+    }
+
+    // filled
+    switch (color) {
+      case 'danger':
+        return { backgroundColor: Colors.Error, borderColor: Colors.Error, color: Colors.TextInverse };
+      case 'secondary':
+        return { backgroundColor: Colors.Secondary, borderColor: Colors.Secondary, color: Colors.N900 };
+      case 'white':
+        return { backgroundColor: '#FFFFFF', borderColor: Colors.N200, color: Colors.Primary };
+      default:
+        return { backgroundColor: Colors.Primary, borderColor: Colors.Primary, color: Colors.TextInverse };
     }
   };
 
-  const { backgroundColor, borderColor, color: textColor } = getStyles();
+  const { backgroundColor, borderColor, color: textColor } = getColorStyles();
+  const pad = PADDING[size] || PADDING.medium;
 
   return (
     <text
@@ -89,26 +100,25 @@ const Button = ({
         display: 'block',
         width: '100%',
         textAlign: 'center',
-        fontWeight: '700',
-        borderRadius: rounded ? '999px' : '12px',
+        fontFamily: 'inter',
+        fontWeight: '600',
+        borderRadius: rounded ? '9999px' : '8px',
         borderWidth: '1px',
         borderStyle: 'solid',
         boxSizing: 'border-box',
-        // Layout/Sizing
-        paddingTop: size === 'small' ? '10px' : size === 'medium' ? '14px' : '20px',
-        paddingBottom: size === 'small' ? '10px' : size === 'medium' ? '14px' : '20px',
-        // Colors
+        ...pad,
         backgroundColor,
         borderColor,
         color: textColor,
-        // Animation/State
-        opacity: animate ? 0.7 : 1,
-        transform: animate ? 'scale(0.98)' : 'scale(1)',
+        opacity: (pressed || isLoading) ? 0.75 : 1,
+        transform: pressed ? 'scale(0.98)' : 'scale(1)',
         transition: 'all 0.1s ease-in-out',
+        minHeight: '44px',
+        ...styleProp,
       }}
       className={className}
     >
-      {isLoading ? <Loading size={32} /> : children}
+      {isLoading ? <Loading size={24} /> : children}
     </text>
   );
 };

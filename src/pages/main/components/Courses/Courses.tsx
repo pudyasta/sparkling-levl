@@ -101,7 +101,7 @@ const Courses: React.FC = () => {
             <view
               bindtap={handleSearchInput}
               className={`z-50 h-full w-12 items-center rounded-2xl p-2 absolute right-2 justify-center ${
-                hasActiveFilters ? 'bg-blue-500' : 'bg-white/20'
+                hasActiveFilters ? 'bg-[#1a73e8]' : 'bg-white/20'
               }`}
             >
               <CustomImage src={searchIcon} className="h-full w-full" />
@@ -118,7 +118,7 @@ const Courses: React.FC = () => {
                     key={tag.value}
                     bindtap={() => setLevelTag(levelTag === tag.value ? '' : tag.value)}
                     className={`rounded-full px-3 py-1 ${
-                      levelTag === tag.value ? 'bg-blue-500' : 'bg-white/20'
+                      levelTag === tag.value ? 'bg-[#1a73e8]' : 'bg-white/20'
                     }`}
                   >
                     <Text
