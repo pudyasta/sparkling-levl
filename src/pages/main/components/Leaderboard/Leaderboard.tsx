@@ -44,21 +44,8 @@ function Leaderboard() {
   useEffect(() => {}, [userRank]);
 
   return (
-    <view
-      style={{
-        width: '100%',
-        paddingBottom: '20px',
-      }}
-    >
-      <view
-        style={{
-          background: 'linear-gradient(180deg, #2d7cf1 0%, #1a5bb9 100%)',
-          padding: '1.5rem',
-          display: 'flex',
-          gap: '1rem',
-          alignItems: 'center',
-        }}
-      >
+    <view className="w-full pb-5">
+      <view className="bg-gradient-primary items-center gap-4 px-6 py-7 flex">
         <IconWithBackground image={thropy} />
         <view>
           <Text size={TextType.h1} fontWeight="bold" color="white" fontFamily={FontFamily.jakarta}>
@@ -74,16 +61,7 @@ function Leaderboard() {
         <LeaderboardLoader />
       ) : (
         <view className="animate-fade-in">
-          <view
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-around',
-              paddingTop: '12px',
-              borderBottomWidth: '1px',
-              borderBottomColor: '#eeeeee',
-              display: 'flex',
-            }}
-          >
+          <view className="flex-row border-b border-light pt-3 flex justify-around">
             <view className={styles.lbRow}>
               {topThree.map((user: LeaderboardEntry, idx: number) => (
                 <view
@@ -125,13 +103,7 @@ function Leaderboard() {
           </view>
 
           {/* Full list */}
-          <view
-            style={{
-              padding: '12px',
-              display: 'flex',
-              flexDirection: 'column',
-            }}
-          >
+          <view className="flex-col gap-1 p-3 flex">
             {restRank.map((l: LeaderboardEntry, idx: number) => (
               <LeaderboardItem
                 rank={idx + 4}

@@ -1,22 +1,18 @@
-import handleFontSize from './utils/handleFontSize';
-import handleLineHeight from './utils/handleLineHeight';
-import handleLetterSpacing from './utils/handleLetterSpacing';
 import handleColor from './utils/handleColor';
-import { FontFamily, type TypographyProps } from './types';
 import handleFontFamily from './utils/handleFontFamily';
+import handleFontSize from './utils/handleFontSize';
+import handleLetterSpacing from './utils/handleLetterSpacing';
+import handleLineHeight from './utils/handleLineHeight';
+import { FontFamily, type TypographyProps } from './types';
 
 const Text = ({
   asSpan = false,
-  body,
   fontWeight = 'normal',
   children,
   color,
   disabled = false,
   fontFamily = FontFamily.inter,
-  link = '',
-  main = false,
   margin = '',
-  tag,
   uppercase = false,
   onClick = () => {},
   size,
@@ -28,15 +24,14 @@ const Text = ({
       class={className}
       style={{
         fontFamily: handleFontFamily(fontFamily),
-        display: link || asSpan ? 'linear' : 'block',
+        display: asSpan ? 'linear' : 'block',
         position: 'relative',
-        fontWeight: fontWeight,
+        fontWeight,
         fontSize: `${handleFontSize({ size })}px`,
-        color: handleColor({ color, link, tag, main, disabled }),
         lineHeight: `${handleLineHeight({ size })}px`,
-        letterSpacing: `${handleLetterSpacing({ body, tag, uppercase })}px`,
+        letterSpacing: `${handleLetterSpacing({ uppercase })}px`,
+        color: handleColor({ color, disabled }),
         textTransform: uppercase ? 'uppercase' : 'none',
-        textDecoration: link ? 'none' : 'initial',
         ...(margin ? { margin } : {}),
         ...style,
       }}

@@ -1,33 +1,21 @@
-// Font size
-export const fontSizeLv1 = 10;
-export const fontSizeLv2 = 12;
-export const fontSizeLv3 = 14;
-export const fontSizeLv4 = 16;
-export const fontSizeLv5 = 18;
-export const fontSizeLv6 = 20;
-export const fontSizeLv7 = 28;
+import { TextType } from './types';
 
-// Line height
-export const lineHeightMicro = 12;
-export const lineHeightLv1 = 14;
-export const lineHeightLv2 = 16;
-export const lineHeightLv3 = 18;
-export const lineHeightLv4 = 20;
-export const lineHeightLv5 = 22;
-export const lineHeightLv6 = 24;
-export const lineHeightLv7 = 28;
-export const lineHeightLv9 = 36;
+/**
+ * Single source of truth for the typography scale.
+ * Values mirror the CSS variables in src/styles/core.css:
+ * --text-caption/xs/sm/md/lg/xl/3xl and their --leading-* counterparts.
+ */
+export const TYPOGRAPHY_SCALE: Record<TextType, { fontSize: number; lineHeight: number }> = {
+  [TextType.p]:  { fontSize: 10, lineHeight: 16 }, // --text-caption / --leading-caption
+  [TextType.b3]: { fontSize: 12, lineHeight: 18 }, // --text-xs     / --leading-xs
+  [TextType.b2]: { fontSize: 14, lineHeight: 20 }, // --text-sm     / --leading-sm
+  [TextType.b1]: { fontSize: 16, lineHeight: 22 }, // --text-md     / --leading-md
+  [TextType.h3]: { fontSize: 18, lineHeight: 24 }, // --text-lg     / --leading-lg
+  [TextType.h2]: { fontSize: 20, lineHeight: 28 }, // --text-xl     / --leading-xl
+  [TextType.h1]: { fontSize: 28, lineHeight: 36 }, // --text-3xl    / --leading-3xl
+} as const;
 
-// Font weight
-export const fontWeightRegular = 400;
-export const fontWeightBold = 'bold';
-export const fontFamilyLite = 'inter, Roboto, sans-serif';
+export const DEFAULT_SIZE = TextType.b2;
 
-export const fontFamilyJakarta = 'jakarta, sans-serif';
-
-// tracking
-export const trackingTighter = -0.2;
-export const trackingTight = -0.1;
-export const trackingWide = 0.1;
-export const trackingWidest = 0.3;
-export const trackingWider = 0.2;
+export const fontFamilyInter = 'inter';
+export const fontFamilyJakarta = 'jakarta';

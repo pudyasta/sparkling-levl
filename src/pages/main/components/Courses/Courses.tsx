@@ -88,7 +88,7 @@ const Courses: React.FC = () => {
           </Text>
 
           {/* Search + filter trigger row */}
-          <view className="mt-2 flex-row gap-3 rounded-2xl bg-white flex relative overflow-hidden">
+          <view className="mt-2 flex-row gap-3 rounded-2xl bg-surface flex relative overflow-hidden">
             <Input
               title=""
               placeholder="Search courses"
@@ -101,7 +101,7 @@ const Courses: React.FC = () => {
             <view
               bindtap={handleSearchInput}
               className={`z-50 h-full w-12 items-center rounded-2xl p-2 absolute right-2 justify-center ${
-                hasActiveFilters ? 'bg-blue-500' : 'bg-white/20'
+                hasActiveFilters ? 'bg-primary' : 'bg-white/20'
               }`}
             >
               <CustomImage src={searchIcon} className="h-full w-full" />
@@ -118,7 +118,7 @@ const Courses: React.FC = () => {
                     key={tag.value}
                     bindtap={() => setLevelTag(levelTag === tag.value ? '' : tag.value)}
                     className={`rounded-full px-3 py-1 ${
-                      levelTag === tag.value ? 'bg-blue-500' : 'bg-white/20'
+                      levelTag === tag.value ? 'bg-primary' : 'bg-white/20'
                     }`}
                   >
                     <Text
@@ -188,7 +188,7 @@ const Courses: React.FC = () => {
           {isLoading ? (
             // Skeleton placeholders
             Array.from({ length: 4 }).map((_, i) => (
-              <view key={i} className="mb-4 h-48 w-full animate-pulse rounded-2xl bg-slate-200" />
+              <view key={i} className="mb-4 h-48 w-full animate-pulse rounded-2xl bg-surface-alt" />
             ))
           ) : courses.length === 0 ? (
             <view className={styles.emptyState}>
@@ -223,7 +223,7 @@ const Courses: React.FC = () => {
           {/* Load more indicator */}
           {isFetchingNextPage && (
             <view className="items-center py-6 flex">
-              <text className="text-sm text-slate-400">Loading more...</text>
+              <text className="text-sm text-subtle">Loading more...</text>
             </view>
           )}
 

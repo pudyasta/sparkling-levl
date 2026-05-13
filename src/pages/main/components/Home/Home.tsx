@@ -50,7 +50,7 @@ export default function LearningDashboard() {
   return (
     recommendedCourses && (
       <PullToRefresh onRefresh={async () => refetchAll()}>
-        <scroll-view className="flex-1 animate-fade-in bg-slate-50 pb-[80px]">
+        <scroll-view className="flex-1 animate-fade-in bg-canvas pb-20">
           {/* Header Section */}
           <view
             className="min-h-[20vh] flex-col px-4 pb-10 pt-8 flex"
@@ -124,7 +124,7 @@ export default function LearningDashboard() {
               <view className="flex-col gap-3 flex">
                 <SectionHeader title="Lanjut Belajar" bindTap={() => navigateTo('myCourse')} />
                 <Card
-                  className="flex-row items-center gap-4 rounded-2xl bg-white p-1 flex shadow-sm"
+                  className="flex-row items-center gap-4 rounded-2xl bg-surface p-1 flex shadow-sm"
                   bindTap={() =>
                     navigateTo('courseDetail', {
                       courseId: recentLearning[0].course.id,
@@ -145,7 +145,7 @@ export default function LearningDashboard() {
                     />
                   </view>
                   <view className="flex-1 flex-col gap-1 flex">
-                    <Text size={TextType.b1} fontWeight="bold" className="text-slate-800">
+                    <Text size={TextType.b1} fontWeight="bold" className="text-neutral">
                       {recentLearning[0].course?.title || ''}
                     </Text>
                     <Text size={TextType.b3} color={Colors.Primary}>
@@ -153,7 +153,7 @@ export default function LearningDashboard() {
                       {recentLearning[0].progress.total_lessons} materi
                     </Text>
                     <view className="mt-1 flex-row items-center gap-2 flex">
-                      <view className="h-2 flex-1 rounded-full bg-slate-100 overflow-hidden">
+                      <view className="h-2 flex-1 rounded-full bg-surface-alt overflow-hidden">
                         <view
                           className="h-full rounded-full"
                           style={{
@@ -162,7 +162,7 @@ export default function LearningDashboard() {
                           }}
                         />
                       </view>
-                      <Text size={TextType.b3} className="text-slate-400">
+                      <Text size={TextType.b3} className="text-subtle">
                         {recentLearning[0].progress.percentage}%
                       </Text>
                     </view>
@@ -179,10 +179,10 @@ export default function LearningDashboard() {
                   {achievements?.map((i, idx) => {
                     return (
                       <view key={idx} className="mr-4 w-[80px] flex-col items-center flex">
-                        <view className="mb-2 rounded-2xl border border-slate-50 bg-white overflow-hidden shadow-sm">
+                        <view className="mb-2 rounded-2xl border border-light bg-surface overflow-hidden shadow-sm">
                           <CustomImage className="h-20 w-20" src={i?.icon_url || ''} />
                         </view>
-                        <Text className="text-slate-600 text-center" size={TextType.b3}>
+                        <Text className="text-muted text-center" size={TextType.b3}>
                           {i.name}
                         </Text>
                       </view>

@@ -34,14 +34,84 @@
   --font-inter: 'inter', sans-serif;
   --font-jakarta: 'jakarta', sans-serif;
 
+  /* Brand */
   --primary: #1a73e8;
   --secondary: #ffc107;
   --accent: #e8f0fe;
+
+  /* Semantic */
   --success: #28a745;
   --error: #dc3545;
-  --neutral: #202124;
-  --background: #ffffff;
   --disabled: #9aa0a6;
+
+  /* Text */
+  --neutral: #202124;
+  --text-muted: #64748b;
+  --text-subtle: #94a3b8;
+
+  /* Surface */
+  --background: #ffffff;
+  --canvas: #f8f9fa;
+  --surface: #ffffff;
+  --surface-alt: #f1f5f9;
+
+  /* Border */
+  --border: #e2e8f0;
+  --border-light: #f1f5f9;
+
+  /* Gradients */
+  --gradient-primary: linear-gradient(160deg, #2d7cf1 0%, #1a5bb9 100%);
+  --gradient-streak: linear-gradient(90deg, #e23d3d, #e98980);
+  --gradient-xp: linear-gradient(180deg, #f7b500, #f2d06b);
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.10);
+
+  /* Radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+
+  /* Typography scale (mirrors TextType enum) */
+  --text-caption: 10px;
+  --text-xs: 12px;
+  --text-sm: 14px;
+  --text-md: 16px;
+  --text-lg: 18px;
+  --text-xl: 20px;
+  --text-2xl: 24px;
+  --text-3xl: 28px;
+  --text-display: 32px;
+
+  /* Line heights */
+  --leading-caption: 16px;
+  --leading-xs: 18px;
+  --leading-sm: 20px;
+  --leading-md: 22px;
+  --leading-lg: 24px;
+  --leading-xl: 28px;
+  --leading-2xl: 32px;
+  --leading-3xl: 36px;
+  --leading-display: 40px;
+
+  /* Spacing scale (4px grid — mirrors Tailwind's numeric scale) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 28px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-18: 72px;
+  --space-20: 80px;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -54,6 +124,13 @@
     --neutral: #e8eaed;
     --background: #121212;
     --disabled: #5f6368;
+    --text-muted: #9aa0a6;
+    --text-subtle: #6b7280;
+    --canvas: #0d0d0d;
+    --surface: #1e1e1e;
+    --surface-alt: #2a2a2a;
+    --border: #383838;
+    --border-light: #2d2d2d;
   }
 }
 
@@ -78,28 +155,93 @@ page {
   font-family: var(--font-jakarta);
 }
 
+/* ── Text color utilities ───────────────────────────── */
 .text-primary {
   color: var(--primary);
 }
 .text-secondary {
   color: var(--secondary);
 }
+.text-success {
+  color: var(--success);
+}
+.text-error {
+  color: var(--error);
+}
+.text-neutral {
+  color: var(--neutral);
+}
+.text-muted {
+  color: var(--text-muted);
+}
+.text-subtle {
+  color: var(--text-subtle);
+}
+.text-disabled {
+  color: var(--disabled);
+}
 
+/* ── Background utilities ───────────────────────────── */
 .bg-primary {
   background-color: var(--primary);
 }
 .bg-secondary {
   background-color: var(--secondary);
 }
+.bg-accent {
+  background-color: var(--accent);
+}
+.bg-success {
+  background-color: var(--success);
+}
+.bg-error {
+  background-color: var(--error);
+}
+.bg-canvas {
+  background-color: var(--canvas);
+}
+.bg-surface {
+  background-color: var(--surface);
+}
+.bg-surface-alt {
+  background-color: var(--surface-alt);
+}
 
+/* ── Border utilities ───────────────────────────────── */
 .border-primary {
   border-color: var(--primary);
 }
-
 .border-secondary {
   border-color: var(--secondary);
 }
-
 .border-neutral {
   border-color: var(--neutral);
+}
+.border-default {
+  border-color: var(--border);
+}
+.border-light {
+  border-color: var(--border-light);
+}
+
+/* ── Gradient utilities ─────────────────────────────── */
+.bg-gradient-primary {
+  background: var(--gradient-primary);
+}
+.bg-gradient-streak {
+  background: var(--gradient-streak);
+}
+.bg-gradient-xp {
+  background: var(--gradient-xp);
+}
+
+/* ── Shadow utilities ───────────────────────────────── */
+.shadow-design-sm {
+  box-shadow: var(--shadow-sm);
+}
+.shadow-design-md {
+  box-shadow: var(--shadow-md);
+}
+.shadow-design-lg {
+  box-shadow: var(--shadow-lg);
 }

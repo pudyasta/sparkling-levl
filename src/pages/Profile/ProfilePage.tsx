@@ -43,7 +43,7 @@ const SlideScreen = ({ active, children }: { active: boolean; children: React.Re
   return (
     <view
       style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
-      className={`bg-slate-50 transition-all duration-300 ease-in-out ${
+      className={`bg-canvas transition-all duration-300 ease-in-out ${
         visible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-full'
       }`}
     >
@@ -54,9 +54,9 @@ const SlideScreen = ({ active, children }: { active: boolean; children: React.Re
 
 // ─── Shared section wrapper ───────────────────────────────────────────────────
 const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
-  <view className="mb-4 rounded-2xl bg-white overflow-hidden">
-    <view className="border-b border-slate-100 px-5 py-4">
-      <Text size={TextType.h3} fontWeight="bold" className="text-slate-800">
+  <view className="mb-4 rounded-2xl bg-surface overflow-hidden">
+    <view className="border-b border-light px-5 py-4">
+      <Text size={TextType.h3} fontWeight="bold" className="text-neutral">
         {title}
       </Text>
     </view>
@@ -78,21 +78,21 @@ const ToggleRow = ({
 }) => (
   <view className="flex-row items-center flex justify-between">
     <view className="mr-4 flex-1 flex-col flex">
-      <Text size={TextType.b2} fontWeight="bold" className="text-slate-700">
+      <Text size={TextType.b2} fontWeight="bold" className="text-neutral">
         {label}
       </Text>
       {description && (
-        <Text size={TextType.b3} className="mt-0.5 text-slate-400">
+        <Text size={TextType.b3} className="mt-0.5 text-subtle">
           {description}
         </Text>
       )}
     </view>
     <view
       bindtap={onToggle}
-      className={`h-6 w-12 rounded-full justify-center ${value ? 'bg-blue-500' : 'bg-slate-200'}`}
+      className={`h-6 w-12 rounded-full justify-center ${value ? 'bg-primary' : 'bg-surface-alt'}`}
       style={{ alignItems: value ? 'flex-end' : 'flex-start', padding: '2px' }}
     >
-      <view className="h-5 w-5 rounded-full bg-white shadow-sm" />
+      <view className="h-5 w-5 rounded-full bg-surface shadow-sm" />
     </view>
   </view>
 );
@@ -113,37 +113,37 @@ const MenuItem = ({
 }) => (
   <view
     bindtap={onPress}
-    className={`flex-row items-center gap-4 bg-white px-5 py-4 flex ${
-      !isLast ? 'border-b border-slate-100' : ''
+    className={`flex-row items-center gap-4 bg-surface px-5 py-4 flex ${
+      !isLast ? 'border-b border-light' : ''
     }`}
   >
-    <view className="h-10 w-10 items-center rounded-full bg-slate-100 justify-center">
+    <view className="h-10 w-10 items-center rounded-full bg-surface-alt justify-center">
       <text className="text-lg">{emoji}</text>
     </view>
     <view className="flex-1 flex-col flex">
-      <Text size={TextType.b1} fontWeight="bold" className="text-slate-800">
+      <Text size={TextType.b1} fontWeight="bold" className="text-neutral">
         {label}
       </Text>
-      <Text size={TextType.b3} className="text-slate-400">
+      <Text size={TextType.b3} className="text-subtle">
         {description}
       </Text>
     </view>
-    <text className="text-lg text-slate-300">›</text>
+    <text className="text-lg text-subtle">›</text>
   </view>
 );
 
 // ─── Back header ─────────────────────────────────────────────────────────────
 const BackHeader = ({ title, onBack }: { title: string; onBack: () => void }) => (
-  <view className="flex-row items-center gap-3 border-b border-slate-100 bg-white px-4 py-4 flex">
+  <view className="flex-row items-center gap-3 border-b border-light bg-surface px-4 py-4 flex">
     <view
       bindtap={onBack}
-      className="h-9 w-9 items-center rounded-full bg-slate-100 justify-center"
+      className="h-9 w-9 items-center rounded-full bg-surface-alt justify-center"
     >
       <Text size={TextType.h2} fontWeight="bold">
         ‹
       </Text>
     </view>
-    <Text size={TextType.h3} fontWeight="bold" className="text-slate-800">
+    <Text size={TextType.h3} fontWeight="bold" className="text-neutral">
       {title}
     </Text>
   </view>
@@ -266,9 +266,9 @@ const ProfilePage = () => {
 
   if (isLoading || !profile) {
     return (
-      <view className="h-screen w-full flex-col bg-slate-50 flex">
+      <view className="h-screen w-full flex-col bg-canvas flex">
         {/* Hero skeleton */}
-        <view className="bg-blue-600 px-5 pb-6 pt-12">
+        <view className="bg-primary px-5 pb-6 pt-12">
           <view className="flex-row items-center gap-4 flex">
             {/* Avatar circle */}
             <Shimmer isRound width={80} height={80} />
@@ -297,11 +297,11 @@ const ProfilePage = () => {
         <view className="flex-1 p-4">
           {/* Section label */}
           <Shimmer height={10} width={120} className="mx-1 mb-3" />
-          <view className="rounded-2xl bg-white overflow-hidden">
+          <view className="rounded-2xl bg-surface overflow-hidden">
             {[1, 2, 3, 4].map((i, idx) => (
               <view
                 key={i}
-                className={`flex-row items-center gap-4 px-5 py-4 flex ${idx < 3 ? 'border-b border-slate-100' : ''}`}
+                className={`flex-row items-center gap-4 px-5 py-4 flex ${idx < 3 ? 'border-b border-light' : ''}`}
               >
                 {/* Icon circle */}
                 <Shimmer isRound width={40} height={40} />
@@ -322,19 +322,19 @@ const ProfilePage = () => {
 
   return (
     <view
-      className="h-screen w-full bg-slate-50"
+      className="h-screen w-full bg-canvas"
       style={{ position: 'relative', overflow: 'hidden' }}
     >
       {/* ════ MENU SCREEN — always mounted as the base layer ════ */}
       <view
-        className="flex-col bg-slate-50"
+        className="flex-col bg-canvas"
         style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, flex: 1 }}
       >
         {/* Hero header */}
-        <view className="bg-blue-600 px-5 pb-6 pt-12">
+        <view className="bg-primary px-5 pb-6 pt-12">
           <view className="flex-row items-center gap-4 flex">
             <view className="relative">
-              <view className="h-20 w-20 items-center rounded-full bg-blue-400 justify-center overflow-hidden">
+              <view className="h-20 w-20 items-center rounded-full bg-primary justify-center overflow-hidden">
                 {profile.avatar_url ? (
                   <image src={profile.avatar_url} className="h-full w-full" />
                 ) : (
@@ -345,7 +345,7 @@ const ProfilePage = () => {
               </view>
               <view
                 bindtap={handlePickAvatar}
-                className="h-7 w-7 items-center rounded-full bg-white absolute -bottom-1 -right-1 justify-center shadow-md"
+                className="h-7 w-7 items-center rounded-full bg-surface absolute -bottom-1 -right-1 justify-center shadow-md"
               >
                 <text className="text-xs">📷</text>
               </view>
@@ -358,8 +358,8 @@ const ProfilePage = () => {
               <Text size={TextType.b2} className="text-blue-200">
                 @{profile.username}
               </Text>
-              <view className="mt-1 self-start rounded-full bg-blue-500 px-2 py-0.5">
-                <text className="uppercase text-[10px] font-bold text-blue-100">
+              <view className="mt-1 self-start rounded-full bg-primary px-2 py-0.5">
+                <text className="uppercase text-caption font-bold text-blue-100">
                   {profile.role}
                 </text>
               </view>
@@ -395,7 +395,7 @@ const ProfilePage = () => {
           <Text
             size={TextType.b3}
             fontWeight="bold"
-            className="uppercase mb-2 px-1 tracking-wider text-slate-400"
+            className="uppercase mb-2 px-1 tracking-wider text-subtle"
           >
             Account Settings
           </Text>
@@ -432,7 +432,7 @@ const ProfilePage = () => {
 
       {/* ════ PROFILE SCREEN ════ */}
       <SlideScreen active={activeScreen === 'profile'}>
-        <view className="flex-1 flex-col bg-slate-50 flex" style={{ flex: 1 }}>
+        <view className="flex-1 flex-col bg-canvas flex" style={{ flex: 1 }}>
           <BackHeader title="Edit Profil Akun" onBack={() => setActiveScreen('menu')} />
           <scroll-view className="flex-1 p-4" scroll-y>
             <Section title="Informasi Akun">
@@ -450,7 +450,7 @@ const ProfilePage = () => {
               )}
 
               <Button
-                className="h-12 w-full rounded-2xl bg-blue-600"
+                className="h-12 w-full rounded-2xl bg-primary"
                 disabled={isSavingProfile}
                 onPress={() => updateProfile({ name, phone, bio, location })}
                 isLoading={isSavingProfile}
@@ -473,7 +473,7 @@ const ProfilePage = () => {
 
       {/* ════ SECURITY SCREEN ════ */}
       <SlideScreen active={activeScreen === 'security'}>
-        <view className="flex-1 flex-col bg-slate-50 flex" style={{ flex: 1 }}>
+        <view className="flex-1 flex-col bg-canvas flex" style={{ flex: 1 }}>
           <BackHeader title="Keamanan Akun" onBack={() => setActiveScreen('menu')} />
           <scroll-view className="flex-1 p-4" scroll-y>
             <Section title="Ubah Password">
@@ -495,7 +495,7 @@ const ProfilePage = () => {
               )}
 
               <Button
-                className="h-12 w-full rounded-2xl bg-blue-600"
+                className="h-12 w-full rounded-2xl bg-primary"
                 disabled={isSavingPw || !currentPw || newPw !== confirmPw}
                 onPress={() => {
                   setPwError(null);
@@ -514,12 +514,12 @@ const ProfilePage = () => {
             <Section title="Ubah email Anda">
               {!emailSent ? (
                 <>
-                  <Text size={TextType.b3} className="text-slate-400">
+                  <Text size={TextType.b3} className="text-subtle">
                     Email saat ini: {profile.email ?? '—'}
                   </Text>
                   <Input title="Email baru" initialValue={newEmail} variant="email" />
                   <Button
-                    className="h-12 w-full rounded-2xl bg-blue-600"
+                    className="h-12 w-full rounded-2xl bg-primary"
                     disabled={isSendingEmail || !newEmail}
                     onPress={() => changeEmail({ new_email: newEmail })}
                     isLoading={isSendingEmail}
@@ -529,14 +529,14 @@ const ProfilePage = () => {
                 </>
               ) : (
                 <>
-                  <view className="rounded-xl bg-blue-50 p-3">
-                    <text className="text-xs text-blue-600">
+                  <view className="rounded-xl bg-accent p-3">
+                    <text className="text-xs text-primary">
                       Email verifikasi telah dikirim ke email {newEmail}.
                     </text>
                   </view>
                   <Input title="Verification token" initialValue={emailToken} />
                   <Button
-                    className="h-12 w-full rounded-2xl bg-blue-600"
+                    className="h-12 w-full rounded-2xl bg-primary"
                     disabled={isVerifyingEmail || !emailToken || !emailUuid}
                     onPress={() => verifyEmail({ uuid: emailUuid!, token: emailToken })}
                     isLoading={isVerifyingEmail}
@@ -544,7 +544,7 @@ const ProfilePage = () => {
                     Verifikasi email
                   </Button>
                   <view bindtap={() => setEmailSent(false)} className="items-center">
-                    <text className="text-xs text-slate-400">← Gunakan email lainnya</text>
+                    <text className="text-xs text-subtle">← Gunakan email lainnya</text>
                   </view>
                 </>
               )}
@@ -556,7 +556,7 @@ const ProfilePage = () => {
 
       {/* ════ PRIVACY SCREEN ════ */}
       <SlideScreen active={activeScreen === 'privacy'}>
-        <view className="flex-1 flex-col bg-slate-50 flex" style={{ flex: 1 }}>
+        <view className="flex-1 flex-col bg-canvas flex" style={{ flex: 1 }}>
           <BackHeader title="Privacy" onBack={() => setActiveScreen('menu')} />
           <scroll-view className="flex-1 p-4" scroll-y>
             <Section title="Visibilitas profil Anda">
@@ -566,8 +566,8 @@ const ProfilePage = () => {
                   bindtap={() => setPrivacyForm((p) => ({ ...p, profile_visibility: v }))}
                   className={`flex-row items-center gap-3 rounded-xl border-2 p-4 flex ${
                     privacyForm.profile_visibility === v
-                      ? 'border-blue-500 bg-blue-50'
-                      : 'border-slate-100 bg-white'
+                      ? 'border-primary bg-accent'
+                      : 'border-light bg-surface'
                   }`}
                 >
                   <text>{v === 'public' ? '🌍' : v === 'private' ? '🔒' : '👥'}</text>
@@ -575,7 +575,7 @@ const ProfilePage = () => {
                     size={TextType.b2}
                     fontWeight={privacyForm.profile_visibility === v ? 'bold' : 'normal'}
                     className={
-                      privacyForm.profile_visibility === v ? 'text-blue-600' : 'text-slate-600'
+                      privacyForm.profile_visibility === v ? 'text-primary' : 'text-muted'
                     }
                   >
                     {v === 'public' ? 'Public' : v === 'private' ? 'Private' : 'Friends only'}
@@ -636,7 +636,7 @@ const ProfilePage = () => {
             )}
 
             <Button
-              className="h-14 w-full rounded-2xl bg-blue-600"
+              className="h-14 w-full rounded-2xl bg-primary"
               disabled={isSavingPrivacy}
               onPress={() => updatePrivacy(privacyForm)}
               isLoading={isSavingPrivacy}
@@ -650,7 +650,7 @@ const ProfilePage = () => {
 
       {/* ════ DANGER ZONE SCREEN ════ */}
       <SlideScreen active={activeScreen === 'danger'}>
-        <view className="flex-1 flex-col bg-slate-50 flex" style={{ flex: 1 }}>
+        <view className="flex-1 flex-col bg-canvas flex" style={{ flex: 1 }}>
           <BackHeader title="Account" onBack={() => setActiveScreen('menu')} />
           <scroll-view className="flex-1 p-4" scroll-y>
             <Section title="Session">
@@ -697,7 +697,7 @@ const ProfilePage = () => {
                     Konfirmasi hapus akun akun
                   </Button>
                   <view bindtap={() => setDeleteStep('idle')} className="items-center py-2">
-                    <text className="text-xs text-slate-400">Batalkan</text>
+                    <text className="text-xs text-subtle">Batalkan</text>
                   </view>
                 </>
               )}

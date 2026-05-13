@@ -105,13 +105,13 @@ export const PullToRefresh = ({
           transition: isTransitioning ? `transform ${TRANSITION_DURATION}ms ease-out` : 'none',
         }}
       >
-        <view className="h-10 w-10 items-center rounded-full bg-white justify-center shadow-md">
+        <view className="h-10 w-10 items-center rounded-full bg-surface justify-center shadow-md">
           {pullState === 'refreshing' ? (
             <view className="h-6 w-6 items-center justify-center">
               {spinnerDots.map((_, i) => (
                 <view
                   key={i}
-                  className="h-1 w-1 rounded-full bg-blue-500 absolute"
+                  className="h-1 w-1 rounded-full bg-primary absolute"
                   style={{
                     opacity: (i + 1) / spinnerDots.length,
                     transform: `rotate(${i * 45}deg) translateY(-10px)`,

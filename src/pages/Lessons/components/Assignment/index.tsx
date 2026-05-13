@@ -108,12 +108,12 @@ const AssignmentContent = ({
 
   return (
     data && (
-      <view className="mt-5 flex-col px-5 pb-[40px] pt-[60px] flex">
+      <view className="mt-5 flex-col px-5 pb-10 pt-[60px] flex">
         {/* 1. Header & Title */}
         <view className="mb-6">
           <view className="mb-2 flex-row items-center flex">
             <view className="mr-2 rounded-md bg-orange-100 px-2 py-1">
-              <text className="uppercase text-[10px] font-bold text-orange-600">Tugas</text>
+              <text className="uppercase text-caption font-bold text-orange-600">Tugas</text>
             </view>
             <Text size={TextType.b2} color={Colors.Primary}>
               Materi Ke-{data.order}
@@ -127,18 +127,18 @@ const AssignmentContent = ({
         {/* 2. Status Score Card (Only shows if submitted/graded) */}
         {
           <view
-            className={`mb-6 flex-row items-center rounded-2xl p-4 flex justify-between ${isGraded ? 'border border-green-100 bg-green-50' : 'border border-blue-100 bg-blue-50'}`}
+            className={`mb-6 flex-row items-center rounded-2xl p-4 flex justify-between ${isGraded ? 'border border-green-100 bg-green-50' : 'border border-light bg-accent'}`}
           >
             <view className="flex-col flex">
               <Text
                 size={TextType.b2}
                 fontWeight={'bold'}
-                className={isGraded ? 'text-green-700' : 'text-blue-700'}
+                className={isGraded ? 'text-green-700' : 'text-primary'}
               >
                 Status: {data.submission_status_label}
               </Text>
               {data.submitted_at && (
-                <Text size={TextType.b2} className={isGraded ? 'text-green-600' : 'text-blue-600'}>
+                <Text size={TextType.b2} className={isGraded ? 'text-green-600' : 'text-primary'}>
                   Dikumpulkan pada {new Date(data.submitted_at).toLocaleDateString()}
                 </Text>
               )}
@@ -147,11 +147,11 @@ const AssignmentContent = ({
               <Text
                 size={TextType.b2}
                 fontWeight={'bold'}
-                className={isGraded ? 'text-green-700' : 'text-blue-700'}
+                className={isGraded ? 'text-green-700' : 'text-primary'}
               >
                 {data.score || '-'}
               </Text>
-              <Text size={TextType.b2} className={isGraded ? 'text-green-600' : 'text-blue-600'}>
+              <Text size={TextType.b2} className={isGraded ? 'text-green-600' : 'text-primary'}>
                 Skor Akhir
               </Text>
             </view>
@@ -170,7 +170,7 @@ const AssignmentContent = ({
 
         {/* 4. Submission Requirements Grid */}
         <view className="mb-6 flex-row gap-3 flex">
-          <view className="flex-1 flex-col rounded-xl border border-[#e8eaed] bg-[#f8f9fa] p-3 flex">
+          <view className="flex-1 flex-col rounded-xl border border-light bg-canvas p-3 flex">
             <Text size={TextType.b2} color={Colors.Primary}>
               Format File
             </Text>
@@ -178,7 +178,7 @@ const AssignmentContent = ({
               {data.accepted_formats.map((f) => f.split('.')[1].toUpperCase()).join(', ')}
             </Text>
           </view>
-          <view className="flex-1 flex-col rounded-xl border border-[#e8eaed] bg-[#f8f9fa] p-3 flex">
+          <view className="flex-1 flex-col rounded-xl border border-light bg-canvas p-3 flex">
             <Text size={TextType.b2} color={Colors.Primary}>
               Ukuran Maksimal
             </Text>
@@ -216,7 +216,7 @@ const AssignmentContent = ({
                   Unggah Jawaban:
                 </Text>
                 <view
-                  className={`items-center rounded-2xl border-2 border-dashed border-[#dadce0] bg-[#f8f9fa] p-6 justify-center ${fileError ? 'border-red-500' : ''}`}
+                  className={`items-center rounded-2xl border-2 border-dashed border-default bg-canvas p-6 justify-center ${fileError ? 'border-red-500' : ''}`}
                   bindtap={choose}
                 >
                   {selectedFiles.length > 0 ? (
@@ -224,10 +224,10 @@ const AssignmentContent = ({
                       {selectedFiles.map((file: MediaFile) => (
                         <view
                           key={file.tempFilePath}
-                          className="mt-2 flex-row items-center rounded-xl border border-[#e8eaed] bg-white p-3 flex shadow-sm"
+                          className="mt-2 flex-row items-center rounded-xl border border-light bg-surface p-3 flex shadow-sm"
                         >
-                          <view className="mr-3 h-8 min-w-8 items-center rounded-lg bg-blue-50 justify-center">
-                            <text className="text-xs font-bold text-blue-600">
+                          <view className="mr-3 h-8 min-w-8 items-center rounded-lg bg-accent justify-center">
+                            <text className="text-xs font-bold text-primary">
                               {file.mimeType.split('.')[file.mimeType.split('.').length - 1]}
                             </text>
                           </view>
@@ -237,10 +237,10 @@ const AssignmentContent = ({
                     </view>
                   ) : (
                     <view className="items-center">
-                      <view className="mb-3 h-12 w-12 items-center rounded-full bg-blue-100 justify-center">
-                        <text className="text-xl font-bold text-blue-600">+</text>
+                      <view className="mb-3 h-12 w-12 items-center rounded-full bg-accent justify-center">
+                        <text className="text-xl font-bold text-primary">+</text>
                       </view>
-                      <Text size={TextType.b1} fontWeight={'bold'} className="text-blue-600">
+                      <Text size={TextType.b1} fontWeight={'bold'} className="text-primary">
                         Pilih File Tugas
                       </Text>
                     </view>

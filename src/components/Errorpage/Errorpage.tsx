@@ -86,15 +86,15 @@ export const ErrorPage = ({ error, onRetry }: ErrorPageProps) => {
         }`}
       >
         {/* Emoji illustration */}
-        <view className="mb-6 h-24 w-24 items-center rounded-full bg-slate-100 justify-center">
+        <view className="mb-6 h-24 w-24 items-center rounded-full bg-surface-alt justify-center">
           <text className="text-5xl">{emoji}</text>
         </view>
 
         {/* Title */}
-        <text className="mb-3 text-2xl font-bold text-slate-800 text-center">{title}</text>
+        <text className="mb-3 text-2xl font-bold text-neutral text-center">{title}</text>
 
         {/* Description */}
-        <text className="mb-8 text-sm leading-6 text-slate-400 text-center">{description}</text>
+        <text className="mb-8 text-sm leading-6 text-subtle text-center">{description}</text>
 
         {/* Error detail (dev only) */}
         {__DEV__ && error?.message && (
@@ -105,7 +105,7 @@ export const ErrorPage = ({ error, onRetry }: ErrorPageProps) => {
 
         {/* Primary action */}
         <Button
-          className="mb-3 h-14 w-full items-center rounded-2xl bg-blue-500 justify-center"
+          className="mb-3 h-14 w-full items-center rounded-2xl bg-primary justify-center"
           onPress={handlePrimary}
         >
           {isUnauthorized ? 'Log In Again' : 'Coba Lagi'}

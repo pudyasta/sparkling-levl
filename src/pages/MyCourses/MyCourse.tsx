@@ -24,15 +24,7 @@ const MyCourse: React.FC = () => {
     </view>
   ) : (
     <>
-      <view
-        style={{
-          background: 'linear-gradient(180deg, #2d7cf1 0%, #1a5bb9 100%)',
-          padding: '1.5rem',
-          display: 'flex',
-          gap: '1rem',
-          alignItems: 'center',
-        }}
-      >
+      <view className="bg-gradient-primary items-center gap-4 px-6 py-7 flex">
         {/* <IconWithBackground image={thropy} /> */}
         <view>
           <Text size={TextType.h1} fontWeight="bold" color="white" fontFamily={FontFamily.jakarta}>
@@ -44,7 +36,7 @@ const MyCourse: React.FC = () => {
         <view className="flex-col gap-1 px-4 flex">
           {myCourseData.data.map((item) => (
             <Card
-              className="flex-row items-center gap-2 rounded-2xl bg-white p-4 flex shadow-sm"
+              className="flex-row items-center gap-2 rounded-2xl bg-surface p-4 flex shadow-sm"
               bindTap={() =>
                 navigateTo('courseDetail', {
                   courseId: item.id,
@@ -56,14 +48,14 @@ const MyCourse: React.FC = () => {
                 <CustomImage src={item.thumbnail} className="h-full w-full" />
               </view>
               <view className="flex-1 flex-col gap-1 flex">
-                <Text size={TextType.b1} fontWeight="bold" className="text-slate-800">
+                <Text size={TextType.b1} fontWeight="bold" className="text-neutral">
                   {item.title || ''}
                 </Text>
                 <Text size={TextType.b3} color={Colors.Primary}>
                   {item.progress.completed_items} of {item.progress.total_items} items
                 </Text>
                 <view className="mt-1 flex-row items-center gap-2 flex">
-                  <view className="h-2 flex-1 rounded-full bg-slate-100 overflow-hidden">
+                  <view className="h-2 flex-1 rounded-full bg-surface-alt overflow-hidden">
                     <view
                       className="h-full rounded-full"
                       style={{
@@ -72,7 +64,7 @@ const MyCourse: React.FC = () => {
                       }}
                     />
                   </view>
-                  <Text size={TextType.b3} className="text-slate-400">
+                  <Text size={TextType.b3} className="text-subtle">
                     {item.progress.percentage}%
                   </Text>
                 </view>

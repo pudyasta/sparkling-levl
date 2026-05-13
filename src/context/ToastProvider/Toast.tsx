@@ -42,7 +42,7 @@ export function Toast({
       }`}
     >
       <view
-        className={`elevation-6 flex-row items-center gap-3 rounded-2xl border ${cfg.border} bg-white px-4 py-3 flex shadow-lg`}
+        className={`elevation-6 flex-row items-center gap-3 rounded-2xl border ${cfg.border} bg-surface px-4 py-3 flex shadow-lg`}
       >
         <view className={`h-10 w-10 shrink-0 items-center rounded-xl ${cfg.bg} justify-center`}>
           <text className={`text-xs font-bold ${cfg.text}`}>{cfg.label}</text>

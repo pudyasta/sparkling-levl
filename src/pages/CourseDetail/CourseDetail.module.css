@@ -1,11 +1,11 @@
 .container {
-  background-color: #f8fafc;
+  background-color: var(--canvas);
   height: 100%;
   width: 100%;
 }
 
 .hero {
-  padding: 50px 24px 70px; /* Extra bottom padding for the overlap */
+  padding: var(--space-12) var(--space-6) var(--space-18);
   background-size: cover;
   background-position: center;
 }
@@ -14,7 +14,7 @@
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  margin-bottom: 24px;
+  margin-bottom: var(--space-6);
 }
 
 .backButton {
@@ -28,31 +28,32 @@
   height: 40px;
   background-color: rgba(255, 248, 248, 0.2);
   color: #ffffff;
-  border-radius: 20px;
+  border-radius: var(--radius-full);
   justify-content: center;
   align-items: center;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-lg);
 }
 
 .badge {
-  padding: 4px 12px;
-  border-radius: 8px;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-sm);
   align-self: flex-start;
-  margin-bottom: 12px;
+  margin-bottom: var(--space-3);
+  background-color: var(--primary);
 }
 
 .badgeText {
   color: #ffffff;
-  font-size: 12px;
+  font-size: var(--text-xs);
   font-weight: 700;
 }
 
 .courseTitle {
   color: #ffffff;
-  font-size: 32px;
+  font-size: var(--text-display);
   font-weight: 800;
-  line-height: 40px;
-  margin-bottom: 16px;
+  line-height: var(--leading-display);
+  margin-bottom: var(--space-4);
 }
 
 .metaRow {
@@ -63,82 +64,83 @@
 
 .metaItem {
   color: rgba(255, 255, 255, 0.9);
-  font-size: 14px;
-  margin-right: 20px;
+  font-size: var(--text-sm);
+  margin-right: var(--space-5);
 }
 
 /* 2. Overlapping Progress Card */
 .contentBody {
   margin-top: -60px;
-  padding: 0 20px 40px;
+  padding: 0 var(--space-5) var(--space-10);
 }
 
 .progressCard {
-  padding: 24px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-lg);
 }
 
 .progressTextRow {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 12px;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
 }
 
 .cardLabel {
-  font-size: 16px;
+  font-size: var(--text-md);
   font-weight: 700;
-  color: #1e293b;
+  color: var(--neutral);
 }
 
 .cardValue {
-  font-size: 18px;
+  font-size: var(--text-lg);
   font-weight: 800;
-  color: #3b82f6;
+  color: var(--primary);
 }
 
 .progressBarBg {
   height: 10px;
-  background-color: #f1f5f9;
-  border-radius: 5px;
+  background-color: var(--surface-alt);
+  border-radius: var(--radius-full);
   overflow: hidden;
-  margin-bottom: 20px;
+  margin-bottom: var(--space-5);
 }
 
 .progressBarFill {
   height: 10px;
-  border-radius: 5px;
+  background-color: var(--primary);
+  border-radius: var(--radius-full);
 }
 
 .actionBtn {
-  background-color: #3b82f6;
+  background-color: var(--primary);
   height: 54px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   justify-content: center;
   align-items: center;
 }
 
 .actionBtnText {
   color: #ffffff;
-  font-size: 16px;
+  font-size: var(--text-md);
   font-weight: 700;
 }
 
 /* 3. Description Section */
 .sectionTitle {
-  font-size: 20px;
+  font-size: var(--text-xl);
   font-weight: 800;
-  color: #1e293b;
-  margin-bottom: 12px;
-  margin-top: 10px;
+  color: var(--neutral);
+  margin-bottom: var(--space-3);
+  margin-top: var(--space-3);
 }
 
 .descriptionText {
-  font-size: 15px;
-  color: #64748b;
-  line-height: 24px;
-  margin-bottom: 30px;
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  line-height: var(--leading-lg);
+  margin-bottom: var(--space-8);
 }
 
 /* 4. Lesson List (Curriculum) */
@@ -146,10 +148,10 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  background-color: #ffffff;
-  border-radius: 16px;
-  border: 1px solid #f1f5f9;
-  padding: 0.75rem 1.5rem;
+  background-color: var(--surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+  padding: var(--space-3) var(--space-6);
   overflow: hidden;
 }
 
@@ -157,24 +159,24 @@
 .checkCircleActive {
   width: 40px;
   height: 40px;
-  border-radius: 20px;
+  border-radius: var(--radius-full);
   justify-content: center;
   align-items: center;
-  margin-right: 16px;
+  margin-right: var(--space-4);
 }
 
 .checkCircle {
-  background-color: #f1f5f9;
+  background-color: var(--surface-alt);
 }
 
 .checkCircleActive {
-  background-color: #22c55e; /* Success Green */
+  background-color: var(--success);
 }
 
 .lessonNumber {
-  font-size: 14px;
+  font-size: var(--text-sm);
   font-weight: 700;
-  color: #64748b;
+  color: var(--text-muted);
 }
 
 .checkCircleActive .lessonNumber {
@@ -186,31 +188,31 @@
 }
 
 .lessonTitle {
-  font-size: 16px;
+  font-size: var(--text-md);
   font-weight: 700;
-  color: #1e293b;
+  color: var(--neutral);
 }
 
 .lessonTitleLocked {
-  font-size: 16px;
+  font-size: var(--text-md);
   font-weight: 600;
-  color: #94a3b8;
+  color: var(--text-subtle);
 }
 
 .lessonMeta {
-  font-size: 13px;
-  color: #94a3b8;
+  font-size: var(--text-xs);
+  color: var(--text-subtle);
   margin-top: 2px;
 }
 
 .lockIcon {
-  font-size: 16px;
-  margin-left: 10px;
+  font-size: var(--text-md);
+  margin-left: var(--space-3);
 }
 
 .unitContainer {
   overflow: hidden;
-  margin-bottom: 4px;
+  margin-bottom: var(--space-1);
 }
 
 .unitHeader {
@@ -218,8 +220,8 @@
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  padding: 1rem 1.5rem;
-  background-color: #ffffff;
+  padding: var(--space-4) var(--space-6);
+  background-color: var(--surface);
   z-index: 10;
 }
 
@@ -228,35 +230,35 @@
 }
 
 .unitTitle {
-  font-size: 1.1rem;
+  font-size: var(--text-lg);
   font-weight: 700;
-  color: #111827;
+  color: var(--neutral);
 }
 
 .unitSubtitle {
-  font-size: 0.8rem;
-  color: #6b7280;
+  font-size: var(--text-xs);
+  color: var(--text-muted);
   margin-top: 2px;
 }
 
 .arrowIcon {
-  font-size: 1.2rem;
-  color: #9ca3af;
+  font-size: var(--text-xl);
+  color: var(--text-subtle);
   transition: transform 0.3s ease-in-out;
 }
 
 .arrowOpen {
   transform: rotate(180deg);
 }
+
 .lessonList {
-  background-color: #f9fafb;
+  background-color: var(--canvas);
 }
 
 .lessonListWrapper {
   transition:
     max-height 0.5s ease-in-out,
     opacity 0.2s linear;
-
   max-height: 0px;
   opacity: 0;
   overflow: hidden;
@@ -267,11 +269,6 @@
   opacity: 1;
 }
 
-.lessonList {
-  transition: transform 0.5s ease-in-out;
-  transform: translateY(-10px);
-}
-
 .lessonListVisible .lessonList {
   transform: translateY(0px);
 }
@@ -280,9 +277,9 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  background-color: #ffffff;
-  border: 1px solid #f1f5f9;
-  padding: 0.75rem 1.5rem;
+  background-color: var(--surface);
+  border: 1px solid var(--border-light);
+  padding: var(--space-3) var(--space-6);
 }
 
 .locked {

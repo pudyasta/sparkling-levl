@@ -219,7 +219,7 @@ const LessonPage = () => {
 
         {/* Progress Trigger */}
         <view
-          className="z-[110] w-full border-b border-[#f1f3f4] bg-white p-4 px-5 absolute top-0"
+          className="z-[110] w-full border-b border-light bg-surface p-4 px-5 absolute top-0"
           bindtap={() => setIsSheetOpen(!isSheetOpen)}
         >
           <view className="mb-2 flex-row flex justify-between">
@@ -228,7 +228,7 @@ const LessonPage = () => {
             </Text>
             <Text>{isSheetOpen ? '▼' : '▲'}</Text>
           </view>
-          <view className="h-1.5 w-full rounded-full bg-[#f1f3f4]">
+          <view className="h-1.5 w-full rounded-full bg-surface-alt">
             <view
               className={`h-full rounded-full transition duration-300 ease-in-out`}
               style={{ backgroundColor: Colors.Primary, width: `${progressPercentage}%` }}
@@ -238,7 +238,7 @@ const LessonPage = () => {
 
         {/* Bottom Sheet List */}
         <view
-          className={`z-[105] w-full rounded-b-3xl bg-white p-4 absolute top-0 overflow-hidden shadow-2xl transition-transform duration-[350ms] ease-[cubic-bezier(0.25,0.1,0.25,1)] ${isSheetOpen ? 'translate-y-[60px]' : '-translate-y-full'}`}
+          className={`z-[105] w-full rounded-b-3xl bg-surface p-4 absolute top-0 overflow-hidden shadow-2xl transition-transform duration-[350ms] ease-[cubic-bezier(0.25,0.1,0.25,1)] ${isSheetOpen ? 'translate-y-[60px]' : '-translate-y-full'}`}
           style={{ height: handleBottomSheetHeight(routerParams?.all_lessons?.length || 0) }}
         >
           <scroll-view className="h-full w-full px-1" scroll-y>
@@ -251,21 +251,21 @@ const LessonPage = () => {
                     if (item.is_locked) return;
                     handlePageChange(i);
                   }}
-                  className={`mb-2 flex-row items-center rounded-xl border p-4 flex transition-all duration-200 ${isActive ? 'border-[#d1e3ff] bg-[#f0f7ff]' : 'border-transparent'} ${item.is_locked ? 'pointer-events-none opacity-50' : ''}`}
+                  className={`mb-2 flex-row items-center rounded-xl border p-4 flex transition-all duration-200 ${isActive ? 'border-light bg-accent' : 'border-transparent'} ${item.is_locked ? 'pointer-events-none opacity-50' : ''}`}
                 >
                   <view className="mr-4">
                     {item.is_completed ? (
-                      <view className="h-6 w-6 items-center rounded-full bg-[#34a853] flex justify-center">
+                      <view className="h-6 w-6 items-center rounded-full bg-success flex justify-center">
                         <text className="text-xs font-extrabold text-white">✓</text>
                       </view>
                     ) : (
                       <view
-                        className={`h-[22px] w-[22px] rounded-full border-2 bg-white ${isActive ? 'border-[#1a73e8]' : 'border-[#dadce0]'}`}
+                        className={`h-[22px] w-[22px] rounded-full border-2 bg-surface ${isActive ? 'border-primary' : 'border-default'}`}
                       />
                     )}
                   </view>
                   <text
-                    className={`text-base font-medium ${isActive ? 'font-bold text-[#1a73e8]' : 'text-[#3c4043]'}`}
+                    className={`text-base font-medium ${isActive ? 'font-bold text-primary' : 'text-neutral'}`}
                   >
                     {item.title}
                   </text>
@@ -300,7 +300,7 @@ const LessonPage = () => {
             <Text size={TextType.h2} fontWeight="600" className="text-center">
               Keluar dari halaman ini?
             </Text>
-            <Text className="text-[#5f6368] text-center">
+            <Text className="text-muted text-center">
               Kemajuan kamu akan hilang jika kamu keluar.
             </Text>
             <view className="flex-col gap-3 flex">
@@ -328,7 +328,7 @@ const LessonPage = () => {
             <Text size={TextType.h2} fontWeight="600" className="text-center">
               Kumpulkan tugas?
             </Text>
-            <Text className="text-[#5f6368] text-center">
+            <Text className="text-muted text-center">
               Setelah dikumpulkan, kamu tidak bisa mengubah jawaban lagi. Pastikan semua sudah benar
               ya.
             </Text>

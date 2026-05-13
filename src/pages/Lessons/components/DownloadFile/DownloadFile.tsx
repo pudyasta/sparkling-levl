@@ -37,7 +37,7 @@ export function DownloadToast({ visible, onLihat }: { visible: boolean; onLihat:
         mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'
       }`}
     >
-      <view className="elevation-6 flex-row items-center gap-3 rounded-2xl border border-gray-100 bg-white px-4 py-3 flex shadow-lg">
+      <view className="elevation-6 flex-row items-center gap-3 rounded-2xl border border-light bg-surface px-4 py-3 flex shadow-lg">
         {/* Icon badge */}
         <view className="h-10 w-10 shrink-0 items-center rounded-xl bg-indigo-50 justify-center">
           <text className="text-xs font-bold text-indigo-600">XLSX</text>
@@ -50,7 +50,7 @@ export function DownloadToast({ visible, onLihat }: { visible: boolean; onLihat:
         </view>
 
         {/* Divider */}
-        <view className="h-8 w-px bg-gray-100" />
+        <view className="h-8 w-px bg-surface-alt" />
 
         {/* Lihat */}
         <view bindtap={onLihat} className="items-center px-1 justify-center">
@@ -94,13 +94,13 @@ export function FileCard({ url, filename, filesize, onDownloadSuccess }: FileCar
   }[downloadState];
 
   return (
-    <view className="flex-row items-center rounded-xl border border-[#d2e3fc] bg-white p-4 flex justify-between">
+    <view className="flex-row items-center rounded-xl border border-light bg-surface p-4 flex justify-between">
       <view className="flex-1">
-        <text className="mb-1 text-sm font-bold text-[#1a73e8]">{displayName}</text>
-        <text className="text-xs text-[#5f6368]">{((filesize ?? 0) / 1024).toFixed(1)} KB</text>
+        <text className="mb-1 text-sm font-bold text-primary">{displayName}</text>
+        <text className="text-xs text-muted">{((filesize ?? 0) / 1024).toFixed(1)} KB</text>
       </view>
       <view
-        className="rounded-lg bg-[#1a73e8] px-4 py-2 active:opacity-70"
+        className="rounded-lg bg-primary px-4 py-2 active:opacity-70"
         bindtap={handleDownload}
       >
         <text className="text-xs font-bold text-white">{btnLabel}</text>

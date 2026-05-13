@@ -12,12 +12,12 @@ const AchievementBadge: React.FC<AchievementBadgeProps> = ({
   colorClass,
 }) => {
   return (
-    <view className="flex flex-col items-center space-y-2 p-2 w-full bg-white">
+    <view className="flex flex-col items-center space-y-2 p-2 w-full bg-surface">
       <view className={`p-4 rounded-full ${colorClass} shadow-md`}>{icon}</view>
-      <text className="text-sm font-semibold text-gray-700 text-center">
+      <text className="text-sm font-semibold text-neutral text-center">
         {title}
       </text>
-      <text className="text-xs text-gray-400 text-center hidden">
+      <text className="text-xs text-subtle text-center hidden">
         {description}
       </text>
     </view>

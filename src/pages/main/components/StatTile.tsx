@@ -10,13 +10,13 @@ const StatTile: React.FC<StatTileProps> = ({
   isPrimary = false,
 }) => {
   return (
-    <view className="flex-1 bg-white rounded-xl shadow-sm p-4 text-center border border-gray-100">
+    <view className="flex-1 bg-surface rounded-xl shadow-sm p-4 text-center border border-light">
       <text
-        className={`text-xl font-bold ${isPrimary ? 'text-yellow-600' : 'text-gray-800'}`}
+        className={`text-xl font-bold ${isPrimary ? 'text-yellow-600' : 'text-neutral'}`}
       >
         {value}
       </text>
-      <text className="text-xs text-gray-500 mt-1">{label}</text>
+      <text className="text-xs text-muted mt-1">{label}</text>
     </view>
   );
 };

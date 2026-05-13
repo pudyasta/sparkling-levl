@@ -120,12 +120,12 @@ const QuizContent = ({ data }: { data: QuizStudentResponse }) => {
 
   return (
     data && (
-      <view className="mt-5 h-[100vh] flex-col px-5 pb-[40px] pt-[60px] flex">
+      <view className="mt-5 h-[100vh] flex-col px-5 pb-10 pt-[60px] flex">
         {/* Header Section */}
         <view className="mb-6">
           <view className="mb-2 flex-row items-center flex">
-            <view className="mr-2 rounded-md bg-blue-100 px-2 py-1">
-              <text className="uppercase text-[10px] font-bold tracking-wider text-blue-600">
+            <view className="mr-2 rounded-md bg-accent px-2 py-1">
+              <text className="uppercase text-caption font-bold tracking-wider text-primary">
                 Quiz
               </text>
             </view>
@@ -150,7 +150,7 @@ const QuizContent = ({ data }: { data: QuizStudentResponse }) => {
 
         {/* Info Cards Grid */}
         <view className="mb-8 flex-row gap-4 flex">
-          <view className="flex-1 flex-col items-center rounded-2xl border border-[#e8eaed] bg-[#f8f9fa] p-4 flex">
+          <view className="flex-1 flex-col items-center rounded-2xl border border-light bg-canvas p-4 flex">
             <Text size={TextType.b2} color={Colors.Primary} className="text-center">
               Waktu
             </Text>
@@ -159,7 +159,7 @@ const QuizContent = ({ data }: { data: QuizStudentResponse }) => {
             </Text>
           </view>
           {
-            <view className="flex-1 flex-col items-center rounded-2xl border border-[#e8eaed] bg-[#f8f9fa] p-4 flex">
+            <view className="flex-1 flex-col items-center rounded-2xl border border-light bg-canvas p-4 flex">
               <Text size={TextType.b2} color={Colors.Primary}>
                 Status
               </Text>
@@ -168,7 +168,7 @@ const QuizContent = ({ data }: { data: QuizStudentResponse }) => {
               </Text>
             </view>
           }
-          <view className="flex-1 flex-col items-center rounded-2xl border border-[#e8eaed] bg-[#f8f9fa] p-4 flex">
+          <view className="flex-1 flex-col items-center rounded-2xl border border-light bg-canvas p-4 flex">
             <Text size={TextType.b2} color={Colors.Primary} className="text-center">
               Passing Grade
             </Text>
@@ -216,7 +216,7 @@ const QuizContent = ({ data }: { data: QuizStudentResponse }) => {
             <Text size={TextType.h2} fontWeight="600" className="text-center">
               Kuis sedang dikerjakan di perangkat lain.
             </Text>
-            <Text className="text-[#5f6368] text-center">
+            <Text className="text-muted text-center">
               Apakah Kamu ingin mengambil alih kuis ini? Dengan mengambil alih, sesi kuis di
               perangkat lain akan dihentikan dan Kamu bisa melanjutkan kuis di perangkat ini.
             </Text>

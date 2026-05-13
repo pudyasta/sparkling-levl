@@ -79,7 +79,7 @@ const VerifyEmailPage = () => {
   };
 
   return (
-    <view className="h-full items-center bg-white px-5 justify-center">
+    <view className="h-full items-center bg-surface px-5 justify-center">
       <view className="mb-5 h-44 w-44 items-center justify-center">
         <CustomImage src={docsMascot} className="h-full w-full" />
       </view>
@@ -129,7 +129,7 @@ const VerifyEmailPage = () => {
       )}
 
       {/* Instruction */}
-      <Text size={TextType.b3} className="mb-8 leading-5 text-slate-400 text-center">
+      <Text size={TextType.b3} className="mb-8 leading-5 text-subtle text-center">
         {phase === 'verifying'
           ? 'Tunggu sebentar yaa, kami baru memverifikasi email Kamu.'
           : phase === 'success'
@@ -141,7 +141,7 @@ const VerifyEmailPage = () => {
       {phase === 'verifying' && (
         <view className="mb-8 flex-row items-center gap-3 flex justify-center">
           {[0.3, 0.6, 1].map((opacity, i) => (
-            <view key={i} className="h-2.5 w-2.5 rounded-full bg-blue-500" style={{ opacity }} />
+            <view key={i} className="h-2.5 w-2.5 rounded-full bg-primary" style={{ opacity }} />
           ))}
         </view>
       )}

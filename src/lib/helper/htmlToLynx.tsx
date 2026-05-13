@@ -320,7 +320,7 @@ const renderNode = (node: LynxNode): ReactNode => {
 
   // hr → decorative divider
   if (tag === 'hr') {
-    return <view key={key} className="my-2 w-full border-t border-slate-200" />;
+    return <view key={key} className="my-2 w-full border-t border-default" />;
   }
 
   const lynxTag = toLynxTag(tag);

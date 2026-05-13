@@ -38,14 +38,6 @@ const Button = ({
     neutral: Colors.Neutral, // #202124
     disabled: Colors.Disabled, // #9AA0A6
   };
-  const borderColorStyles = {
-    primary: Colors.Neutral,
-    secondary: Colors.Neutral,
-    white: Colors.Neutral,
-    neutral: Colors.Accent,
-    disabled: Colors.Disabled,
-  };
-
   const handleTap = () => {
     if (disabled) return;
     setAnimate(true);
@@ -56,9 +48,9 @@ const Button = ({
   const getStyles = () => {
     if (disabled) {
       return {
-        backgroundColor: '#F5F5F5',
-        borderColor: theme.disabled,
-        color: theme.disabled,
+        backgroundColor: Colors.SurfaceAlt,
+        borderColor: Colors.Border,
+        color: Colors.Disabled,
       };
     }
 
@@ -68,7 +60,7 @@ const Button = ({
     if (variant === 'filled') {
       return {
         backgroundColor: baseColor,
-        borderColor: borderColorStyles[color],
+        borderColor: baseColor,
         color: color === 'primary' ? '#FFFFFF' : '#000000',
       };
     } else {

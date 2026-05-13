@@ -23,7 +23,7 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, bindTap }) => {
   return (
     <view
       bindtap={bindTap}
-      className="mb-6 rounded-2xl border border-slate-100 bg-white overflow-hidden shadow-sm"
+      className="mb-6 rounded-2xl border border-light bg-surface overflow-hidden shadow-sm"
     >
       {/* Thumbnail — full width hero */}
       {course.image && (
@@ -37,7 +37,7 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, bindTap }) => {
       <view className="flex-col gap-3 p-4 flex">
         {/* Level badge */}
         {course.level && (
-          <view className="self-start rounded-full bg-blue-50 px-3 py-1">
+          <view className="self-start rounded-full bg-accent px-3 py-1">
             <Text size={TextType.b3} fontWeight="bold" color={Colors.Primary}>
               {course.level.toUpperCase()}
             </Text>
@@ -45,13 +45,13 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, bindTap }) => {
         )}
 
         {/* Title */}
-        <Text size={TextType.b1} fontWeight="bold" className="leading-snug text-slate-800">
+        <Text size={TextType.b1} fontWeight="bold" className="leading-snug text-neutral">
           {course.title}
         </Text>
 
         {/* Description */}
         {course.description && (
-          <Text size={TextType.b3} className="leading-relaxed text-slate-400">
+          <Text size={TextType.b3} className="leading-relaxed text-subtle">
             {htmlToPlainText(course.description).split(' ').slice(0, 35).join(' ') + '...'}
           </Text>
         )}

@@ -68,9 +68,9 @@ const QuizPage = () => {
   };
 
   const timerColor = (() => {
-    if (timeLeft <= 60) return { bg: 'bg-red-50', text: 'text-red-600', dot: 'bg-red-500' };
+    if (timeLeft <= 60) return { bg: 'bg-red-50', text: 'text-error', dot: 'bg-error' };
     if (timeLeft <= 300) return { bg: 'bg-amber-50', text: 'text-amber-600', dot: 'bg-amber-500' };
-    return { bg: 'bg-blue-50', text: 'text-blue-600', dot: 'bg-blue-500' };
+    return { bg: 'bg-accent', text: 'text-primary', dot: 'bg-primary' };
   })();
 
   const startTimer = () => {
@@ -365,9 +365,9 @@ const QuizPage = () => {
 
   if (phase === 'submitting') {
     return (
-      <view className="h-[100vh] items-center bg-[#F8F9FA] flex justify-center">
+      <view className="h-[100vh] items-center bg-canvas flex justify-center">
         <text className="mb-3 text-4xl">📤</text>
-        <Text size={TextType.b1} className="text-slate-400">
+        <Text size={TextType.b1} className="text-subtle">
           {timeLeft === 0 ? "Time's up! Submitting your quiz..." : 'Submitting your quiz...'}
         </Text>
       </view>
@@ -384,18 +384,18 @@ const QuizPage = () => {
           <view
             key={index}
             className={`flex-row items-center rounded-2xl border-2 p-4 flex ${
-              active ? 'border-blue-500 bg-blue-50/30' : 'border-slate-100 bg-white'
+              active ? 'border-primary bg-accent' : 'border-light bg-surface'
             }`}
             bindtap={() => handleSelection(index.toString())}
           >
             <view
               className={`mr-4 h-6 w-6 items-center border-2 justify-center ${
                 isCheckbox ? 'rounded-md' : 'rounded-full'
-              } ${active ? 'border-blue-500 bg-blue-500' : 'border-slate-200'}`}
+              } ${active ? 'border-primary bg-primary' : 'border-default'}`}
             >
               {active && (
                 <view
-                  className={isCheckbox ? 'h-3 w-3 bg-white' : 'h-2 w-2 rounded-full bg-white'}
+                  className={isCheckbox ? 'h-3 w-3 bg-surface' : 'h-2 w-2 rounded-full bg-surface'}
                 />
               )}
             </view>
@@ -431,17 +431,17 @@ const QuizPage = () => {
                   ? option.isTrue
                     ? 'border-green-500 bg-green-50'
                     : 'border-red-400 bg-red-50'
-                  : 'border-slate-100 bg-white'
+                  : 'border-light bg-surface'
               }`}
               bindtap={() => handleSelection(index.toString())}
             >
               {/* Icon */}
               <view
                 className={`mr-4 h-10 w-10 items-center rounded-full justify-center ${
-                  active ? (option.isTrue ? 'bg-green-500' : 'bg-red-400') : 'bg-slate-100'
+                  active ? (option.isTrue ? 'bg-green-500' : 'bg-red-400') : 'bg-surface-alt'
                 }`}
               >
-                <text className={`text-base font-bold ${active ? 'text-white' : 'text-slate-400'}`}>
+                <text className={`text-base font-bold ${active ? 'text-white' : 'text-subtle'}`}>
                   {active ? (option.isTrue ? '✓' : '✗') : option.isTrue ? 'B' : 'S'}
                 </text>
               </view>
@@ -452,7 +452,7 @@ const QuizPage = () => {
                   size={TextType.b1}
                   fontWeight="bold"
                   className={
-                    active ? (option.isTrue ? 'text-green-700' : 'text-red-600') : 'text-slate-700'
+                    active ? (option.isTrue ? 'text-green-700' : 'text-red-600') : 'text-neutral'
                   }
                 >
                   {option.label}
@@ -466,10 +466,10 @@ const QuizPage = () => {
                     ? option.isTrue
                       ? 'border-green-500 bg-green-500'
                       : 'border-red-400 bg-red-400'
-                    : 'border-slate-200 bg-white'
+                    : 'border-default bg-surface'
                 }`}
               >
-                {active && <view className="h-2 w-2 rounded-full bg-white" />}
+                {active && <view className="h-2 w-2 rounded-full bg-surface" />}
               </view>
             </view>
           );
@@ -479,9 +479,9 @@ const QuizPage = () => {
   };
 
   return (
-    <view className="h-screen w-full flex-col bg-[#F8F9FA] flex relative">
+    <view className="h-screen w-full flex-col bg-canvas flex relative">
       {/* Header */}
-      <view className="bg-white px-5 py-4 shadow-sm">
+      <view className="bg-surface px-5 py-4 shadow-sm">
         <view
           className={`mb-4 flex-row items-center flex ${timeLeft > 0 ? 'justify-between' : 'justify-end'}`}
         >
@@ -502,16 +502,16 @@ const QuizPage = () => {
           {/* Question nav pill */}
           <view
             bindtap={() => openNav()}
-            className="flex-row items-center gap-2 rounded-full bg-blue-50 px-3 py-1 flex"
+            className="flex-row items-center gap-2 rounded-full bg-accent px-3 py-1 flex"
           >
-            <Text size={TextType.b2} fontWeight="bold" className="text-blue-600">
+            <Text size={TextType.b2} fontWeight="bold" className="text-primary">
               {currentPage} / {totalQuestions}
             </Text>
-            <text className="text-xs text-blue-600">☰</text>
+            <text className="text-xs text-primary">☰</text>
           </view>
         </view>
 
-        <view className="h-1.5 w-full rounded-full bg-slate-100">
+        <view className="h-1.5 w-full rounded-full bg-surface-alt">
           <view
             className="h-full rounded-full bg-[#FBB03B]"
             style={{ width: `${progressWidth}%` }}
@@ -520,7 +520,7 @@ const QuizPage = () => {
       </view>
 
       {/* Content */}
-      <scroll-view className="flex-1 bg-white px-5 pt-8" scroll-y>
+      <scroll-view className="flex-1 bg-surface px-5 pt-8" scroll-y>
         {phase === 'loading' ? (
           <view className="h-[40vh] items-center flex justify-center">
             <Loading size={32} />
@@ -529,19 +529,19 @@ const QuizPage = () => {
           <view key={currentPage} className="animate-fade-in">
             <view className="flex-row flex justify-between">
               <view className="items-center rounded-full bg-[#FFF8E6] px-3 py-1 flex">
-                <text className="uppercase text-[10px] font-bold text-[#FBB03B]">
+                <text className="uppercase text-caption font-bold text-[#FBB03B]">
                   {question?.type_label ?? 'Question'}
                 </text>
               </view>
               <view
                 bindtap={toggleFlag}
                 className={`h-8 flex-row items-center gap-1 rounded-full border px-3 flex ${
-                  isFlagged ? 'border-orange-200 bg-orange-50' : 'border-transparent bg-slate-50'
+                  isFlagged ? 'border-orange-200 bg-orange-50' : 'border-transparent bg-surface-alt'
                 }`}
               >
                 <text>{isFlagged ? '🚩' : '🏳️'}</text>
                 <text
-                  className={`text-[10px] font-bold ${isFlagged ? 'text-orange-500' : 'text-slate-400'}`}
+                  className={`text-caption font-bold ${isFlagged ? 'text-orange-500' : 'text-subtle'}`}
                 >
                   {isFlagged ? 'FLAGGED' : 'FLAG'}
                 </text>
@@ -551,7 +551,7 @@ const QuizPage = () => {
             <Text
               size={TextType.h2}
               fontWeight="bold"
-              className="my-6 leading-tight text-slate-800"
+              className="my-6 leading-tight text-neutral"
             >
               {htmlToPlainText(question?.content || '')}
             </Text>
@@ -566,22 +566,22 @@ const QuizPage = () => {
       </scroll-view>
 
       {/* Footer */}
-      <view className="border-t border-slate-100 bg-white p-5 pb-10">
+      <view className="border-t border-light bg-surface p-5 pb-10">
         <view className="flex-row gap-3 flex">
           {currentPage > 1 && (
             <view
               bindtap={handleBack}
-              className="h-14 flex-1 items-center rounded-2xl border-2 border-slate-200 justify-center"
+              className="h-14 flex-1 items-center rounded-2xl border-2 border-default justify-center"
             >
-              <text className="font-bold text-slate-600">Back</text>
+              <text className="font-bold text-muted">Back</text>
             </view>
           )}
           <Button
             disabled={isNextDisabled()}
             onPress={handleNext}
-            className={`h-14 flex-1 rounded-2xl ${isNextDisabled() ? 'bg-slate-200' : 'bg-blue-600'}`}
+            className={`h-14 flex-1 rounded-2xl ${isNextDisabled() ? 'bg-surface-alt' : 'bg-primary'}`}
           >
-            <text className={`font-bold ${isNextDisabled() ? 'text-slate-400' : 'text-white'}`}>
+            <text className={`font-bold ${isNextDisabled() ? 'text-subtle' : 'text-white'}`}>
               {isSaving ? 'Saving...' : meta?.pagination.has_next ? 'Next' : 'Finish Quiz ✓'}
             </text>
           </Button>
@@ -600,7 +600,7 @@ const QuizPage = () => {
             bindtap={closeNav}
           />
           <view
-            className="max-h-[70vh] flex-col rounded-t-[32px] bg-white p-6 flex relative"
+            className="max-h-[70vh] flex-col rounded-t-[32px] bg-surface p-6 flex relative"
             style={{
               transform: `translateY(${isNavAnimated ? 0 : 100}%)`,
               transition: 'transform 300ms cubic-bezier(0.32, 0.72, 0, 1)',
@@ -611,7 +611,7 @@ const QuizPage = () => {
                 Question List
               </Text>
               <view bindtap={closeNav} className="p-2">
-                <text className="font-bold text-slate-400">✕</text>
+                <text className="font-bold text-subtle">✕</text>
               </view>
             </view>
             <scroll-view className="flex-1" scroll-y>
@@ -624,9 +624,9 @@ const QuizPage = () => {
                       key={i}
                       className={`h-12 w-12 items-center rounded-xl border-2 flex relative justify-center ${
                         isCurrent
-                          ? 'border-blue-600 bg-blue-50'
+                          ? 'border-primary bg-accent'
                           : answeredQuestions.includes(i)
-                            ? 'border-slate-100 bg-slate-50'
+                            ? 'border-light bg-surface-alt'
                             : 'border-transparent'
                       }`}
                       bindtap={() => {
@@ -635,13 +635,13 @@ const QuizPage = () => {
                       }}
                     >
                       <text
-                        className={`font-bold ${isCurrent ? 'text-blue-600' : 'text-slate-600'}`}
+                        className={`font-bold ${isCurrent ? 'text-primary' : 'text-muted'}`}
                       >
                         {i + 1}
                       </text>
                       {isFlaggedItem && (
                         <view className="absolute -right-1 -top-1">
-                          <text className="text-[10px]">🚩</text>
+                          <text className="text-caption">🚩</text>
                         </view>
                       )}
                     </view>
@@ -659,7 +659,7 @@ const QuizPage = () => {
               <Text size={TextType.h2} fontWeight="600" className="text-center">
                 Keluar dari halaman ini?
               </Text>
-              <Text className="text-[#5f6368] text-center">
+              <Text className="text-muted text-center">
                 Kemajuan kamu akan hilang jika kamu keluar.
               </Text>
               <view className="flex-col gap-3 flex">

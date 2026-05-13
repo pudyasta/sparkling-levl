@@ -61,10 +61,10 @@ export const Enroll = ({ courseSlug, enrollmentType, onEnrollSuccess }: EnrollPr
     return (
       <view className="items-center">
         <text className="mb-2 text-4xl">⏳</text>
-        <Text className="mb-2 text-lg font-bold text-slate-800 text-center" size={TextType.h2}>
+        <Text className="mb-2 text-lg font-bold text-neutral text-center" size={TextType.h2}>
           Permintaan Terkirim!
         </Text>
-        <Text className="text-sm text-slate-400 text-center" size={TextType.b2}>
+        <Text className="text-sm text-subtle text-center" size={TextType.b2}>
           Pendaftaranmu sedang menunggu persetujuan. Kamu akan diberi tahu setelah admin menyetujui.
         </Text>
       </view>
@@ -102,11 +102,11 @@ export const Enroll = ({ courseSlug, enrollmentType, onEnrollSuccess }: EnrollPr
 const AutoAcceptView = ({ isLoading, onEnroll }: { isLoading: boolean; onEnroll: () => void }) => (
   <view>
     <view className="mb-4 flex-row items-center gap-2">
-      <Text className="text-lg font-extrabold text-slate-800" size={TextType.h2}>
+      <Text className="text-lg font-extrabold text-neutral" size={TextType.h2}>
         Daftar untuk mulai belajar!
       </Text>
     </view>
-    <Text className="mb-5 text-sm text-slate-400" size={TextType.b2}>
+    <Text className="mb-5 text-sm text-subtle" size={TextType.b2}>
       Kursus ini terbuka buat semua orang. Gabung sekarang yuk!
     </Text>
     <Button
@@ -134,11 +134,11 @@ const KeyBasedView = ({
 }) => (
   <view>
     <view className="mb-4 flex-row items-center gap-2">
-      <Text className="text-lg font-extrabold text-slate-800" size={TextType.h2}>
+      <Text className="text-lg font-extrabold text-neutral" size={TextType.h2}>
         Input kode pendaftaran
       </Text>
     </view>
-    <Text className="mb-4 text-sm text-slate-400" size={TextType.b2}>
+    <Text className="mb-4 text-sm text-subtle" size={TextType.b2}>
       Kursus ini memerlukan kode pendaftaran. Silakan kode kunci Anda di bawah ini untuk bergabung.
     </Text>
 
@@ -168,11 +168,11 @@ const KeyBasedView = ({
 const ApprovalView = ({ isLoading, onEnroll }: { isLoading: boolean; onEnroll: () => void }) => (
   <view>
     <view className="mb-4 flex-row items-center gap-2">
-      <Text className="text-lg font-extrabold text-slate-800" size={TextType.h2}>
+      <Text className="text-lg font-extrabold text-neutral" size={TextType.h2}>
         Minta untuk bergabung
       </Text>
     </view>
-    <Text className="mb-2 text-sm text-slate-400" size={TextType.b2}>
+    <Text className="mb-2 text-sm text-subtle" size={TextType.b2}>
       Kursus ini memerlukan persetujuan admin. Permintaanmu akan ditinjau sebelum dapat mengakses
       kontennya.
     </Text>

@@ -56,12 +56,12 @@ const LessonContent = ({
   return (
     // position: relative so the absolute toast is anchored to this screen container
     <view className="mt-5 flex-1 relative">
-      <view className="flex-col px-5 pb-[50px] pt-[60px] flex">
+      <view className="flex-col px-5 pb-12 pt-[60px] flex">
         {/* Header */}
         <view className="mb-6">
           <view className="mb-2 flex-row items-center flex">
             <view className="mr-2 rounded-md bg-green-100 px-2 py-1">
-              <text className="uppercase text-[10px] font-bold tracking-wider text-green-600">
+              <text className="uppercase text-caption font-bold tracking-wider text-green-600">
                 Materi
               </text>
             </view>
@@ -82,16 +82,16 @@ const LessonContent = ({
             {block.block_type === 'video' && block.media && (
               <view className="rounded-xl bg-black overflow-hidden">
                 <NativeVideoPlayer src={block.media.url} className="h-[210px] w-full" />
-                <view className="bg-white p-3">{htmlToLynx(block.content)}</view>
+                <view className="bg-surface p-3">{htmlToLynx(block.content)}</view>
               </view>
             )}
 
             {block.block_type === 'image' && block.media && (
-              <view className="rounded-xl border border-[#f1f3f4] overflow-hidden">
+              <view className="rounded-xl border border-light overflow-hidden">
                 <image src={block.media.url} className="h-[200px] w-full" mode="aspectFill" />
                 <Text
                   size={TextType.b2}
-                  className="bg-[#f9f9f9] p-3 text-xs text-[#5f6368] text-center"
+                  className="bg-canvas p-3 text-xs text-muted text-center"
                 >
                   {htmlToLynx(block.content) || block.media.file_name}
                 </Text>

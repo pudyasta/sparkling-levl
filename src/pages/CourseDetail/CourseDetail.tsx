@@ -41,9 +41,9 @@ export interface CourseDetailData {
   lessons: Lesson[];
 }
 const CourseDetailSkeleton = () => (
-  <scroll-view className="h-full w-full bg-slate-50" scroll-y>
+  <scroll-view className="h-full w-full bg-canvas" scroll-y>
     {/* Hero Skeleton */}
-    <view className="bg-[#c7c7c7] px-6 pb-[70px] pt-[50px]">
+    <view className="bg-surface-alt px-6 pb-[70px] pt-[50px]">
       {/* Back button */}
       <Shimmer isRound width={40} height={40} className="mb-6" />
 
@@ -63,7 +63,7 @@ const CourseDetailSkeleton = () => (
     {/* Content Body */}
     <view className="-mt-[60px] px-5 pb-10">
       {/* Progress Card Skeleton */}
-      <view className="mb-4 rounded-2xl bg-white p-6 shadow-[0_10px_25px_rgba(0,0,0,0.1)]">
+      <view className="mb-4 rounded-2xl bg-surface p-6 shadow-design-lg">
         <view className="mb-3 flex-row flex justify-between">
           <Shimmer width={120} height={20} className="rounded-lg" />
           <Shimmer width={50} height={20} className="rounded-lg" />
@@ -77,7 +77,7 @@ const CourseDetailSkeleton = () => (
 
       {/* Unit Items */}
       {[1, 2, 3].map((i) => (
-        <view key={i} className="mb-3 rounded-2xl border border-slate-100 bg-white p-4">
+        <view key={i} className="mb-3 rounded-2xl border border-light bg-surface p-4">
           <view className="mb-2 flex-row items-center flex justify-between">
             <Shimmer width="70%" height={20} className="rounded-lg" />
             <Shimmer width={24} height={24} className="rounded-lg" />
@@ -142,7 +142,7 @@ export const CourseDetail: FC = () => {
   return isLoading ? (
     <CourseDetailSkeleton />
   ) : (
-    <scroll-view className="h-[100vh] animate-fade-in flex-col bg-slate-50 flex" scroll-y>
+    <scroll-view className="h-[100vh] animate-fade-in flex-col bg-canvas flex" scroll-y>
       <PullToRefresh onRefresh={async () => refetchAll()}>
         {/* 1. Hero Header */}
         <view
@@ -170,7 +170,7 @@ export const CourseDetail: FC = () => {
           </view>
 
           <Text
-            className="mb-4 text-[32px] font-extrabold leading-10 text-white"
+            className="mb-4 text-display font-extrabold leading-10 text-white"
             size={TextType.h1}
             fontFamily={FontFamily.jakarta}
             color="white"
@@ -178,7 +178,7 @@ export const CourseDetail: FC = () => {
             {courses?.title}
           </Text>
 
-          <Text className="mb-8 text-[15px] leading-6 text-white" size={TextType.b2} color="white">
+          <Text className="mb-8 text-sm leading-6 text-white" size={TextType.b2} color="white">
             {htmlToPlainText(courses?.short_desc)}
           </Text>
 
@@ -187,12 +187,12 @@ export const CourseDetail: FC = () => {
 
         {/* 2. Overlapping Progress Card */}
         <view className="-mt-[60px] px-5 pb-10">
-          <Card className="p-6 shadow-[0_10px_25px_rgba(0,0,0,0.1)]">
+          <Card className="p-6 shadow-design-lg">
             {courses?.enrollment_status === 'active' ||
             courses?.enrollment_status === 'completed' ? (
               <>
                 <view className="mb-3 flex-row gap-3 flex justify-between">
-                  <Text className="text-base font-bold text-slate-800" size={TextType.b1}>
+                  <Text className="text-base font-bold text-neutral" size={TextType.b1}>
                     Progres Kamu
                   </Text>
                   <Text
@@ -203,7 +203,7 @@ export const CourseDetail: FC = () => {
                     {courses?.progress?.percentage}%
                   </Text>
                 </view>
-                <view className="mb-5 h-[10px] rounded-full bg-slate-100 overflow-hidden">
+                <view className="mb-5 h-[10px] rounded-full bg-surface-alt overflow-hidden">
                   <view
                     className="h-[10px] rounded-full"
                     style={{
@@ -233,7 +233,7 @@ export const CourseDetail: FC = () => {
 
           {/* 3. Course Units */}
           {courses.units && (
-            <Text className="mb-3 mt-2.5 text-xl font-extrabold text-slate-800" size={TextType.h2}>
+            <Text className="mb-3 mt-2.5 text-xl font-extrabold text-neutral" size={TextType.h2}>
               Course Units
             </Text>
           )}

@@ -23,7 +23,7 @@ const CategoryLabel: React.FC<LabelProps> = ({
         className={
           isActive
             ? 'text-white text-sm font-semibold'
-            : 'text-gray-700 text-sm'
+            : 'text-neutral text-sm'
         }
       >
         {category}

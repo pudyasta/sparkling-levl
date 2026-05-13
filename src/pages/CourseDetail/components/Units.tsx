@@ -24,8 +24,8 @@ export const UnitSection = ({
     <view className="mb-1 overflow-hidden">
       <view
         key={unit.id}
-        className={`flex-row items-center rounded-2xl border bg-white px-6 py-3 flex overflow-hidden ${
-          isOpen ? 'border-blue-500' : 'border-slate-100'
+        className={`flex-row items-center rounded-2xl border bg-surface px-6 py-3 flex overflow-hidden ${
+          isOpen ? 'border-primary' : 'border-light'
         }`}
         bindtap={() => {
           if (unit.progress?.is_locked || unit.progress?.is_locked === undefined) return;
@@ -35,7 +35,7 @@ export const UnitSection = ({
         {/* Check circle */}
         <view
           className={`mr-4 h-10 w-10 items-center rounded-full justify-center ${
-            unit.progress?.status == 'completed' ? 'bg-green-500' : 'bg-slate-100'
+            unit.progress?.status == 'completed' ? 'bg-green-500' : 'bg-surface-alt'
           }`}
         >
           <Text color={unit.progress?.status == 'completed' ? 'white' : ''}>{unit.order}</Text>
@@ -46,14 +46,14 @@ export const UnitSection = ({
           <Text
             className={
               unit.progress?.is_locked
-                ? 'text-base font-semibold text-slate-400'
-                : 'text-base font-bold text-slate-800'
+                ? 'text-base font-semibold text-subtle'
+                : 'text-base font-bold text-neutral'
             }
             size={TextType.b2}
           >
             {unit.title}
           </Text>
-          <Text className="mt-0.5 text-sm text-slate-400">
+          <Text className="mt-0.5 text-sm text-subtle">
             {unit.progress?.completed_items} / {unit.progress?.total_items} Completed Lessons
           </Text>
         </view>
@@ -65,7 +65,7 @@ export const UnitSection = ({
 
         {/* Locked overlay */}
         {(unit.progress?.is_locked || unit.progress?.is_locked === undefined) && (
-          <view className="items-center bg-white/80 flex absolute inset-0 justify-center" />
+          <view className="items-center bg-surface/80 flex absolute inset-0 justify-center" />
         )}
       </view>
 
@@ -76,14 +76,14 @@ export const UnitSection = ({
         }`}
       >
         <view
-          className={`bg-gray-50 transition-transform duration-500 ${
+          className={`bg-canvas transition-transform duration-500 ${
             isOpen ? 'translate-y-0' : '-translate-y-2.5'
           }`}
         >
           {unit.elements?.map((lesson, i) => (
             <view
               key={lesson.id}
-              className="flex-row items-center border border-slate-100 bg-white px-6 py-3 flex"
+              className="flex-row items-center border border-light bg-surface px-6 py-3 flex"
               bindtap={() => {
                 console.log(lesson);
                 if (lesson.is_locked) return;
@@ -103,7 +103,7 @@ export const UnitSection = ({
               {/* Check circle */}
               <view
                 className={`mr-4 h-10 w-10 items-center rounded-full justify-center ${
-                  lesson.is_completed ? 'bg-green-500' : 'bg-slate-100'
+                  lesson.is_completed ? 'bg-green-500' : 'bg-surface-alt'
                 }`}
               >
                 <Text
@@ -115,13 +115,13 @@ export const UnitSection = ({
                 </Text>
               </view>
 
-              <Text className="text-sm font-bold text-slate-500" size={TextType.b2}>
+              <Text className="text-sm font-bold text-muted" size={TextType.b2}>
                 {lesson.title}
               </Text>
 
               {/* Locked overlay */}
               {(lesson.is_locked || lesson.is_locked === undefined) && (
-                <view className="items-center bg-white/80 flex absolute inset-0 justify-center" />
+                <view className="items-center bg-surface/80 flex absolute inset-0 justify-center" />
               )}
             </view>
           ))}

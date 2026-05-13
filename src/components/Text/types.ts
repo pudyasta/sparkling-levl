@@ -1,16 +1,11 @@
-import type { ColorPalette } from '../../constant/style';
-import type { ComponentPropsWithoutRef, ReactNode, MutableRefObject } from '@lynx-js/react';
-
-import type { MouseEvent } from 'react';
+import type { ComponentPropsWithoutRef, ReactNode } from '@lynx-js/react';
 
 export interface TypographyProps extends Omit<ComponentPropsWithoutRef<'span'>, 'css'> {
-  /**
-   * To determine paragraphy font size
-   */
-  body?: number | string;
-  /**
-   * To apply bold on text
-   */
+  children?: ReactNode;
+  className?: string;
+  color?: string;
+  disabled?: boolean;
+  fontFamily?: FontFamily;
   fontWeight?:
     | 'bold'
     | 'normal'
@@ -22,82 +17,13 @@ export interface TypographyProps extends Omit<ComponentPropsWithoutRef<'span'>, 
     | '600'
     | '700'
     | '800'
-    | '900'
-    | undefined;
-  /**
-   * To apply caption Typography design
-   */
-  caption?: boolean;
-  /**
-   * To specify typography content
-   */
-  children?: ReactNode;
-  /**
-   * To pass custom className to create custom styles
-   */
-  className?: string;
-  /**
-   * To apply custom color on text
-   */
-  color?: string;
-  /**
-   * To apply disabled on text
-   */
-  disabled?: boolean;
-  /**
-   * To change html tag different than it's size appearance
-   */
-  heading?: number;
-  /**
-   * To apply large Typography design
-   */
-  large?: boolean;
-  /**
-   * To provide link url and apply link design
-   */
-  link?: string | ((e: MouseEvent<HTMLElement>) => void);
-  /**
-   * To apply main Typography design
-   */
-  main?: boolean;
-  /**
-   * To apply custom margin on Typography
-   */
+    | '900';
   margin?: string;
-  /**
-   * To apply micro Typography design
-   */
-  micro?: boolean;
-  /**
-   * To set custom ref on Typography
-   */
-  setRef?: MutableRefObject<HTMLElement>;
-  /**
-   * To determine heading font size
-   */
-  tag?: number;
-  target?: string;
-  /**
-   * To transforms text to uppercase
-   */
-  uppercase?: boolean;
-  /**
-   * To apply the wrapper as span
-   */
-  asSpan?: boolean;
-  /**
-   * To pass callback when Typography is clicked
-   */
   onClick?: () => void;
-
-  style?: Record<string, string | number>;
-
   size?: TextType;
-
-  /**
-   * To apply custom font family on text
-   */
-  fontFamily?: FontFamily;
+  style?: Record<string, string | number>;
+  uppercase?: boolean;
+  asSpan?: boolean;
 }
 
 export enum TextType {
@@ -113,9 +39,4 @@ export enum TextType {
 export enum FontFamily {
   inter = 'font-inter',
   jakarta = 'font-jakarta',
-}
-
-export enum fontWeight {
-  bold = 800,
-  semiBold = 500,
 }

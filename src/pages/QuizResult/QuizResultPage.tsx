@@ -43,11 +43,11 @@ const ScoreRing = ({ percentage, isPassed }: { percentage: number; isPassed: boo
 };
 
 const StatCard = ({ label, value }: { label: string; value: string }) => (
-  <view className="flex-1 flex-col items-center rounded-2xl border border-slate-100 bg-slate-50 p-4 flex">
-    <Text size={TextType.b2} className="text-slate-400">
+  <view className="flex-1 flex-col items-center rounded-2xl border border-light bg-surface-alt p-4 flex">
+    <Text size={TextType.b2} className="text-subtle">
       {label}
     </Text>
-    <Text size={TextType.h2} fontWeight="bold" className="mt-1 text-slate-800">
+    <Text size={TextType.h2} fontWeight="bold" className="mt-1 text-neutral">
       {value}
     </Text>
   </view>
@@ -73,7 +73,7 @@ const AnswerReviewItem = ({ answer, index }: { answer: QuizAnswerResource; index
       : 'Salah';
 
   return (
-    <view className="mb-3 rounded-2xl border border-slate-100 bg-white overflow-hidden">
+    <view className="mb-3 rounded-2xl border border-light bg-surface overflow-hidden">
       <view
         className="flex-row items-center p-4 flex justify-between"
         bindtap={() => setIsOpen(!isOpen)}
@@ -87,7 +87,7 @@ const AnswerReviewItem = ({ answer, index }: { answer: QuizAnswerResource; index
               {index + 1}
             </text>
           </view>
-          <Text size={TextType.b2} className="flex-1 text-slate-700">
+          <Text size={TextType.b2} className="flex-1 text-neutral">
             {htmlToPlainText(question?.content ?? '—')}
           </Text>
         </view>
@@ -95,17 +95,17 @@ const AnswerReviewItem = ({ answer, index }: { answer: QuizAnswerResource; index
           <text className="text-xs font-bold" style={{ color: statusColor }}>
             {statusLabel}
           </text>
-          <text className="text-slate-300">{isOpen ? '▲' : '▼'}</text>
+          <text className="text-subtle">{isOpen ? '▲' : '▼'}</text>
         </view>
       </view>
 
       {isOpen && (
-        <view className="border-t border-slate-100 px-4 pb-4 pt-3">
+        <view className="border-t border-light px-4 pb-4 pt-3">
           {/* Your answer */}
-          <Text size={TextType.b3} className="mb-1 text-slate-400">
+          <Text size={TextType.b3} className="mb-1 text-subtle">
             Jawaban kamu:
           </Text>
-          <Text size={TextType.b2} className="mb-3 text-slate-700">
+          <Text size={TextType.b2} className="mb-3 text-neutral">
             {isEssay
               ? (answer.content ?? '—')
               : isTrueFalse
@@ -123,10 +123,10 @@ const AnswerReviewItem = ({ answer, index }: { answer: QuizAnswerResource; index
 
           {/* Score */}
           <view className="flex-row items-center gap-2 flex">
-            <Text size={TextType.b3} className="text-slate-400">
+            <Text size={TextType.b3} className="text-subtle">
               Skor:
             </Text>
-            <Text size={TextType.b2} fontWeight="bold" className="text-slate-800">
+            <Text size={TextType.b2} fontWeight="bold" className="text-neutral">
               {answer.score ?? (isPendingGrade ? 'Pending penilaian manual' : '0')}
               {!isPendingGrade && ` / ${question?.max_score ?? '—'}`}
             </Text>
@@ -134,8 +134,8 @@ const AnswerReviewItem = ({ answer, index }: { answer: QuizAnswerResource; index
 
           {/* Feedback */}
           {answer.feedback && (
-            <view className="mt-3 rounded-xl bg-blue-50 p-3">
-              <Text size={TextType.b3} className="text-blue-600">
+            <view className="mt-3 rounded-xl bg-accent p-3">
+              <Text size={TextType.b3} className="text-primary">
                 {answer.feedback}
               </Text>
             </view>
@@ -172,9 +172,9 @@ const QuizResultPage = () => {
 
   if (phase === 'loading') {
     return (
-      <view className="h-[100vh] flex-1 items-center bg-[#F8F9FA] justify-center">
+      <view className="h-[100vh] flex-1 items-center bg-canvas justify-center">
         <Loading />
-        <Text size={TextType.b1} className="text-slate-400">
+        <Text size={TextType.b1} className="text-subtle">
           Kami sedang memproses hasil quiz kamu...
         </Text>
       </view>
@@ -183,9 +183,9 @@ const QuizResultPage = () => {
 
   if (phase === 'error' || !submission) {
     return (
-      <view className="h-screen flex-col items-center bg-[#F8F9FA] px-8 flex justify-center">
+      <view className="h-screen flex-col items-center bg-canvas px-8 flex justify-center">
         <text className="mb-3 text-5xl">⚠️</text>
-        <Text size={TextType.h2} fontWeight="bold" className="mb-6 text-slate-800 text-center">
+        <Text size={TextType.h2} fontWeight="bold" className="mb-6 text-neutral text-center">
           Oops, Kami baru tidak bisa memuat hasil quiz
         </Text>
         <Button
@@ -204,10 +204,10 @@ const QuizResultPage = () => {
   const hasEssay = answers.some((a) => a.question?.type === 'essay');
 
   return (
-    <view className="h-screen w-full flex-col bg-[#F8F9FA] flex">
+    <view className="h-screen w-full flex-col bg-canvas flex">
       <scroll-view className="flex-1 px-5 pt-6" scroll-y>
         {/* Score ring */}
-        <view className="mb-6 items-center rounded-3xl bg-white p-6 shadow-sm">
+        <view className="mb-6 items-center rounded-3xl bg-surface p-6 shadow-sm">
           <ScoreRing percentage={percentage} isPassed={isPassed} />
 
           {/* Stat row */}
@@ -240,7 +240,7 @@ const QuizResultPage = () => {
         {/* Answer review */}
         {answers.length > 0 && (
           <view className="mb-6">
-            <Text size={TextType.h3} fontWeight="bold" className="mb-3 text-slate-800">
+            <Text size={TextType.h3} fontWeight="bold" className="mb-3 text-neutral">
               Review Jawaban
             </Text>
             {answers.map((answer, i) => (
@@ -253,9 +253,9 @@ const QuizResultPage = () => {
       </scroll-view>
 
       {/* Footer */}
-      <view className="border-t border-slate-100 bg-white p-5 pb-10">
+      <view className="border-t border-light bg-surface p-5 pb-10">
         <Button
-          className="h-14 w-full rounded-2xl bg-blue-600"
+          className="h-14 w-full rounded-2xl bg-primary"
           onPress={() => {
             setParams({ courseId: routerParams?.courseId, course_slug: routerParams?.course_slug });
             router.close();

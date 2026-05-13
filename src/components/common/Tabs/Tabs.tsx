@@ -28,13 +28,13 @@ export function Tabs({
     onChange?.(i);
   };
   return (
-    <view className="h-full flex-col bg-[#f6f8fa] flex">
+    <view className="h-full flex-col bg-canvas flex">
       <scroll-view className="mb-18 flex-1" scroll-orientation="vertical">
         {items[active]?.content}
       </scroll-view>
 
       {/* TABS */}
-      <view className="w-full flex-row border-t border-[#eeeeee] bg-white px-4 flex fixed bottom-0">
+      <view className="w-full flex-row border-t border-light bg-surface px-4 flex fixed bottom-0">
         {items.map((item, i) => {
           const isActive = i === active;
 
@@ -43,7 +43,7 @@ export function Tabs({
               key={item.key ?? i}
               bindtap={() => handleChange(i)}
               className={`flex-1 flex-col items-center border-b-2 py-5 flex justify-center ${
-                isActive ? 'border-[#1a73e8]' : 'border-transparent'
+                isActive ? 'border-primary' : 'border-transparent'
               }`}
             >
               <CustomImage
@@ -52,7 +52,7 @@ export function Tabs({
               />
               <text
                 className={`mt-1 text-sm font-semibold ${
-                  isActive ? 'text-[#1a73e8]' : 'text-[#9aa0a6]'
+                  isActive ? 'text-primary' : 'text-subtle'
                 }`}
               >
                 {item.label.text}

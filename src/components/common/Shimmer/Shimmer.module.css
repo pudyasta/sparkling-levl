@@ -1,14 +1,14 @@
 .shimmerContainer {
-  background-color: #e0e0e0; /* Base skeleton color */
+  background-color: var(--surface-alt);
   overflow: hidden;
   position: relative;
-  border-radius: 10px;
+  border-radius: var(--radius-md);
 }
 
 .default {
   height: 20px;
   width: 100%;
-  border-radius: 10px;
+  border-radius: var(--radius-md);
 }
 
 .shimmerWave {
