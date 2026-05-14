@@ -7,7 +7,7 @@
 }
 
 .content {
-  padding: 0 16px 40px;
+  padding: 0 16px 70px;
 }
 
 /* Header Section */
@@ -176,7 +176,7 @@
   grid-template-columns: repeat(3, 1fr);
   gap: 12px;
   justify-content: space-between;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
 
 .achievementItem {

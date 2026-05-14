@@ -1,6 +1,12 @@
+import arrowBackBlack from './IoArrowBack.svg';
+import documentLock from './IoDocumentLock.svg';
 import eyeOpen from './IoEye.svg';
 import eyeClose from './IoEyeOffSharp.svg';
 import searchIcon from './IoSearch.svg';
+import editIcon from './MdEdit.svg';
+import exit from './MdExitToApp.svg';
+import manageAccount from './MdManageAccounts.svg';
+import privacy from './MdPrivacyTip.svg';
 import back from './back.svg';
 import courses from './course.svg';
 import date from './date.svg';
@@ -32,4 +38,10 @@ export {
   eyeClose,
   searchIcon,
   logo,
+  documentLock,
+  editIcon,
+  privacy,
+  manageAccount,
+  arrowBackBlack,
+  exit,
 };

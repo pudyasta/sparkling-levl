@@ -5,6 +5,7 @@ import CourseCard from '@/components/CoursesCard/CoursesCard';
 import { PullToRefresh } from '@/components/PullToRefresh/PullToRefresh';
 import Text from '@/components/Text';
 import { TextType } from '@/components/Text/types';
+import { Shimmer } from '@/components/common';
 import Card from '@/components/common/Card/Card';
 import CustomImage from '@/components/common/CustomImage/CustomImage';
 import { Colors } from '@/constant/style';
@@ -19,6 +20,87 @@ import {
 import { useGetAchievements } from '../../usecase/useGetProfile';
 import style from './Home.module.css';
 
+function HomeShimmer() {
+  return (
+    <scroll-view className="flex-1 bg-slate-50 pb-[80px]">
+      {/* Header skeleton */}
+      <view className="min-h-[20vh] flex-col bg-[#E3F2FD] px-4 pb-10 pt-8 flex">
+        <view className="w-full flex-col gap-2.5 flex">
+          <view className="flex-row items-center flex justify-between">
+            <view className="flex-col gap-2 flex">
+              <Shimmer height={14} width={100} />
+              <Shimmer height={28} width={160} />
+            </view>
+            <Shimmer isRound width={60} height={60} />
+          </view>
+          <view className="mt-2 flex-row items-center gap-2 flex">
+            <Shimmer height={56} width={120} borderRadius={12} />
+            <Shimmer height={56} width={80} borderRadius={12} />
+          </view>
+        </view>
+      </view>
+
+      <view className="mt-5 flex-col gap-4 px-4 flex">
+        {/* Continue Learning skeleton */}
+        <view className="flex-col gap-3 flex">
+          <view className="mb-2 flex-row items-center flex justify-between">
+            <Shimmer height={22} width={140} />
+            <Shimmer height={14} width={70} />
+          </view>
+          <view className="flex-row items-center gap-4 rounded-2xl bg-white p-3 flex shadow-sm">
+            <Shimmer width={96} height={96} borderRadius={12} />
+            <view className="flex-1 flex-col gap-2 flex">
+              <Shimmer height={16} width={160} />
+              <Shimmer height={12} width={100} />
+              <view className="mt-1 flex-row items-center gap-2 flex">
+                <view className="flex-1">
+                  <Shimmer height={8} />
+                </view>
+                <Shimmer height={12} width={32} />
+              </view>
+            </view>
+          </view>
+        </view>
+
+        {/* Achievements skeleton */}
+        <view className="flex-col gap-1 flex">
+          <view className="mb-2 flex-row items-center flex justify-between">
+            <Shimmer height={22} width={180} />
+          </view>
+          <scroll-view scroll-x className="flex-row py-1 flex">
+            {[1, 2, 3, 4].map((i) => (
+              <view key={i} className="mr-4 flex-col items-center flex">
+                <Shimmer width={80} height={80} borderRadius={16} className="mb-2" />
+                <Shimmer height={12} width={60} />
+              </view>
+            ))}
+          </scroll-view>
+        </view>
+
+        {/* Recommended Courses skeleton */}
+        <view className="flex-col gap-1 flex">
+          <view className="mb-2 flex-row items-center flex justify-between">
+            <Shimmer height={22} width={180} />
+          </view>
+          {[1, 2, 3].map((i) => (
+            <view key={i} className="mb-3 flex-col gap-3 rounded-2xl bg-white p-4 flex shadow-sm">
+              <Shimmer height={140} borderRadius={12} />
+              <view className="flex-col gap-2 flex">
+                <Shimmer height={16} width={200} />
+                <Shimmer height={12} width={140} />
+                <view className="flex-row gap-2 flex">
+                  <Shimmer height={22} width={70} borderRadius={99} />
+                  <Shimmer height={22} width={60} borderRadius={99} />
+                </view>
+              </view>
+            </view>
+          ))}
+        </view>
+      </view>
+    </scroll-view>
+  );
+}
+
 export default function LearningDashboard() {
   const { user, navigateTo } = useNativeBridge();
 
@@ -26,7 +108,15 @@ export default function LearningDashboard() {
   const { recentLearning, refetch: refetchGetDashboardRecentLearning } =
     useGetDashboardRecentLearning();
   const { achievements, refetch: refetchGetAchievements } = useGetAchievements();
-  const { recommendedCourses, refetch: refetchGetRecommendedCourses } = useGetRecommendedCourses();
+  const {
+    recommendedCourses,
+    isLoading,
+    refetch: refetchGetRecommendedCourses,
+  } = useGetRecommendedCourses();
+
+  if (isLoading || !recommendedCourses) {
+    return <HomeShimmer />;
+  }
 
   const gradients = {
     pagi: 'linear-gradient(180deg, #E3F2FD 0%, #FFE0B2 40%, #FFF9C4 100%)',

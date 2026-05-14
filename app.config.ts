@@ -28,6 +28,20 @@ const config: AppConfig = {
     second: { path: './lynxPages/second' },
     login: { path: './lynxPages/login' },
   },
+  plugin: [
+    [
+      'splash-screen',
+      {
+        backgroundColor: '#232323',
+        image: './resource/app_icon.png',
+        dark: {
+          image: './resource/app_icon.png',
+          backgroundColor: '#000000',
+        },
+        imageWidth: 200,
+      },
+    ],
+  ],
 };
 
 export default config;

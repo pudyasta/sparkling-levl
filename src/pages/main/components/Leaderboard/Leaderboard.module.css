@@ -37,9 +37,8 @@
   width: 64px;
   height: 64px;
   border-radius: 999px;
-  align-items: center;
-  justify-content: center;
   overflow: hidden;
+  position: relative;
 }
 
 .lbCardThird .lbAvatar {

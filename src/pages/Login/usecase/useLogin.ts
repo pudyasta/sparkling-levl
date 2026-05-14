@@ -31,6 +31,7 @@ export const useLogin = (options?: UseLoginOptions) => {
       });
     },
     onSuccess: ({ data }) => {
+      console.log(JSON.stringify(data, null, 2));
       if (!data.data?.access_token || !data.data?.refresh_token) {
         throw new Error('Invalid token response');
       }
@@ -58,6 +59,7 @@ export const useLogin = (options?: UseLoginOptions) => {
     },
     onError: (error: any) => {
       console.log(JSON.stringify(error, null, 2));
+
       if (error.type === 'VALIDATION_ERROR') {
         options?.onValidationError?.(error.errors);
       }

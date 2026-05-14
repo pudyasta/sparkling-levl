@@ -1,14 +1,18 @@
-import { useEffect, useState } from '@lynx-js/react';
+import { useEffect, useRef, useState } from '@lynx-js/react';
+import * as router from 'sparkling-navigation';
 
-import Input from '@/components/Input/Input';
+import { arrowBackBlack } from '@/assets/images/icon';
+import { useConfirmation } from '@/components/ConfirmationModal/ConfitmationModal';
+import Input, { type InputRef } from '@/components/Input/Input';
+import { Loading } from '@/components/Loading/Loading';
 import Text from '@/components/Text';
 import { TextType } from '@/components/Text/types';
 import Button from '@/components/common/Button';
-import Shimmer from '@/components/common/Shimmer/Shimmer';
+import CustomImage from '@/components/common/CustomImage/CustomImage';
 import { useNativeBridge } from '@/context/NativeBridgeProvider';
-import { pickAnyFile } from '@/lib/helper/filePicker';
+import { callToast } from '@/lib/helper/showToast';
 
-import type { ProfileResource, ProfileVisibility, UpdatePrivacyPayload } from './repository/type';
+import type { ProfileVisibility, UpdatePrivacyPayload } from './repository/type';
 import { useChangeEmail, useVerifyEmailChange } from './usecase/useChangeEmail';
 import { useDeleteAccountConfirm, useDeleteAccountRequest } from './usecase/useDeleteAccount';
 import { useGetPrivacy } from './usecase/useGetPrivacy';
@@ -17,40 +21,7 @@ import { useUpdatePassword } from './usecase/useUpdatePassword';
 import { useUpdatePrivacy } from './usecase/useUpdatePrivacy';
 import { useUpdateProfile } from './usecase/useUpdateProfile';
 
-type Screen = 'menu' | 'profile' | 'security' | 'privacy' | 'danger';
-
-// ─── Slide screen wrapper (pure Tailwind CSS transitions) ─────────────────────
-// `mounted` keeps the node alive during the exit animation.
-// `visible` is flipped one RAF after mount so CSS always sees the start state first.
-const SlideScreen = ({ active, children }: { active: boolean; children: React.ReactNode }) => {
-  const [mounted, setMounted] = useState(active);
-  const [visible, setVisible] = useState(active);
-
-  useEffect(() => {
-    if (active) {
-      setMounted(true);
-      const raf = requestAnimationFrame(() => setVisible(true));
-      return () => cancelAnimationFrame(raf);
-    } else {
-      setVisible(false);
-      const t = setTimeout(() => setMounted(false), 350);
-      return () => clearTimeout(t);
-    }
-  }, [active]);
-
-  if (!mounted) return null;
-
-  return (
-    <view
-      style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
-      className={`bg-slate-50 transition-all duration-300 ease-in-out ${
-        visible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-full'
-      }`}
-    >
-      {children}
-    </view>
-  );
-};
+type Screen = 'profile' | 'security' | 'privacy' | 'danger';
 
 // ─── Shared section wrapper ───────────────────────────────────────────────────
 const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
@@ -97,51 +68,14 @@ const ToggleRow = ({
   </view>
 );
 
-// ─── Settings menu item ───────────────────────────────────────────────────────
-const MenuItem = ({
-  emoji,
-  label,
-  description,
-  onPress,
-  isLast,
-}: {
-  emoji: string;
-  label: string;
-  description: string;
-  onPress: () => void;
-  isLast?: boolean;
-}) => (
-  <view
-    bindtap={onPress}
-    className={`flex-row items-center gap-4 bg-white px-5 py-4 flex ${
-      !isLast ? 'border-b border-slate-100' : ''
-    }`}
-  >
-    <view className="h-10 w-10 items-center rounded-full bg-slate-100 justify-center">
-      <text className="text-lg">{emoji}</text>
-    </view>
-    <view className="flex-1 flex-col flex">
-      <Text size={TextType.b1} fontWeight="bold" className="text-slate-800">
-        {label}
-      </Text>
-      <Text size={TextType.b3} className="text-slate-400">
-        {description}
-      </Text>
-    </view>
-    <text className="text-lg text-slate-300">›</text>
-  </view>
-);
-
 // ─── Back header ─────────────────────────────────────────────────────────────
-const BackHeader = ({ title, onBack }: { title: string; onBack: () => void }) => (
+export const BackHeader = ({ title }: { title: string }) => (
   <view className="flex-row items-center gap-3 border-b border-slate-100 bg-white px-4 py-4 flex">
     <view
-      bindtap={onBack}
-      className="h-9 w-9 items-center rounded-full bg-slate-100 justify-center"
+      bindtap={() => router.close()}
+      className="h-9 w-9 items-center rounded-full bg-slate-100 p-2 justify-center"
     >
-      <Text size={TextType.h2} fontWeight="bold">
-        ‹
-      </Text>
+      <CustomImage className="h-full w-full" src={arrowBackBlack} />
     </view>
     <Text size={TextType.h3} fontWeight="bold" className="text-slate-800">
       {title}
@@ -151,8 +85,9 @@ const BackHeader = ({ title, onBack }: { title: string; onBack: () => void }) =>
 
 // ─── Main page ────────────────────────────────────────────────────────────────
 const ProfilePage = () => {
-  const { logout, navigateTo } = useNativeBridge();
-  const [activeScreen, setActiveScreen] = useState<Screen>('menu');
+  const { logout, routerParams, setUser, user } = useNativeBridge();
+  const activeScreen = (routerParams?.screen as Screen) ?? 'profile';
+  const { confirm, ConfirmationModal } = useConfirmation();
 
   // ── Profile data ──
   const { profile } = useGetProfile();
@@ -161,41 +96,62 @@ const ProfilePage = () => {
   const [phone, setPhone] = useState('');
   const [bio, setBio] = useState('');
   const [location, setLocation] = useState('');
-  const [profileSaved, setProfileSaved] = useState(false);
 
-  useState(() => {
+  useEffect(() => {
     if (profile) {
       setName(profile.name ?? '');
       setPhone(profile.phone ?? '');
       setBio(profile.bio ?? '');
       setLocation(profile.location ?? '');
     }
-  });
+  }, [profile]);
 
   const { execute: updateProfile, isLoading: isSavingProfile } = useUpdateProfile({
-    onSuccess: () => {
-      setProfileSaved(true);
-      setTimeout(() => setProfileSaved(false), 2000);
+    onSuccess: (data) => {
+      setUser({
+        ...user,
+        name,
+      });
+      callToast('Profil berhasil diberbarui!', 'success');
     },
   });
 
   // ── Security ──
-  const [currentPw, setCurrentPw] = useState('');
-  const [newPw, setNewPw] = useState('');
-  const [confirmPw, setConfirmPw] = useState('');
-  const [pwError, setPwError] = useState<string | null>(null);
-  const [pwSuccess, setPwSuccess] = useState(false);
+  const currentPassRef = useRef<InputRef>(null);
+  const newPassRef = useRef<InputRef>(null);
+  const newPassConfirmRef = useRef<InputRef>(null);
 
   const { execute: updatePassword, isLoading: isSavingPw } = useUpdatePassword({
-    onSuccess: () => {
-      setPwSuccess(true);
-      setCurrentPw('');
-      setNewPw('');
-      setConfirmPw('');
-      setTimeout(() => setPwSuccess(false), 2000);
+    onValidationError: (errors) => {
+      if (errors.current_password) currentPassRef.current?.setError(errors.current_password);
+      if (errors.new_password) newPassRef.current?.setError(errors.new_password);
+      if (errors.new_password_confirmation)
+        newPassConfirmRef.current?.setError(errors.new_password_confirmation);
     },
-    onError: () => setPwError('Current password is incorrect.'),
+    onSuccess: () => {
+      callToast('Berhasil mengubah kata sandi.', 'success');
+    },
+    onError: (err) => {
+      callToast('Terjadi kesalahan saat mengubah kata sandi.', 'error');
+    },
   });
+
+  const handleUpdatePassword = () => {
+    confirm(() => {
+      if (!currentPassRef.current || !newPassConfirmRef.current || !newPassRef.current) {
+        callToast('Terjadi apa saat mengubah kata sandi.', 'error');
+        return;
+      }
+      currentPassRef.current?.setError('');
+      newPassRef.current?.setError('');
+      newPassConfirmRef.current?.setError('');
+      updatePassword({
+        current_password: currentPassRef.current?.getValue(),
+        new_password: newPassRef.current?.getValue(),
+        new_password_confirmation: newPassConfirmRef.current?.getValue(),
+      });
+    });
+  };
 
   const [newEmail, setNewEmail] = useState('');
   const [emailUuid, setEmailUuid] = useState<string | null>(null);
@@ -210,7 +166,7 @@ const ProfilePage = () => {
   });
 
   const { execute: verifyEmail, isLoading: isVerifyingEmail } = useVerifyEmailChange({
-    onSuccess: () => {
+    onSuccess: (data) => {
       setEmailSent(false);
       setEmailUuid(null);
       setNewEmail('');
@@ -257,177 +213,47 @@ const ProfilePage = () => {
     onSuccess: () => logout(),
   });
 
-  const handlePickAvatar = () => {
-    pickAnyFile('image', (res) => {
-      const file = res?.tempFiles?.[0];
-      if (!file) return;
-    });
-  };
-
   if (isLoading || !profile) {
     return (
-      <view className="h-screen w-full flex-col bg-slate-50 flex">
-        {/* Hero skeleton */}
-        <view className="bg-[#1a73e8] px-5 pb-6 pt-12">
-          <view className="flex-row items-center gap-4 flex">
-            {/* Avatar circle */}
-            <Shimmer isRound width={80} height={80} />
-            {/* Name + username + badge */}
-            <view className="flex-1 flex-col gap-2 flex">
-              <Shimmer height={20} width={140} />
-              <Shimmer height={14} width={100} />
-              <Shimmer height={16} width={60} borderRadius={99} />
-            </view>
-          </view>
-          {/* Stats row */}
-          <view className="mt-4 flex-row gap-3 flex">
-            {[1, 2, 3, 4].map((i) => (
-              <view
-                key={i}
-                className="flex-1 flex-col items-center gap-1 rounded-xl bg-white/10 py-3 flex"
-              >
-                <Shimmer height={20} width={32} />
-                <Shimmer height={12} width={48} />
-              </view>
-            ))}
-          </view>
-        </view>
-
-        {/* Menu list skeleton */}
-        <view className="flex-1 p-4">
-          {/* Section label */}
-          <Shimmer height={10} width={120} className="mx-1 mb-3" />
-          <view className="rounded-2xl bg-white overflow-hidden">
-            {[1, 2, 3, 4].map((i, idx) => (
-              <view
-                key={i}
-                className={`flex-row items-center gap-4 px-5 py-4 flex ${idx < 3 ? 'border-b border-slate-100' : ''}`}
-              >
-                {/* Icon circle */}
-                <Shimmer isRound width={40} height={40} />
-                {/* Label + description */}
-                <view className="flex-1 flex-col gap-1.5 flex">
-                  <Shimmer height={14} width={100} />
-                  <Shimmer height={11} width={160} />
-                </view>
-                {/* Chevron */}
-                <Shimmer height={14} width={8} />
-              </view>
-            ))}
-          </view>
-        </view>
+      <view className="h-screen w-full flex-col items-center bg-slate-50 flex justify-center">
+        <Loading />
       </view>
     );
   }
 
   return (
-    <view
-      className="h-screen w-full bg-slate-50"
-      style={{ position: 'relative', overflow: 'hidden' }}
-    >
-      {/* ════ MENU SCREEN — always mounted as the base layer ════ */}
-      <view
-        className="flex-col bg-slate-50"
-        style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, flex: 1 }}
-      >
-        {/* Hero header */}
-        <view className="bg-[#1a73e8] px-5 pb-6 pt-12">
-          <view className="flex-row items-center gap-4 flex">
-            <view className="relative">
-              <view className="h-20 w-20 items-center rounded-full bg-[#1557b0] justify-center overflow-hidden">
-                {profile.avatar_url ? (
-                  <image src={profile.avatar_url} className="h-full w-full" />
-                ) : (
-                  <text className="text-3xl font-bold text-white">
-                    {profile.name?.charAt(0)?.toUpperCase()}
-                  </text>
-                )}
-              </view>
-              <view
-                bindtap={handlePickAvatar}
-                className="h-7 w-7 items-center rounded-full bg-white absolute -bottom-1 -right-1 justify-center shadow-md"
-              >
-                <text className="text-xs">📷</text>
-              </view>
-            </view>
-
-            <view className="flex-1 flex-col flex">
-              <Text size={TextType.h2} fontWeight="bold" color="white">
-                {profile.name}
-              </Text>
-              <Text size={TextType.b2} color="white">
-                @{profile.username}
-              </Text>
-              <view className="mt-1 self-start rounded-full bg-white/20 px-2 py-0.5">
-                <text className="uppercase text-[10px] font-bold text-blue-100">
-                  {profile.role}
-                </text>
-              </view>
-            </view>
-          </view>
-        </view>
-
-        {/* Settings list */}
-        <scroll-view className="flex-1 p-4" scroll-y>
-          <Text
-            size={TextType.b3}
-            fontWeight="bold"
-            className="uppercase mb-2 px-1 tracking-wider text-slate-400"
-          >
-            Pengaturan Akun
-          </Text>
-          <view className="mb-4 rounded-2xl overflow-hidden">
-            <MenuItem
-              emoji="👤"
-              label="Edit Profil"
-              description="Ubah informasi profil Kamu"
-              onPress={() => setActiveScreen('profile')}
-            />
-            <MenuItem
-              emoji="🔐"
-              label="Keamanan Akun"
-              description="Ubah password dan email Kamu"
-              onPress={() => setActiveScreen('security')}
-            />
-            <MenuItem
-              emoji="👁️"
-              label="Privasi"
-              description="Atur privasi Kamu"
-              onPress={() => setActiveScreen('privacy')}
-            />
-            <MenuItem
-              emoji="⚠️"
-              label="Akun"
-              description="Logout atau hapus akun Kamu"
-              onPress={() => setActiveScreen('danger')}
-              isLast
-            />
-          </view>
-          <view className="h-10" />
-        </scroll-view>
-      </view>
-
-      {/* ════ PROFILE SCREEN ════ */}
-      <SlideScreen active={activeScreen === 'profile'}>
+    <view className="h-screen w-full flex-col bg-slate-50 flex">
+      {activeScreen === 'profile' && (
         <view className="flex-1 flex-col bg-slate-50 flex" style={{ flex: 1 }}>
-          <BackHeader title="Edit Profil Akun" onBack={() => setActiveScreen('menu')} />
+          <BackHeader title="Kembali" />
           <scroll-view className="flex-1 p-4" scroll-y>
             <Section title="Informasi Akun">
-              <Input title="Nama Lengkap" initialValue={profile.name} />
-              <Input title="Nomor Telepon" initialValue={profile.phone} />
-              <Input title="Lokasi" initialValue={location} placeholder="e.g. Jakarta, Indonesia" />
-              <Input title="Bio" initialValue={bio} placeholder="Tell us about yourself" />
-
-              {profileSaved && (
-                <view className="rounded-xl bg-green-50 p-3">
-                  <text className="text-xs font-bold text-green-600">
-                    Berhasil menyimpan perubahan
-                  </text>
-                </view>
-              )}
+              <Input
+                title="Nama Lengkap"
+                initialValue={profile.name}
+                bindChange={(e) => setName(e)}
+              />
+              {/* Disabled for first release */}
+              <Input
+                title="Nomor Telepon"
+                initialValue={profile.phone}
+                variant="number"
+                bindChange={(e) => setPhone(e)}
+              />
+              <Input
+                title="Lokasi"
+                initialValue={location}
+                placeholder="e.g. Jakarta, Indonesia"
+                bindChange={(e) => setLocation(e)}
+              />
+              <Input
+                title="Bio"
+                initialValue={bio}
+                placeholder="Tell us about yourself"
+                bindChange={(e) => setBio(e)}
+              />
 
               <Button
-                className="h-12 w-full"
                 disabled={isSavingProfile}
                 onPress={() => updateProfile({ name, phone, bio, location })}
                 isLoading={isSavingProfile}
@@ -446,44 +272,18 @@ const ProfilePage = () => {
             <view className="h-10" />
           </scroll-view>
         </view>
-      </SlideScreen>
+      )}
 
       {/* ════ SECURITY SCREEN ════ */}
-      <SlideScreen active={activeScreen === 'security'}>
+      {activeScreen === 'security' && (
         <view className="flex-1 flex-col bg-slate-50 flex" style={{ flex: 1 }}>
-          <BackHeader title="Keamanan Akun" onBack={() => setActiveScreen('menu')} />
+          <BackHeader title="Kembali" />
           <scroll-view className="flex-1 p-4" scroll-y>
             <Section title="Ubah Password">
-              <Input title="Password saat ini" initialValue={currentPw} variant="password" />
-              <Input title="Password baru" initialValue={newPw} variant="password" />
-              <Input title="Konfirmasi password baru" initialValue={confirmPw} variant="password" />
-
-              {pwError && (
-                <view className="rounded-xl bg-red-50 p-3">
-                  <text className="text-xs text-red-500">{pwError}</text>
-                </view>
-              )}
-              {pwSuccess && (
-                <view className="rounded-xl bg-green-50 p-3">
-                  <text className="text-xs font-bold text-green-600">
-                    Berhasil mengubah password
-                  </text>
-                </view>
-              )}
-
-              <Button
-                className="h-12 w-full"
-                disabled={isSavingPw || !currentPw || newPw !== confirmPw}
-                onPress={() => {
-                  setPwError(null);
-                  updatePassword({
-                    current_password: currentPw,
-                    new_password: newPw,
-                    new_password_confirmation: confirmPw,
-                  });
-                }}
-                isLoading={isSavingPw}
-              >
+              <Input title="Password saat ini" variant="password" ref={currentPassRef} />
+              <Input title="Password baru" variant="password" ref={newPassRef} />
+              <Input title="Konfirmasi password baru" variant="password" ref={newPassConfirmRef} />
+              <Button disabled={isSavingPw} onPress={handleUpdatePassword} isLoading={isSavingPw}>
                 Simpan
               </Button>
             </Section>
@@ -529,12 +329,13 @@ const ProfilePage = () => {
             <view className="h-10" />
           </scroll-view>
         </view>
-      </SlideScreen>
+      )}
 
+      {/* Diabled */}
       {/* ════ PRIVACY SCREEN ════ */}
-      <SlideScreen active={activeScreen === 'privacy'}>
+      {activeScreen === 'privacy' && (
         <view className="flex-1 flex-col bg-slate-50 flex" style={{ flex: 1 }}>
-          <BackHeader title="Privacy" onBack={() => setActiveScreen('menu')} />
+          <BackHeader title="Kembali" />
           <scroll-view className="flex-1 p-4" scroll-y>
             <Section title="Visibilitas profil Anda">
               {(['public', 'private', 'friends_only'] as ProfileVisibility[]).map((v) => (
@@ -613,7 +414,6 @@ const ProfilePage = () => {
             )}
 
             <Button
-              className="h-14 w-full"
               disabled={isSavingPrivacy}
               onPress={() => updatePrivacy(privacyForm)}
               isLoading={isSavingPrivacy}
@@ -623,18 +423,18 @@ const ProfilePage = () => {
             <view className="h-10" />
           </scroll-view>
         </view>
-      </SlideScreen>
+      )}
 
       {/* ════ DANGER ZONE SCREEN ════ */}
-      <SlideScreen active={activeScreen === 'danger'}>
+      {activeScreen === 'danger' && (
         <view className="flex-1 flex-col bg-slate-50 flex" style={{ flex: 1 }}>
-          <BackHeader title="Account" onBack={() => setActiveScreen('menu')} />
+          <BackHeader title="Kembali" />
           <scroll-view className="flex-1 p-4" scroll-y>
             <Section title="Session">
               <Button onPress={logout}>Logout</Button>
             </Section>
 
-            <Section title="Delete account">
+            <Section title="Hapus akun">
               <view className="rounded-xl bg-red-50 p-4">
                 <Text size={TextType.b3} className="text-red-500">
                   Menghapus akun ini akan menghapus seluruh data Kamu. Apakah Kamu yakin?
@@ -683,7 +483,9 @@ const ProfilePage = () => {
             <view className="h-10" />
           </scroll-view>
         </view>
-      </SlideScreen>
+      )}
+
+      <ConfirmationModal />
     </view>
   );
 };

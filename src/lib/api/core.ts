@@ -5,6 +5,8 @@ import { AUTH_REFRESH_ENDPOINT } from '@/constant/route';
 import { useNativeBridge } from '@/context/NativeBridgeProvider';
 import type { Token } from '@/pages/Login/repository/type';
 
+import { callToast } from '../helper/showToast';
+
 export interface ApiResponse<T> {
   success: boolean;
   message: string;
@@ -45,7 +47,8 @@ export const guestAPIClient = async (url: string, config: AxiosRequestConfig = {
 
 export const useApiClient = () => {
   const { accessToken, setAccessToken, navigateTo } = useNativeBridge();
-
+  const isTimeout = (err: unknown) =>
+    axios.isAxiosError(err) && (err.code === 'ECONNABORTED' || err.code === 'ERR_CANCELED');
   const api = async (url: string, config: AxiosRequestConfig = {}) => {
     const headers = {
       ...(config.headers || {}),
@@ -53,12 +56,16 @@ export const useApiClient = () => {
     };
 
     // -------- 1st try (normal request)
-    let res = await instance.request({
-      url,
-      ...config,
-      headers,
-      validateStatus: () => true,
-    });
+    let res;
+    try {
+      res = await instance.request({ url, ...config, headers, validateStatus: () => true });
+    } catch (err) {
+      if (isTimeout(err)) {
+        callToast('Terjadi kendala dalam koneksi.', 'error');
+        return;
+      }
+      throw err;
+    }
 
     // -------- If 401 & refresh token null → redirect to login
     if (res.status !== 401) return res;
@@ -77,15 +84,10 @@ export const useApiClient = () => {
     try {
       const newToken = await refreshTokenApi(accessToken.refresh_token);
 
-      if (!newToken?.data?.access_token) {
-        throw new Error('Refresh failed');
-      }
+      if (!newToken?.data?.access_token) throw new Error('Refresh failed');
 
-      // -------- Update access token
-      console.log('newToken', newToken);
       setAccessToken(newToken.data);
 
-      // -------- Final Retry with the brand-new token
       return await instance.request({
         url,
         ...config,
@@ -95,9 +97,11 @@ export const useApiClient = () => {
         },
       });
     } catch (err) {
-      console.log('error Refresh', JSON.stringify(err, null, 2));
-      // setAccessToken(null);
-      // navigateTo('login.lynx.bundle');
+      if (isTimeout(err)) {
+        callToast('Terjadi kendala dalam koneksi.', 'error');
+        return;
+      }
+      // navigateTo('login');
     }
   };
 
