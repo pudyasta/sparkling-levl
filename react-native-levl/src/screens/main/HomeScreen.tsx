@@ -12,6 +12,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import AppLoading from '@/components/AppLoading';
 import AppText, { TextType } from '@/components/AppText';
+import CourseCard from '@/components/CourseCard';
 import { Colors } from '@/constant/colors';
 import { useAuth } from '@/context/AuthContext';
 import { getTimeOfDay } from '@/lib/helper/getTime';
@@ -37,7 +38,7 @@ export default function HomeScreen() {
   const { summary, refetch: refetchSummary, isLoading: loadingSummary } = useGetDashboardSummary();
   const { recentLearning, refetch: refetchRecent, isLoading: loadingRecent } = useGetDashboardRecentLearning();
   const { achievements, refetch: refetchAch } = useGetAchievements();
-  const { refetch: refetchRec } = useGetRecommendedCourses();
+  const { recommendedCourses, refetch: refetchRec } = useGetRecommendedCourses();
 
   const isLoading = loadingSummary || loadingRecent;
 
@@ -160,6 +161,32 @@ export default function HomeScreen() {
                   </View>
                 ))}
               </ScrollView>
+            </View>
+          )}
+
+          {recommendedCourses && recommendedCourses.length > 0 && (
+            <View style={styles.section}>
+              <SectionHeader title="Rekomendasi Kursus" isSeeAll={false} />
+              {recommendedCourses.map((course: any) => (
+                <CourseCard
+                  key={course.id}
+                  course={{
+                    id: String(course.id),
+                    title: course.title,
+                    description: course.short_desc,
+                    level: course.level_tag,
+                    category: course.category?.name ?? '',
+                    image: course.thumbnail,
+                    lessons: course.units?.length ?? 0,
+                  }}
+                  onPress={() =>
+                    router.push({
+                      pathname: '/course-detail',
+                      params: { courseId: course.id, slug: course.slug },
+                    })
+                  }
+                />
+              ))}
             </View>
           )}
         </View>

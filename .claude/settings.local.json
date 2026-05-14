@@ -1,5 +1,11 @@
 {
   "permissions": {
-    "allow": ["Bash(awk '{print $1}')", "Bash(grep -v \"^$\")"]
+    "allow": [
+      "Bash(awk '{print $1}')",
+      "Bash(grep -v \"^$\")",
+      "Bash(Get-ChildItem -Path \"F:\\\\TA\\\\sparkling-levl\\\\react-native-levl\" -Recurse -Directory)",
+      "Bash(Select-Object FullName)",
+      "Bash(ConvertTo-Json)"
+    ]
   }
 }

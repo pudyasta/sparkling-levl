@@ -174,6 +174,8 @@ export default function LessonsScreen() {
           <LessonContent
             lesson={lesson}
             type={currentParams.type}
+            assignmentId={currentParams.assignment_id}
+            courseSlug={currentParams.course_slug}
             onMarkDone={handleMarkDone}
             isLoading={isButtonLoading}
           />
@@ -225,15 +227,95 @@ export default function LessonsScreen() {
 function LessonContent({
   lesson,
   type,
+  assignmentId,
+  courseSlug,
   onMarkDone,
   isLoading,
 }: {
   lesson: any;
   type: string;
+  assignmentId: number;
+  courseSlug: string;
   onMarkDone: () => void;
   isLoading: boolean;
 }) {
   if (!lesson) return null;
+
+  if (type === 'quiz') {
+    return (
+      <View style={{ gap: 16, alignItems: 'center', paddingTop: 32 }}>
+        <Text style={{ fontSize: 48 }}>📝</Text>
+        <AppText size={TextType.h2} fontWeight="bold" style={{ textAlign: 'center' }}>
+          {lesson.title}
+        </AppText>
+        {lesson.description ? (
+          <AppText size={TextType.b1} color={Colors.Disabled} style={{ textAlign: 'center', lineHeight: 22 }}>
+            {lesson.description}
+          </AppText>
+        ) : null}
+        <View style={styles.quizInfoRow}>
+          {lesson.time_limit_minutes ? (
+            <View style={styles.quizInfoCard}>
+              <AppText size={TextType.b3} color={Colors.Disabled}>Waktu</AppText>
+              <AppText size={TextType.h3} fontWeight="bold">{lesson.time_limit_minutes} Menit</AppText>
+            </View>
+          ) : null}
+          {lesson.passing_grade ? (
+            <View style={styles.quizInfoCard}>
+              <AppText size={TextType.b3} color={Colors.Disabled}>Passing Grade</AppText>
+              <AppText size={TextType.h3} fontWeight="bold">{lesson.passing_grade}%</AppText>
+            </View>
+          ) : null}
+          {lesson.xp_reward ? (
+            <View style={[styles.quizInfoCard, { backgroundColor: '#FFFBEB' }]}>
+              <AppText size={TextType.b3} color={Colors.Disabled}>XP Reward</AppText>
+              <AppText size={TextType.h3} fontWeight="bold" color="#D97706">
+                +{lesson.xp_reward} XP
+              </AppText>
+            </View>
+          ) : null}
+        </View>
+        <AppButton
+          label="Mulai Quiz"
+          color="primary"
+          onPress={() =>
+            router.push({ pathname: '/quiz', params: { quizId: String(assignmentId) } })
+          }
+          style={{ width: '100%', marginTop: 8 }}
+        />
+      </View>
+    );
+  }
+
+  if (type === 'assignment') {
+    return (
+      <View style={{ gap: 16 }}>
+        <View style={styles.assignmentHeader}>
+          <View style={styles.assignmentBadge}>
+            <AppText size={TextType.b3} color={Colors.Primary} fontWeight="bold">ASSIGNMENT</AppText>
+          </View>
+          <AppText size={TextType.h2} fontWeight="bold">{lesson.title}</AppText>
+          {lesson.description ? (
+            <AppText size={TextType.b1} style={{ lineHeight: 24 }}>{lesson.description}</AppText>
+          ) : null}
+        </View>
+        {lesson.is_completed ? (
+          <View style={styles.completedBox}>
+            <Text style={{ fontSize: 24 }}>✅</Text>
+            <AppText size={TextType.b2} color={Colors.Success} fontWeight="bold">
+              Assignment sudah dikumpulkan
+            </AppText>
+          </View>
+        ) : (
+          <View style={{ gap: 8 }}>
+            <AppText size={TextType.b2} color={Colors.Disabled}>
+              Kunjungi halaman web atau hubungi instruktur untuk mengumpulkan assignment ini.
+            </AppText>
+          </View>
+        )}
+      </View>
+    );
+  }
 
   return (
     <View style={{ gap: 16 }}>
@@ -241,6 +323,13 @@ function LessonContent({
       {lesson.content && (
         <AppText size={TextType.b1} style={{ lineHeight: 24 }}>{lesson.content}</AppText>
       )}
+      {lesson.blocks && lesson.blocks.map((block: any, i: number) => (
+        <View key={i} style={{ gap: 8 }}>
+          {block.type === 'text' && block.content && (
+            <AppText size={TextType.b1} style={{ lineHeight: 24 }}>{block.content}</AppText>
+          )}
+        </View>
+      ))}
       {type === 'lesson' && (
         <AppButton
           label={lesson.is_completed ? '✓ Completed' : 'Mark as Done'}
@@ -303,4 +392,33 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   lessonTitle: { flex: 1, fontSize: 14, color: '#3c4043' },
+  quizInfoRow: { flexDirection: 'row', gap: 12, width: '100%' },
+  quizInfoCard: {
+    flex: 1,
+    backgroundColor: '#F8F9FA',
+    borderRadius: 16,
+    padding: 14,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#E8EAED',
+    gap: 4,
+  },
+  assignmentHeader: { gap: 8 },
+  assignmentBadge: {
+    alignSelf: 'flex-start',
+    backgroundColor: Colors.Accent,
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+  },
+  completedBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    backgroundColor: '#F0FFF4',
+    borderRadius: 12,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: '#C6F6D5',
+  },
 });

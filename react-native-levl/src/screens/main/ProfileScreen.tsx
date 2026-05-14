@@ -1,8 +1,8 @@
+import { router } from 'expo-router';
 import { Image } from 'expo-image';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import AppButton from '@/components/AppButton';
 import AppCard from '@/components/AppCard';
 import AppLoading from '@/components/AppLoading';
 import AppText, { TextType } from '@/components/AppText';
@@ -10,18 +10,44 @@ import { Colors } from '@/constant/colors';
 import { useAuth } from '@/context/AuthContext';
 import { useGetAchievements, useGetGamificationStats } from '@/usecase/main/useGetProfile';
 
+const SETTINGS_MENU = [
+  {
+    emoji: '✏️',
+    label: 'Edit Profil',
+    description: 'Ubah informasi profil kamu',
+    route: '/edit-profile',
+  },
+  {
+    emoji: '🔒',
+    label: 'Keamanan Akun',
+    description: 'Ubah password kamu',
+    route: '/account-security',
+  },
+  {
+    emoji: '⚙️',
+    label: 'Akun',
+    description: 'Logout atau hapus akun kamu',
+    route: '/account-danger',
+  },
+] as const;
+
 export default function ProfileScreen() {
-  const { user, logout } = useAuth();
-  const { stats, isLoading } = useGetGamificationStats();
-  const { achievements, isLoading: achLoading } = useGetAchievements();
+  const { user } = useAuth();
+  const { stats, isLoading, refetch: refetchStats } = useGetGamificationStats();
+  const { achievements, isLoading: achLoading, refetch: refetchAch } = useGetAchievements();
 
   if (isLoading || achLoading) return <AppLoading fullScreen />;
+
+  const refetchAll = () => { refetchStats(); refetchAch(); };
 
   const initials = user?.name?.split(' ').map((n: string) => n[0]).join('') ?? 'AC';
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#F8FAFC' }}>
-      <ScrollView contentContainerStyle={{ paddingBottom: 32 }}>
+      <ScrollView
+        contentContainerStyle={{ paddingBottom: 32 }}
+        refreshControl={<RefreshControl refreshing={false} onRefresh={refetchAll} />}
+      >
         <View style={styles.header}>
           <View style={styles.avatarContainer}>
             {user?.avatar_url ? (
@@ -84,7 +110,32 @@ export default function ProfileScreen() {
             </View>
           </View>
 
-          <AppButton label="Logout" color="primary" onPress={logout} />
+          <View>
+            <AppText size={TextType.h2} fontWeight="bold" style={{ marginBottom: 12 }}>
+              Pengaturan Akun
+            </AppText>
+            <View style={styles.menuCard}>
+              {SETTINGS_MENU.map((item, idx) => (
+                <TouchableOpacity
+                  key={item.route}
+                  onPress={() => router.push(item.route as any)}
+                  style={[
+                    styles.menuRow,
+                    idx < SETTINGS_MENU.length - 1 && styles.menuRowBorder,
+                  ]}
+                >
+                  <View style={styles.menuIcon}>
+                    <Text style={{ fontSize: 18 }}>{item.emoji}</Text>
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <AppText size={TextType.b1} fontWeight="bold">{item.label}</AppText>
+                    <AppText size={TextType.b3} color={Colors.Disabled}>{item.description}</AppText>
+                  </View>
+                  <Text style={{ color: Colors.Disabled, fontSize: 18 }}>›</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -160,4 +211,33 @@ const styles = StyleSheet.create({
   achRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
   achItem: { alignItems: 'center', width: 72 },
   achIcon: { width: 64, height: 64, borderRadius: 12, backgroundColor: '#F1F3F4' },
+  menuCard: {
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 1,
+  },
+  menuRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 14,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+  },
+  menuRowBorder: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#F1F3F4',
+  },
+  menuIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#F1F3F4',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });

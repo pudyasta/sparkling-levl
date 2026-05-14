@@ -5,6 +5,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -255,34 +256,49 @@ export default function QuizScreen() {
               {question?.content}
             </AppText>
 
-            <View style={{ gap: 12 }}>
-              {options.map((opt: any) => {
-                const isActive = question?.type === 'checkbox'
-                  ? Array.isArray(currentAnswer) && currentAnswer.includes(opt)
-                  : currentAnswer === opt;
-                return (
-                  <TouchableOpacity
-                    key={typeof opt === 'object' ? opt.id : opt}
-                    onPress={() => {
-                      if (question?.type === 'checkbox') {
-                        const prev = Array.isArray(currentAnswer) ? currentAnswer : [];
-                        setCurrentAnswer(prev.includes(opt) ? prev.filter((o: any) => o !== opt) : [...prev, opt]);
-                      } else {
-                        setCurrentAnswer(opt);
-                      }
-                    }}
-                    style={[styles.option, isActive && styles.optionActive]}
-                  >
-                    <View style={[styles.optionDot, question?.type === 'checkbox' && styles.optionDotCheckbox, isActive && styles.optionDotActive]}>
-                      {isActive && <View style={question?.type === 'checkbox' ? styles.checkInner : styles.radioInner} />}
-                    </View>
-                    <Text style={[styles.optionText, isActive && { color: Colors.Primary, fontWeight: '700' }]}>
-                      {typeof opt === 'object' ? opt.content ?? opt.text ?? JSON.stringify(opt) : String(opt)}
-                    </Text>
-                  </TouchableOpacity>
-                );
-              })}
-            </View>
+            {question?.type === 'essay' ? (
+              <View style={styles.essayContainer}>
+                <TextInput
+                  style={styles.essayInput}
+                  multiline
+                  numberOfLines={8}
+                  placeholder="Tulis jawaban kamu di sini..."
+                  placeholderTextColor={Colors.Disabled}
+                  value={typeof currentAnswer === 'string' ? currentAnswer : ''}
+                  onChangeText={(text) => setCurrentAnswer(text)}
+                  textAlignVertical="top"
+                />
+              </View>
+            ) : (
+              <View style={{ gap: 12 }}>
+                {options.map((opt: any) => {
+                  const isActive = question?.type === 'checkbox'
+                    ? Array.isArray(currentAnswer) && currentAnswer.includes(opt)
+                    : currentAnswer === opt;
+                  return (
+                    <TouchableOpacity
+                      key={typeof opt === 'object' ? opt.id : opt}
+                      onPress={() => {
+                        if (question?.type === 'checkbox') {
+                          const prev = Array.isArray(currentAnswer) ? currentAnswer : [];
+                          setCurrentAnswer(prev.includes(opt) ? prev.filter((o: any) => o !== opt) : [...prev, opt]);
+                        } else {
+                          setCurrentAnswer(opt);
+                        }
+                      }}
+                      style={[styles.option, isActive && styles.optionActive]}
+                    >
+                      <View style={[styles.optionDot, question?.type === 'checkbox' && styles.optionDotCheckbox, isActive && styles.optionDotActive]}>
+                        {isActive && <View style={question?.type === 'checkbox' ? styles.checkInner : styles.radioInner} />}
+                      </View>
+                      <Text style={[styles.optionText, isActive && { color: Colors.Primary, fontWeight: '700' }]}>
+                        {typeof opt === 'object' ? opt.content ?? opt.text ?? JSON.stringify(opt) : String(opt)}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            )}
           </View>
         )}
       </ScrollView>
@@ -367,4 +383,16 @@ const styles = StyleSheet.create({
   navItem: { width: 48, height: 48, borderRadius: 12, borderWidth: 2, borderColor: '#F1F3F4', backgroundColor: '#F8F9FA', alignItems: 'center', justifyContent: 'center' },
   navItemActive: { borderColor: Colors.Primary, backgroundColor: Colors.Accent },
   navFlag: { position: 'absolute', top: -4, right: -4, fontSize: 10 },
+  essayContainer: { marginTop: 4 },
+  essayInput: {
+    borderWidth: 2,
+    borderColor: '#F1F3F4',
+    borderRadius: 16,
+    padding: 16,
+    fontSize: 14,
+    color: Colors.Neutral,
+    minHeight: 200,
+    backgroundColor: '#fff',
+    lineHeight: 22,
+  },
 });

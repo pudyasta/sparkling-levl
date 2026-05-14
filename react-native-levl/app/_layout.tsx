@@ -16,6 +16,9 @@ export default function RootLayout() {
           <Stack.Screen name="quiz" />
           <Stack.Screen name="quiz-result" />
           <Stack.Screen name="my-courses" />
+          <Stack.Screen name="edit-profile" />
+          <Stack.Screen name="account-security" />
+          <Stack.Screen name="account-danger" />
         </Stack>
         <StatusBar style="auto" />
       </AppProvider>
