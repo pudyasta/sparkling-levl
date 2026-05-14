@@ -47,7 +47,7 @@ function Leaderboard() {
     <view
       style={{
         width: '100%',
-        paddingBottom: '20px',
+        paddingBottom: '70px',
       }}
     >
       <view

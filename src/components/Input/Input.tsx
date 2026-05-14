@@ -19,11 +19,13 @@ export interface InputValidation {
   message: string;
 }
 
+type InputVariant = 'number' | 'text' | 'password' | 'digit' | 'tel' | 'email';
+
 interface InputProps {
   initialValue?: string;
   id?: string;
   title: string;
-  variant?: string;
+  variant?: InputVariant;
   icon?: string;
   disabled?: boolean;
   placeholder?: string;
@@ -31,7 +33,7 @@ interface InputProps {
 }
 
 const Input = forwardRef<InputRef, InputProps>(
-  ({ id, initialValue, title, variant, icon, bindChange, placeholder, disabled }, ref) => {
+  ({ id, initialValue, title, variant = 'text', icon, bindChange, placeholder, disabled }, ref) => {
     const [focused, setFocused] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const timerRef = useRef<number | null>(null);
@@ -92,7 +94,13 @@ const Input = forwardRef<InputRef, InputProps>(
             disabled={disabled}
             id={id}
             ref={nativeInputRef}
-            type={variant === 'password' && !showPassword ? 'password' : 'text'}
+            type={
+              variant === 'password' && !showPassword
+                ? 'password'
+                : variant === 'password' && showPassword
+                  ? 'text'
+                  : variant
+            }
             bindfocus={() => setFocused(true)}
             bindblur={() => {
               if (debouncedValue.length === 0) setFocused(false);
@@ -100,7 +108,7 @@ const Input = forwardRef<InputRef, InputProps>(
             bindinput={(res: any) => handleInput(res.detail.value)}
             style={{
               color: disabled ? Colors.TextDisabled : Colors.TextPrimary,
-              fontSize: '14px',
+              fontSize: '12px',
               fontFamily: 'inter',
               lineHeight: '20px',
               minHeight: '20px',

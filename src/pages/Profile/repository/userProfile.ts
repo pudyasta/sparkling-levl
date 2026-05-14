@@ -43,6 +43,7 @@ export const useProfileRepo = () => {
     payload: UpdateProfilePayload
   ): Promise<UpdateProfileResponse> => {
     const res = await api(EP.PROFILE, { method: PUT_METHOD, data: payload });
+    console.log(JSON.stringify(res, null, 2));
     return res?.data;
   };
 

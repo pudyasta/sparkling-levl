@@ -84,7 +84,7 @@ export default function LoginPage() {
       <view className="animate-fade-in flex-col items-center gap-5 px-5 py-8 flex justify-center">
         <Input title="Email atau username" variant="email" icon="mail" ref={emailRef} />
         <Input title="Password" variant="password" icon="lock" ref={passwordRef} />
-
+        {/* 
         <Text
           typeof={TextType.b1}
           className="self-end"
@@ -94,7 +94,7 @@ export default function LoginPage() {
           onClick={() => navigateTo('forgotPassword', { close: true })}
         >
           Lupa Password?
-        </Text>
+        </Text> */}
 
         <Button color="primary" onPress={loginUser} disabled={isLoading}>
           {isLoading ? <Loading size={32} /> : 'Masuk'}

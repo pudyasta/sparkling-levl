@@ -7,6 +7,7 @@ export interface UserProfileData {
   currentXP: number;
   nextLevelXP: number;
   streak: number;
+  bio: string;
 }
 
 export interface StatItem {

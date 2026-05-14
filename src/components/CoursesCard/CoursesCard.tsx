@@ -6,9 +6,9 @@ import { TextType } from '../Text/types';
 import Badge from '../common/Badge/Badge';
 
 const LEVEL_VARIANT: Record<string, 'info' | 'warning' | 'danger'> = {
-  BEGINNER:     'info',
-  INTERMEDIATE: 'warning',
-  ADVANCED:     'danger',
+  DASAR: 'info',
+  MENENGAH: 'warning',
+  MAHIR: 'danger',
 };
 
 interface CourseCardProps {
@@ -66,8 +66,12 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, bindTap }) => {
         )}
 
         {/* Title — 14px 600 max 2 lines */}
-        <Text size={TextType.b2} fontWeight="600" color={Colors.N900}
-          style={{ lineHeight: '20px', overflow: 'hidden' }}>
+        <Text
+          size={TextType.b2}
+          fontWeight="600"
+          color={Colors.N900}
+          style={{ lineHeight: '20px', overflow: 'hidden' }}
+        >
           {course.title}
         </Text>
 
@@ -79,7 +83,14 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, bindTap }) => {
         )}
 
         {/* Footer */}
-        <view style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', paddingTop: '4px' }}>
+        <view
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'flex-end',
+            paddingTop: '4px',
+          }}
+        >
           <Text size={TextType.p} fontWeight="600" color={Colors.Primary}>
             Lihat Selengkapnya
           </Text>

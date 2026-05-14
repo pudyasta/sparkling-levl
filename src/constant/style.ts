@@ -35,48 +35,74 @@ const DarkColors: ColorPalette = {
   Background: '#121212',
   Disabled: '#5F6368',
 };
+const defaultTheme = Theme.Light;
 
 export const Colors = {
   // Theme-aware brand colors
+  // get Primary() {
+  //   return lynx.__globalProps.appTheme === Theme.Dark
+  //     ? DarkColors.Primary
+  //     : LightColors.Primary;
+  // },
+  // get Secondary() {
+  //   return lynx.__globalProps.appTheme === Theme.Dark
+  //     ? DarkColors.Secondary
+  //     : LightColors.Secondary;
+  // },
+  // get Accent() {
+  //   return lynx.__globalProps.appTheme === Theme.Dark
+  //     ? DarkColors.Accent
+  //     : LightColors.Accent;
+  // },
+  // get Success() {
+  //   return lynx.__globalProps.appTheme === Theme.Dark
+  //     ? DarkColors.Success
+  //     : LightColors.Success;
+  // },
+  // get Error() {
+  //   return lynx.__globalProps.appTheme === Theme.Dark
+  //     ? DarkColors.Error
+  //     : LightColors.Error;
+  // },
+  // get Neutral() {
+  //   return lynx.__globalProps.appTheme === Theme.Dark
+  //     ? DarkColors.Neutral
+  //     : LightColors.Neutral;
+  // },
+  // get Background() {
+  //   return lynx.__globalProps.appTheme === Theme.Dark
+  //     ? DarkColors.Background
+  //     : LightColors.Background;
+  // },
+  // get Disabled() {
+  //   return lynx.__globalProps.appTheme === Theme.Dark
+  //     ? DarkColors.Disabled
+  //     : LightColors.Disabled;
+  // },
+
   get Primary() {
-    return lynx.__globalProps.appTheme === Theme.Dark
-      ? DarkColors.Primary
-      : LightColors.Primary;
+    return LightColors.Primary;
   },
   get Secondary() {
-    return lynx.__globalProps.appTheme === Theme.Dark
-      ? DarkColors.Secondary
-      : LightColors.Secondary;
+    return LightColors.Secondary;
   },
   get Accent() {
-    return lynx.__globalProps.appTheme === Theme.Dark
-      ? DarkColors.Accent
-      : LightColors.Accent;
+    return LightColors.Accent;
   },
   get Success() {
-    return lynx.__globalProps.appTheme === Theme.Dark
-      ? DarkColors.Success
-      : LightColors.Success;
+    return LightColors.Success;
   },
   get Error() {
-    return lynx.__globalProps.appTheme === Theme.Dark
-      ? DarkColors.Error
-      : LightColors.Error;
+    return LightColors.Error;
   },
   get Neutral() {
-    return lynx.__globalProps.appTheme === Theme.Dark
-      ? DarkColors.Neutral
-      : LightColors.Neutral;
+    return LightColors.Neutral;
   },
   get Background() {
-    return lynx.__globalProps.appTheme === Theme.Dark
-      ? DarkColors.Background
-      : LightColors.Background;
+    return LightColors.Background;
   },
   get Disabled() {
-    return lynx.__globalProps.appTheme === Theme.Dark
-      ? DarkColors.Disabled
-      : LightColors.Disabled;
+    return LightColors.Disabled;
   },
 
   // Extended brand tokens

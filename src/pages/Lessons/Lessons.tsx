@@ -1,9 +1,14 @@
 import { useEffect, useState } from '@lynx-js/react';
+import * as router from 'sparkling-navigation';
 
+import { arrowBackBlack } from '@/assets/images/icon';
 import { BackInterceptor } from '@/components/BackInterceptor/BackInterceptor';
+import { useConfirmation } from '@/components/ConfirmationModal/ConfitmationModal';
 import { Loading } from '@/components/Loading/Loading';
 import Text from '@/components/Text';
 import { TextType } from '@/components/Text/types';
+import { Button } from '@/components/common';
+import CustomImage from '@/components/common/CustomImage/CustomImage';
 import { Colors } from '@/constant/style';
 import { useNativeBridge } from '@/context/NativeBridgeProvider';
 
@@ -30,6 +35,7 @@ const LessonPage = () => {
   const [completedLessons, setCompletedLessons] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [totalLessons, setTotalLessons] = useState(0);
+  const { confirm, ConfirmationModal } = useConfirmation();
 
   let allLessons = routerParams?.all_lessons || [];
 
@@ -132,21 +138,26 @@ const LessonPage = () => {
         </scroll-view>
 
         {/* Progress Trigger */}
-        <view
-          className="z-[110] w-full border-b border-[#f1f3f4] bg-white p-4 px-5 absolute top-0"
-          bindtap={() => setIsSheetOpen(!isSheetOpen)}
-        >
-          <view className="mb-2 flex-row flex justify-between">
-            <Text size={TextType.b1}>
-              Progres Kursus {completedLessons} / {totalLessons}
-            </Text>
-            <Text>{isSheetOpen ? '▼' : '▲'}</Text>
+        <view className="z-[110] w-full items-center gap-4 border-b border-[#f1f3f4] bg-white p-4 px-5 flex absolute top-0">
+          <view
+            bindtap={() => confirm(() => router.close())}
+            className="h-9 w-9 items-center rounded-full bg-slate-100 p-2 justify-center"
+          >
+            <CustomImage className="h-full w-full" src={arrowBackBlack} />
           </view>
-          <view className="h-1.5 w-full rounded-full bg-[#f1f3f4]">
-            <view
-              className="h-full rounded-full transition duration-300 ease-in-out"
-              style={{ backgroundColor: Colors.Primary, width: `${progressPercentage}%` }}
-            />
+          <view className="flex-1" bindtap={() => setIsSheetOpen(!isSheetOpen)}>
+            <view className="mb-2 flex-row flex justify-between">
+              <Text size={TextType.b1}>
+                Progres Kursus {completedLessons} / {totalLessons}
+              </Text>
+              <Text>{isSheetOpen ? '▼' : '▲'}</Text>
+            </view>
+            <view className="h-1.5 w-full rounded-full bg-[#f1f3f4]">
+              <view
+                className="h-full rounded-full transition duration-300 ease-in-out"
+                style={{ backgroundColor: Colors.Primary, width: `${progressPercentage}%` }}
+              />
+            </view>
           </view>
         </view>
 
@@ -186,9 +197,13 @@ const LessonPage = () => {
                 </view>
               );
             })}
+            <Button variant="outlined" color="secondary" onPress={() => router.close()}>
+              Keluar
+            </Button>
           </scroll-view>
         </view>
 
+        <ConfirmationModal />
         <BackInterceptor />
       </view>
     )
