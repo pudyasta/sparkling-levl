@@ -5,7 +5,6 @@ import { useNativeBridge } from '@/context/NativeBridgeProvider';
 import {
   bookActive,
   bookInactive,
-  booksvg,
   homeActive,
   homeInactive,
   rankingActive,
@@ -22,7 +21,7 @@ import { ProfileScreen } from './components/Profile/ProfileScreen';
 interface Props {}
 
 const MainPage: React.FC<Props> = ({}) => {
-  const { isAuthenticated, navigateTo, hydrate, isRefreshing } = useNativeBridge();
+  const { isAuthenticated, navigateTo, hydrate, isRefreshing, accessToken } = useNativeBridge();
   const pages = [
     {
       label: {
@@ -62,7 +61,7 @@ const MainPage: React.FC<Props> = ({}) => {
     if (isRefreshing) return;
 
     if (!isAuthenticated) {
-      navigateTo('login.lynx.bundle', { title: 'Home', hide_nav_bar: 1, close: true });
+      navigateTo('login', { close: true });
     }
   }, [isAuthenticated, isRefreshing]);
 

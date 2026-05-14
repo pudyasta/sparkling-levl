@@ -1,5 +1,6 @@
 import { useState } from '@lynx-js/react';
 
+import CustomImage from '../CustomImage/CustomImage';
 import styles from './Tabs.module.css';
 
 interface TabItem {
@@ -27,13 +28,13 @@ export function Tabs({
     onChange?.(i);
   };
   return (
-    <view className={styles.container}>
-      <scroll-view className={styles.scrollView} scroll-orientation="vertical">
+    <view className="h-full flex-col bg-[#f6f8fa] flex">
+      <scroll-view className="mb-18 flex-1" scroll-orientation="vertical">
         {items[active]?.content}
       </scroll-view>
 
       {/* TABS */}
-      <view className={styles.tabBar}>
+      <view className="w-full flex-row border-t border-[#eeeeee] bg-white px-4 flex fixed bottom-0">
         {items.map((item, i) => {
           const isActive = i === active;
 
@@ -41,13 +42,19 @@ export function Tabs({
             <view
               key={item.key ?? i}
               bindtap={() => handleChange(i)}
-              className={`${styles.tabItem} ${isActive ? styles.tabItemActive : ''}`}
+              className={`flex-1 flex-col items-center border-b-2 py-5 flex justify-center ${
+                isActive ? 'border-[#1a73e8]' : 'border-transparent'
+              }`}
             >
-              <image
+              <CustomImage
                 src={isActive ? item.label.srcActive : item.label.srcInactive}
-                className={`${styles.tabIcon} ${isActive ? styles.tabIconActive : ''}`}
+                className={`h-9 w-9 ${isActive ? 'opacity-100' : 'opacity-80'}`}
               />
-              <text className={`${styles.tabLabel} ${isActive ? styles.tabLabelActive : ''}`}>
+              <text
+                className={`mt-1 text-sm font-semibold ${
+                  isActive ? 'text-[#1a73e8]' : 'text-[#9aa0a6]'
+                }`}
+              >
                 {item.label.text}
               </text>
             </view>

@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { fire } from '@/assets/images/icon';
+import { fire, fireSvg, xpFilled } from '@/assets/images/icon';
 import CourseCard from '@/components/CoursesCard/CoursesCard';
 import { PullToRefresh } from '@/components/PullToRefresh/PullToRefresh';
 import Text from '@/components/Text';
@@ -44,13 +44,13 @@ export default function LearningDashboard() {
   const timeOfDay = getTimeOfDay();
 
   useEffect(() => {
-    console.log(JSON.stringify(recentLearning, null, 2));
+    // console.log(JSON.stringify(recentLearning, null, 2));
   }, [recentLearning]);
 
   return (
     recommendedCourses && (
       <PullToRefresh onRefresh={async () => refetchAll()}>
-        <scroll-view className="flex-1 animate-fade-in bg-slate-50 pb-10">
+        <scroll-view className="flex-1 animate-fade-in bg-slate-50 pb-[80px]">
           {/* Header Section */}
           <view
             className="min-h-[20vh] flex-col px-4 pb-10 pt-8 flex"
@@ -75,7 +75,13 @@ export default function LearningDashboard() {
                   </Text>
                 </view>
                 <view className="h-[60px] w-[60px] items-center rounded-full border border-white/30 bg-white/20 flex justify-center">
-                  <text className="text-xl font-bold text-white">AC</text>
+                  {user?.avatar_url ? (
+                    <CustomImage src={user?.avatar_url || ''} className="h-12 w-12 rounded-full" />
+                  ) : (
+                    <Text color="white" size={TextType.h3} fontWeight="bold">
+                      {user?.name.split(' ')[0][0] + (user?.name.split(' ')[1][0] || '')}
+                    </Text>
+                  )}
                 </view>
               </view>
 
@@ -86,24 +92,26 @@ export default function LearningDashboard() {
                     className="flex-row items-center gap-2 rounded-xl px-5 py-2 flex"
                     style={{ background: 'linear-gradient(90deg, #e23d3d, #e98980)' }}
                   >
-                    <CustomImage src={fire} className="h-6 w-[18px]" />
+                    <CustomImage src={fireSvg} className="h-6 w-[18px]" />
                     <view className="flex-col flex">
                       <Text size={TextType.h2} fontWeight="bold" color="white">
                         {summary.gamification_stats.day_streak || 0}
                       </Text>
                       <Text size={TextType.b3} color="white" className="opacity-80">
-                        Days Streak
+                        Hari Streak
                       </Text>
                     </view>
                   </view>
 
                   {/* XP Badge */}
                   <view
-                    className="items-center self-stretch rounded-xl px-3 py-3 flex"
+                    className="items-center gap-2 self-stretch rounded-xl px-3 py-3 flex"
                     style={{ background: 'linear-gradient(180deg, #f7b500, #f2d06b)' }}
                   >
+                    <CustomImage src={xpFilled} className="h-6 w-[18px]" />
+
                     <Text size={TextType.b1} fontWeight="bold" color="white">
-                      ✨ +{summary.gamification_stats.xp || 0} XP
+                      {summary.gamification_stats.xp || 0} XP
                     </Text>
                   </view>
                 </view>
@@ -114,14 +122,11 @@ export default function LearningDashboard() {
             {/* Continue Learning */}
             {recentLearning && recentLearning.length > 0 && (
               <view className="flex-col gap-3 flex">
-                <SectionHeader
-                  title="Lanjut Belajar"
-                  bindTap={() => navigateTo('myCourse.lynx.bundle')}
-                />
+                <SectionHeader title="Lanjut Belajar" bindTap={() => navigateTo('myCourse')} />
                 <Card
                   className="flex-row items-center gap-4 rounded-2xl bg-white p-1 flex shadow-sm"
                   bindTap={() =>
-                    navigateTo('courseDetail.lynx.bundle', {
+                    navigateTo('courseDetail', {
                       courseId: recentLearning[0].course.id,
                       course_slug: recentLearning[0].course.slug,
                     })
@@ -138,8 +143,8 @@ export default function LearningDashboard() {
                       {recentLearning[0].course?.title || ''}
                     </Text>
                     <Text size={TextType.b3} color={Colors.Primary}>
-                      {recentLearning[0].progress.completed_lessons} of{' '}
-                      {recentLearning[0].progress.total_lessons} lessons
+                      {recentLearning[0].progress.completed_lessons} dari{' '}
+                      {recentLearning[0].progress.total_lessons} materi
                     </Text>
                     <view className="mt-1 flex-row items-center gap-2 flex">
                       <view className="h-2 flex-1 rounded-full bg-slate-100 overflow-hidden">
@@ -187,7 +192,7 @@ export default function LearningDashboard() {
               {recommendedCourses.map((course) => (
                 <CourseCard
                   bindTap={() =>
-                    navigateTo('courseDetail.lynx.bundle', {
+                    navigateTo('courseDetail', {
                       courseId: course.id,
                       course_slug: course.slug,
                     })

@@ -110,7 +110,7 @@ export interface QuizQuestionResource {
   type: string;
   type_label: string;
   content: string;
-  options: QuestionOptionItem[];
+  options: string[];
   answer_key?: string[] | null;
   weight: number;
   order: number;
@@ -269,5 +269,46 @@ export interface TakeoverQuizResource {
   duration: number | null;
   session_token: string;
 }
-
 export type TakeoverQuizResponse = ApiResponse<TakeoverQuizResource>;
+
+export type QuizOverviewOptionValue = { text: string } | string;
+
+export interface QuizOverviewAnswer {
+  id: number;
+  content: string | null;
+  selected_options: string[] | null;
+}
+
+export interface QuizOverviewQuestion {
+  id: number;
+  order: number;
+  type: QuizQuestionType;
+  type_label: string;
+  content: string;
+  options: QuizOverviewOptionValue[];
+  weight: string;
+  max_score: string;
+  is_answered: boolean;
+  answer: QuizOverviewAnswer | null;
+}
+
+export interface QuizOverviewSummaryItem {
+  order: number;
+  question_id: number;
+  is_answered: boolean;
+}
+
+export interface QuizOverviewData {
+  submission_id: number;
+  status: string;
+  started_at: string;
+  time_limit_minutes: number | null;
+  time_remaining_seconds: number | null;
+  is_time_limited: boolean;
+  total_questions: number;
+  answered_count: number;
+  unanswered_count: number;
+  summary: QuizOverviewSummaryItem[];
+  questions: QuizOverviewQuestion[];
+}
+export type QuizOverviewResponse = ApiResponse<QuizOverviewData>;

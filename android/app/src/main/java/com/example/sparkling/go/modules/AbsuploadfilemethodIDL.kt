@@ -25,6 +25,9 @@ abstract class AbsUploadFileMethodIDL : AbsSparklingIDLMethod<AbsUploadFileMetho
         @get:IDLMethodParamField(required = true, isGetter = true, keyPath = "url", primitiveClassType = String::class)
         val url: String
 
+        @get:IDLMethodParamField(required = true, isGetter = true, keyPath = "method", primitiveClassType = String::class)
+        val method: String
+
         // optional — empty string for files-only submission
         @get:IDLMethodParamField(required = false, isGetter = true, keyPath = "answerText", primitiveClassType = String::class)
         val answerText: String?

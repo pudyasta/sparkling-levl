@@ -87,7 +87,7 @@ export const UnitSection = ({
               bindtap={() => {
                 console.log(lesson);
                 if (lesson.is_locked) return;
-                navigateTo('lessons.lynx.bundle', {
+                navigateTo('lessons', {
                   lesson_slug: lesson.slug,
                   courseId,
                   unit_slug: unit.slug,

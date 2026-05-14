@@ -18,6 +18,7 @@ export const useStartQuiz = (options?: Options) => {
       options?.onSuccess?.(data);
     },
     onError: (error: any) => {
+      console.log('useStartQuiz onError', JSON.stringify(error, null, 2));
       options?.onError?.(error);
     },
   });

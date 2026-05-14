@@ -3,8 +3,13 @@ import { htmlToPlainText } from '@/lib/helper/htmlToLynx';
 
 import Text from '../Text';
 import { TextType } from '../Text/types';
-import Card from '../common/Card/Card';
-import style from './CourseCard.module.css';
+import Badge from '../common/Badge/Badge';
+
+const LEVEL_VARIANT: Record<string, 'info' | 'warning' | 'danger'> = {
+  BEGINNER:     'info',
+  INTERMEDIATE: 'warning',
+  ADVANCED:     'danger',
+};
 
 interface CourseCardProps {
   course: {
@@ -20,52 +25,68 @@ interface CourseCardProps {
 }
 
 const CourseCard: React.FC<CourseCardProps> = ({ course, bindTap }) => {
+  const levelVariant = LEVEL_VARIANT[course.level?.toUpperCase()] ?? 'neutral';
+  const excerpt = course.description
+    ? htmlToPlainText(course.description).split(' ').slice(0, 30).join(' ') + '...'
+    : '';
+
   return (
     <view
       bindtap={bindTap}
-      className="mb-6 rounded-2xl border border-slate-100 bg-white overflow-hidden shadow-sm"
+      style={{
+        backgroundColor: Colors.Surface,
+        borderRadius: '12px',
+        border: `1px solid ${Colors.Border}`,
+        marginBottom: '12px',
+        overflow: 'hidden',
+      }}
     >
-      {/* Thumbnail — full width hero */}
-      {course.image && (
+      {/* Banner image — 128px per design spec */}
+      {course.image ? (
         <view
-          style={{ backgroundImage: `url(${course.image})` }}
-          className="h-36 w-full bg-cover bg-center"
+          style={{
+            backgroundImage: `url(${course.image})`,
+            height: '128px',
+            width: '100%',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
         />
+      ) : (
+        <view style={{ height: '128px', backgroundColor: Colors.N100 }} />
       )}
 
       {/* Content */}
-      <view className="flex-col gap-3 p-4 flex">
+      <view style={{ padding: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
         {/* Level badge */}
         {course.level && (
-          <view className="self-start rounded-full bg-blue-50 px-3 py-1">
-            <Text size={TextType.b3} fontWeight="bold" color={Colors.Primary}>
-              {course.level.toUpperCase()}
-            </Text>
-          </view>
+          <Badge variant={levelVariant}>
+            {course.level.charAt(0).toUpperCase() + course.level.slice(1).toLowerCase()}
+          </Badge>
         )}
 
-        {/* Title */}
-        <Text size={TextType.b1} fontWeight="bold" className="leading-snug text-slate-800">
+        {/* Title — 14px 600 max 2 lines */}
+        <Text size={TextType.b2} fontWeight="600" color={Colors.N900}
+          style={{ lineHeight: '20px', overflow: 'hidden' }}>
           {course.title}
         </Text>
 
-        {/* Description */}
-        {course.description && (
-          <Text size={TextType.b3} className="leading-relaxed text-slate-400">
-            {htmlToPlainText(course.description).split(' ').slice(0, 35).join(' ') + '...'}
+        {/* Description — BodySm muted */}
+        {excerpt && (
+          <Text size={TextType.b3} color={Colors.TextTertiary}>
+            {excerpt}
           </Text>
         )}
 
-        {/* Footer meta row */}
-        <view className="flex-row items-center pt-1 flex justify-end">
-          <view className="flex-row items-center gap-1 flex">
-            <Text size={TextType.b3} color={Colors.Primary}>
-              View Course
-            </Text>
-          </view>
+        {/* Footer */}
+        <view style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', paddingTop: '4px' }}>
+          <Text size={TextType.p} fontWeight="600" color={Colors.Primary}>
+            Lihat Selengkapnya
+          </Text>
         </view>
       </view>
     </view>
   );
 };
+
 export default CourseCard;

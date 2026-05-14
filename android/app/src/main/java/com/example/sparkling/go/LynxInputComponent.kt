@@ -6,7 +6,9 @@ package com.example.sparkling.go
 import android.content.Context
 import android.graphics.Color
 import android.text.Editable
+import android.text.InputType
 import android.text.TextWatcher
+import android.text.method.PasswordTransformationMethod
 import android.view.Gravity
 import android.view.View
 import android.view.inputmethod.EditorInfo
@@ -63,6 +65,41 @@ class LynxInputComponent(context: LynxContext?) : LynxUI<AppCompatEditText>(cont
       mView.setText(value)
     }
   }
+
+  @LynxProp(name = "disabled")
+  fun setDisabled(value: Boolean) {
+    mView.isEnabled = !value
+  }
+
+  @LynxProp(name = "type")
+  fun setType(value: String) {
+    // Preserve cursor position when switching types
+    val cursorPosition = mView.selectionStart
+
+    when (value.lowercase()) {
+      "password" -> {
+        mView.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+        mView.transformationMethod = PasswordTransformationMethod.getInstance()
+      }
+      "number" -> {
+        mView.inputType = InputType.TYPE_CLASS_NUMBER
+        mView.transformationMethod = null
+      }
+      "email" -> {
+        mView.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
+        mView.transformationMethod = null
+      }
+      else -> { // "text" or anything else
+        mView.inputType = InputType.TYPE_CLASS_TEXT
+        mView.transformationMethod = null
+      }
+    }
+
+    // Restore cursor position after type change resets it
+    mView.setSelection(cursorPosition.coerceAtMost(mView.text?.length ?: 0))
+  }
+    
+
 
   @LynxUIMethod
   fun focus(params: ReadableMap, callback: Callback) {

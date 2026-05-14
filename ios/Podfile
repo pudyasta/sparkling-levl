@@ -23,22 +23,18 @@ end
 def sparkling_methods_dep
   # BEGIN SPARKLING AUTOLINK
   pod 'Sparkling-DebugTool', :path => '../node_modules/sparkling-debug-tool/ios'
-  pod 'Sparkling-Router', :path => '../node_modules/sparkling-navigation/ios'
   pod 'Sparkling-Storage', :path => '../node_modules/sparkling-storage/ios'
-  # END SPARKLING AUTOLINK
-end
-
-def sparkling_devtool
-  # BEGIN SPARKLING AUTOLINK
-  pod 'Sparkling-DebugTool', :path => '../node_modules/sparkling-debug-tool/ios'
+  pod 'Sparkling-Router', :path => '../node_modules/sparkling-navigation/ios'
   # END SPARKLING AUTOLINK
 end
 
 def sparkling_kit
   pod 'Sparkling', SPARKLING_VERSION
   sparkling_methods
-  sparkling_methods_dep
-  sparkling_devtool
+  pod 'Sparkling-DebugTool', :path => '../node_modules/sparkling-debug-tool/ios'
+  pod 'Sparkling-Router', :path => '../node_modules/sparkling-navigation/ios'
+  pod 'Sparkling-Storage', :path => '../node_modules/sparkling-storage/ios'
+  # sparkling_methods_dep
   
   pod 'Lynx', '3.6.0', :subspecs => [
     'Framework',
@@ -46,18 +42,15 @@ def sparkling_kit
   ]
   
   pod 'PrimJS', '3.6.1', :subspecs => ['quickjs', 'napi']
-
+  pod 'DebugRouter', '5.0.15'
+  pod 'DebugRouter/MessageTransceiverEnable', '5.0.15'
+  pod 'BaseDevtool'
   pod 'LynxService', '3.6.0', :subspecs => [
   'Image',
   'Log',
   'Http',
-  'Devtool'
   ]
 
-#  pod 'BaseDevtool'
-  pod 'LynxDevtool', '3.6.0', :subspecs => [
-   'Framework',
-  ]
   
   pod 'SnapKit'
   pod 'Mantle', '~> 2.2.0'
@@ -84,5 +77,3 @@ target 'SparklingGoUITests' do
   sparkling_kit
 end
 
-devtool_frameworks = ['Sparkling_DebugTool']
-devtool_pod_names = ['Sparkling-DebugTool']

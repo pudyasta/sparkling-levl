@@ -11,6 +11,7 @@ PODS:
     - DebugRouter/third_party (= 5.0.15)
   - DebugRouter/Framework (5.0.15):
     - DebugRouter/Native
+  - DebugRouter/MessageTransceiverEnable (5.0.15)
   - DebugRouter/Native (5.0.15):
     - DebugRouter/third_party
   - DebugRouter/third_party (5.0.15):
@@ -179,10 +180,11 @@ PODS:
     - SparklingMethod/Core
 
 DEPENDENCIES:
+  - BaseDevtool
+  - DebugRouter (= 5.0.15)
+  - DebugRouter/MessageTransceiverEnable (= 5.0.15)
   - Lynx/Framework (= 3.6.0)
   - Lynx/ReleaseResource (= 3.6.0)
-  - LynxDevtool/Framework (= 3.6.0)
-  - LynxService/Devtool (= 3.6.0)
   - LynxService/Http (= 3.6.0)
   - LynxService/Image (= 3.6.0)
   - LynxService/Log (= 3.6.0)
@@ -248,6 +250,6 @@ SPEC CHECKSUMS:
   Sparkling-Storage: ca2f9dbcd00558f8243ffe9de6869f7cdba147a6
   SparklingMethod: 49b276aabfac4578e3dcffab252f6119d6781e1f
 
-PODFILE CHECKSUM: 7da686b20da485f14d55c41197be155aaf22062a
+PODFILE CHECKSUM: 925f87f77f2fae4435e401b701f0081b6cf11301
 
 COCOAPODS: 1.16.2

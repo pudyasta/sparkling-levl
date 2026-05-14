@@ -5,7 +5,7 @@
 import Foundation
 import SparklingMethod
 import Sparkling_Router
-
+import Sparkling_Storage
 enum SPKServiceRegister {
     static func registerAll() {
         // IMPORTANT: You must either use the provided DefaultDIContainerProvider.inject()
@@ -15,12 +15,22 @@ enum SPKServiceRegister {
         DIProviderRegistry.provider.pipeShared().register(RouterService.self) {
             RouterServiceImpl()
         }
+
+        DIProviderRegistry.provider.pipeShared().register(StorageService.self) {
+            StorageServiceImpl()
+        }
         /// Methods that conform to `SPKAutoRegisteringMethod` will be automatically
         /// registered into the global method table by calling this function.
         MethodRegistry.autoRegisterGlobalMethods()
         
-        /// Alternatively, you can manually register individual methods as shown below.
-        // MethodRegistry.global.register(methodType: SPK_SPKRouter.OpenMethod.self)
-        // MethodRegistry.global.register(methodType: XXX.self)
+        // File operations
+        MethodRegistry.global.register(methodType: FilePickerMethod.self)
+        MethodRegistry.global.register(methodType: FileDownloadMethod.self)
+        MethodRegistry.global.register(methodType: FileUploadMethod.self)
+        MethodRegistry.global.register(methodType: FileOpenMethod.self)
+
+        // Navigation
+        MethodRegistry.global.register(methodType: GoBackMethod.self)
+        MethodRegistry.global.register(methodType: BackInterceptorMethod.self)
     }
 }

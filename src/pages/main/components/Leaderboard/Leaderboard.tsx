@@ -1,17 +1,19 @@
+import { useEffect } from 'react';
+
+import { thropy } from '@/assets/images/icon';
 import { loginBanner } from '@/assets/images/pages';
 import Text from '@/components/Text';
 import { FontFamily, TextType } from '@/components/Text/types';
-import styles from './Leaderboard.module.css';
-import IconWithBackground from '@/components/common/IconWithBackground/IconWithBackground';
-import { thropy } from '@/assets/images/icon';
-import './Leaderboard.module.css';
-import { Colors } from '@/constant/style';
-import LeaderboardItem from './LeaderboardItem/LeaderboardItem';
-import { useGetLeaderboard, useGetUserRank } from '../../usecase/useGetLeaderboards';
-import type { LeaderboardEntry } from '../../repository/type/leaderboard';
 import CustomImage from '@/components/common/CustomImage/CustomImage';
-import { useEffect } from 'react';
+import IconWithBackground from '@/components/common/IconWithBackground/IconWithBackground';
+import { Colors } from '@/constant/style';
 import { useNativeBridge } from '@/context/NativeBridgeProvider';
+
+import type { LeaderboardEntry } from '../../repository/type/leaderboard';
+import { useGetLeaderboard, useGetUserRank } from '../../usecase/useGetLeaderboards';
+import styles from './Leaderboard.module.css';
+import './Leaderboard.module.css';
+import LeaderboardItem from './LeaderboardItem/LeaderboardItem';
 import LeaderboardLoader from './loader';
 
 type Variant = 'second' | 'first' | 'third';
@@ -50,7 +52,7 @@ function Leaderboard() {
     >
       <view
         style={{
-          background: 'linear-gradient(180deg, #2d7cf1 0%, #1a5bb9 100%)',
+          background: 'linear-gradient(180deg, #1a73e8 0%, #1557b0 100%)',
           padding: '1.5rem',
           display: 'flex',
           gap: '1rem',
@@ -60,10 +62,10 @@ function Leaderboard() {
         <IconWithBackground image={thropy} />
         <view>
           <Text size={TextType.h1} fontWeight="bold" color="white" fontFamily={FontFamily.jakarta}>
-            Leaderboard
+            Ranking
           </Text>
           <Text size={TextType.b2} color="white">
-            Compete with other learners
+            Kumpulkan poin dan bersaing peserta lain!
           </Text>
         </view>
       </view>
@@ -78,7 +80,7 @@ function Leaderboard() {
               justifyContent: 'space-around',
               paddingTop: '12px',
               borderBottomWidth: '1px',
-              borderBottomColor: '#eeeeee',
+              borderBottomColor: '#e5e7eb',
               display: 'flex',
             }}
           >
@@ -104,7 +106,9 @@ function Leaderboard() {
                   </view>
                   <view className={styles.lbInfo}>
                     <Text size={TextType.b1} fontWeight="bold" style={{ textAlign: 'center' }}>
-                      {user.user.name.split(' ')[0] + ' ' + user.user.name.split(' ')[1]?.[0]}
+                      {user.user.name.split(' ')[0] +
+                        ' ' +
+                        (user.user.name.split(' ')[1]?.[0] || '')}
                     </Text>
                     <view className={styles.xpRow} style={{ textAlign: 'center' }}>
                       <Text className={styles.xpIcon}>⚡</Text>

@@ -1,6 +1,7 @@
-import { useEffect, useState } from '@lynx-js/react';
-import { getItem, setItem } from 'sparkling-storage';
+import { useState } from '@lynx-js/react';
+import { setItem } from 'sparkling-storage';
 
+import { useConfirmation } from '@/components/ConfirmationModal/ConfitmationModal';
 import { Modal, ModalTemplate } from '@/components/Modal/Modal.view';
 import Text from '@/components/Text';
 import { TextType } from '@/components/Text/types';
@@ -23,18 +24,13 @@ export interface QuizCoreProps {
 const QuizContent = ({ data }: { data: QuizStudentResponse }) => {
   const { navigateTo, routerParams } = useNativeBridge();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [existingSubmission, setExistingSubmission] = useState<QuizCoreProps | null>(null);
+  const { confirm, ConfirmationModal } = useConfirmation();
 
   const [existingID, setExistingID] = useState<number>(0);
 
-  const { execute: takeover, isLoading: isTakingOver } = useTakeoverQuiz({
+  const { execute: takeover } = useTakeoverQuiz({
     onSuccess: (data) => {
-      let timeLeft = 0;
-      if (!data.duration) {
-        timeLeft = -1;
-      } else {
-        timeLeft = data.duration - (data.time_spent_seconds || 0);
-      }
+      const timeLeft = data.duration ? data.duration - (data.time_spent_seconds || 0) : -1;
       setItem(
         {
           key: PrefKey.SubmissionId + data.id,
@@ -42,15 +38,16 @@ const QuizContent = ({ data }: { data: QuizStudentResponse }) => {
             quizId: data.id,
             submissionId: data.id,
             sessionToken: data.session_token,
-            timeLeft: timeLeft,
+            timeLeft,
           },
           biz: BizKey.Quiz,
         },
         () => {
-          navigateTo('quiz.lynx.bundle', {
+          navigateTo('quiz', {
             quizId: data?.id,
             courseId: routerParams?.courseId,
             course_slug: routerParams?.course_slug,
+            close: true,
           });
         }
       );
@@ -67,52 +64,31 @@ const QuizContent = ({ data }: { data: QuizStudentResponse }) => {
         }
         return;
       }
-
-      let timeLeft = res.data.duration;
-      if (!res.data.duration) {
-        timeLeft = -1;
-      }
-
+      const timeLeft = res.data.duration || -1;
       setItem(
         {
-          key: PrefKey.SubmissionId + res.data.id,
-          biz: BizKey.Quiz,
+          key: PrefKey.SubmissionId + data?.id,
           data: {
             quizId: data.id,
             submissionId: res.data.id,
             sessionToken: res.data.session_token,
-            timeLeft: timeLeft,
+            timeLeft,
           },
+          biz: BizKey.Quiz,
         },
-        (res) => {
-          navigateTo('quiz.lynx.bundle', {
+        () => {
+          navigateTo('quiz', {
             quizId: data?.id,
             courseId: routerParams?.courseId,
             lesson_slug: routerParams?.lesson_slug,
+            course_slug: routerParams?.course_slug,
+            close: true,
           });
         }
       );
     },
     onError: () => {},
   });
-
-  useEffect(() => {
-    getItem({ key: PrefKey.SubmissionId + data?.id, biz: BizKey.Quiz }, (res) => {
-      setExistingSubmission(res.data);
-    });
-  }, []);
-
-  const handleStartQuiz = () => {
-    // if (existingSubmission) {
-    //   navigateTo('quiz.lynx.bundle', {
-    //     totalQuestions: data?.questions_count || 0,
-    //     quizId: data?.id,
-    //   });
-    //   return;
-    // }
-
-    startQuiz(data?.id);
-  };
 
   const handleTakeoverQuiz = () => {
     takeover(existingID);
@@ -152,18 +128,26 @@ const QuizContent = ({ data }: { data: QuizStudentResponse }) => {
         {/* Info Cards Grid */}
         <view className="mb-8 flex-row gap-4 flex">
           <view className="flex-1 flex-col items-center rounded-2xl border border-[#e8eaed] bg-[#f8f9fa] p-4 flex">
-            <Text size={TextType.b2} color={Colors.Primary}>
+            <Text size={TextType.b2} color={Colors.Primary} className="text-center">
               Waktu
             </Text>
-            <Text size={TextType.h2} fontWeight={'bold'} className="mt-1">
-              {data.time_limit_minutes} Menit
+            <Text size={TextType.h2} fontWeight={'bold'} className="mt-3 text-center">
+              {data.time_limit_minutes ? `${data.time_limit_minutes} Menit` : '-'}
             </Text>
           </view>
           <view className="flex-1 flex-col items-center rounded-2xl border border-[#e8eaed] bg-[#f8f9fa] p-4 flex">
             <Text size={TextType.b2} color={Colors.Primary}>
+              Status
+            </Text>
+            <Text size={TextType.h3} fontWeight={'bold'} className="mt-3 text-center">
+              {data.submission_status_label || '-'}
+            </Text>
+          </view>
+          <view className="flex-1 flex-col items-center rounded-2xl border border-[#e8eaed] bg-[#f8f9fa] p-4 flex">
+            <Text size={TextType.b2} color={Colors.Primary} className="text-center">
               Passing Grade
             </Text>
-            <Text size={TextType.h2} fontWeight={'bold'} className="mt-1 text-green-600">
+            <Text size={TextType.h3} fontWeight={'bold'} className="mt-3 text-center">
               {data.passing_grade}%
             </Text>
           </view>
@@ -185,7 +169,12 @@ const QuizContent = ({ data }: { data: QuizStudentResponse }) => {
         </view>
 
         {/* Start Button */}
-        <Button className="h-14 w-full" onPress={handleStartQuiz}>
+        <Button
+          className="h-14 w-full"
+          onPress={() => {
+            confirm(() => startQuiz(data?.id));
+          }}
+        >
           Mulai Kerjakan Quiz
         </Button>
 
@@ -226,6 +215,7 @@ const QuizContent = ({ data }: { data: QuizStudentResponse }) => {
             </view>
           </view>
         </Modal>
+        <ConfirmationModal />
       </view>
     )
   );

@@ -38,7 +38,7 @@ const VerifyEmailPage = () => {
       setMessage('Your email has been verified. Redirecting you to the app...');
 
       setTimeout(() => {
-        navigateTo('main.lynx.bundle', { close: true });
+        navigateTo('main', { close: true });
       }, 2000);
     },
     onError: (error) => {
@@ -154,10 +154,7 @@ const VerifyEmailPage = () => {
             <Button disabled={!canResend} onPress={handleResend} color="primary">
               Kirim Ulang Email
             </Button>
-            <Button
-              variant="outlined"
-              onPress={() => navigateTo('login.lynx.bundle', { close: true })}
-            >
+            <Button variant="outlined" onPress={() => navigateTo('login', { close: true })}>
               Kembali ke login
             </Button>
           </view>

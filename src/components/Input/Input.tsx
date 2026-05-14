@@ -1,11 +1,9 @@
 import { forwardRef, useImperativeHandle, useState } from '@lynx-js/react';
 import { useEffect, useRef } from 'react';
 
-import { eye, eyeClose } from '../../assets/images/icon';
+import { eyeClose, eyeOpen } from '../../assets/images/icon';
 import { Colors } from '../../constant/style';
-import Text from '../Text';
-import { TextType } from '../Text/types';
-import handleFontSize from '../Text/utils/handleFontSize';
+import CustomImage from '../common/CustomImage/CustomImage';
 import style from './Input.module.css';
 
 export interface InputRef {
@@ -13,6 +11,7 @@ export interface InputRef {
   setValue: (newValue: string) => void;
   setError: (errorMessage: string | null) => void;
   getError: () => string[] | null;
+  onChange: (callback: (value: string) => void) => void;
 }
 
 export interface InputValidation {
@@ -26,32 +25,34 @@ interface InputProps {
   title: string;
   variant?: string;
   icon?: string;
+  disabled?: boolean;
   placeholder?: string;
-  bindChange?: () => void;
+  bindChange?: (value: any) => void;
 }
 
 const Input = forwardRef<InputRef, InputProps>(
-  ({ id, initialValue, title, variant, icon, bindChange, placeholder }, ref) => {
+  ({ id, initialValue, title, variant, icon, bindChange, placeholder, disabled }, ref) => {
     const [focused, setFocused] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const timerRef = useRef<number | null>(null);
     const [debouncedValue, setDebouncedValue] = useState<string>(initialValue || '');
-    const isFloating = focused || debouncedValue.length > 0;
     const [error, setError] = useState<string[] | null>(null);
+    const onChangeCallbackRef = useRef<((value: any) => void) | null>(null);
     const nativeInputRef = useRef<any>(null);
 
     useEffect(() => {
       setError(null);
-      // setDebouncedValue(initialValue || '');
       return () => {
-        if (timerRef.current) {
-          clearTimeout(timerRef.current);
-        }
+        if (timerRef.current) clearTimeout(timerRef.current);
       };
     }, []);
 
     useEffect(() => {
-      bindChange?.();
+      setDebouncedValue(initialValue || '');
+    }, [initialValue]);
+
+    useEffect(() => {
+      bindChange?.(debouncedValue);
     }, [debouncedValue]);
 
     useImperativeHandle(
@@ -64,74 +65,65 @@ const Input = forwardRef<InputRef, InputProps>(
         },
         setError: (message: string | null) => setError(message ? [message] : null),
         getError: () => error,
+        onChange: (callback) => {
+          onChangeCallbackRef.current = callback;
+        },
       }),
       [debouncedValue, error]
     );
 
     const handleInput = (res: any) => {
       const newValue = res;
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
-      }
+      if (timerRef.current) clearTimeout(timerRef.current);
       timerRef.current = setTimeout(() => {
+        onChangeCallbackRef.current?.(newValue);
         setDebouncedValue(newValue);
       }, 300) as unknown as number;
     };
 
+    const borderColor = error ? Colors.Error : focused ? Colors.Primary : Colors.Border;
+
     return (
       <view className={style.container}>
-        {title !== '' && (
-          <Text style={{ backgroundColor: Colors.Background, marginBottom: '8px' }}>{title}</Text>
-        )}
+        {title !== '' && <text className={style.label}>{title}</text>}
 
-        <view
-          className={style.input}
-          style={{
-            borderColor: error ? Colors.Error : isFloating ? Colors.Primary : Colors.Accent,
-          }}
-        >
+        <view className={style.inputWrapper} style={{ borderColor }}>
           <input
+            disabled={disabled}
             id={id}
             ref={nativeInputRef}
             type={variant === 'password' && !showPassword ? 'password' : 'text'}
             bindfocus={() => setFocused(true)}
             bindblur={() => {
-              if (debouncedValue.length === 0) {
-                setFocused(false);
-              }
+              if (debouncedValue.length === 0) setFocused(false);
             }}
-            bindinput={(res: any) => {
-              handleInput(res.detail.value);
-            }}
+            bindinput={(res: any) => handleInput(res.detail.value)}
             style={{
-              color: Colors.Neutral,
-              width: '100%',
-              height: '100%',
-              marginLeft: '4px',
-              zIndex: 20,
-              position: 'relative',
-              fontSize: `${handleFontSize({ size: TextType.h3 })}px`,
+              color: disabled ? Colors.TextDisabled : Colors.TextPrimary,
+              fontSize: '14px',
+              fontFamily: 'inter',
+              lineHeight: '20px',
               minHeight: '20px',
+              width: '100%',
             }}
-            placeholder={debouncedValue === '' ? placeholder : ''}
             value={debouncedValue}
           />
+
           {variant === 'password' && (
             <text
               bindtap={() => setShowPassword(!showPassword)}
-              style={{ color: 'black', cursor: 'pointer' }}
+              style={{ marginLeft: '8px', cursor: 'pointer' }}
             >
               {!showPassword ? (
-                <image src={eyeClose} mode="aspectFit" style={{ height: '16px', width: '16px' }} />
+                <CustomImage src={eyeClose} className="h-5 w-5" />
               ) : (
-                <image src={eye} mode="aspectFit" style={{ height: '16px', width: '16px' }} />
+                <CustomImage src={eyeOpen} className="h-5 w-5" />
               )}
             </text>
           )}
         </view>
-        <view className={`py-2 ${error ? 'block' : 'hidden'}`}>
-          {error && <Text color="red">{error[0]}</Text>}
-        </view>
+
+        {error && <text className={style.errorText}>{error[0]}</text>}
       </view>
     );
   }

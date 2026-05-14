@@ -15,7 +15,6 @@ export const useUpdatePassword = (options?: Options) => {
     mutationFn: (payload: UpdatePasswordPayload) => updatePasswordApi(payload),
     onSuccess: () => options?.onSuccess?.(),
     onError: (error: any) => {
-      console.log('useUpdatePassword error:', JSON.stringify(error, null, 2));
       options?.onError?.(error);
     },
   });

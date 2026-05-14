@@ -10,9 +10,9 @@
   },
   "type": "module",
   "dependencies": {
-    "@lynx-js/react": "^0.116.5",
-    "@tanstack/react-query": "^5.100.5",
-    "axios": "^1.15.2",
+    "@lynx-js/react": "^0.116.2",
+    "@tanstack/react-query": "^5.100.9",
+    "axios": "^1.16.0",
     "postcss-loader": "^8.2.1",
     "sparkling-method": "^2.0.1",
     "sparkling-navigation": "^2.0.1",
@@ -25,7 +25,7 @@
     "@lynx-js/react-rsbuild-plugin": "^0.12.10",
     "@lynx-js/rspeedy": "^0.13.6",
     "@lynx-js/tailwind-preset": "^0.4.0",
-    "@lynx-js/types": "^3.7.0",
+    "@lynx-js/types": "^3.8.0",
     "@rsbuild/plugin-typed-css-modules": "^1.2.2",
     "@testing-library/jest-dom": "^6.9.1",
     "@trivago/prettier-plugin-sort-imports": "^6.0.2",
@@ -50,7 +50,7 @@
     "autolink": "sparkling-app-cli autolink",
     "test": "vitest run --passWithNoTests",
     "run:android": "sparkling-app-cli run:android",
-    "run:ios": "node fixIos.ts && sparkling-app-cli run:ios --copy",
+    "run:ios": "sparkling-app-cli run:ios --copy",
     "dev": "rspeedy dev",
     "doctor": "sparkling-app-cli doctor"
   }

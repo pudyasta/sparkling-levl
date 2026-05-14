@@ -65,7 +65,7 @@ export const useApiClient = () => {
     // -------- Handle 401: If no refresh token, we can't proceed this request
     if (!accessToken?.refresh_token) {
       console.log('Access token', JSON.stringify(accessToken, null, 2));
-      navigateTo('login.lynx.bundle');
+      navigateTo('login');
       return res;
     }
 

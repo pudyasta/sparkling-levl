@@ -1,10 +1,13 @@
 import { useCallback, useRef, useState } from '@lynx-js/react';
 import { useEffect } from 'react';
 
+import { searchIcon } from '@/assets/images/icon';
 import CourseCard from '@/components/CoursesCard/CoursesCard';
+import Input from '@/components/Input/Input';
 import { PullToRefresh } from '@/components/PullToRefresh/PullToRefresh';
 import Text from '@/components/Text';
 import { TextType } from '@/components/Text/types';
+import CustomImage from '@/components/common/CustomImage/CustomImage';
 import { useNativeBridge } from '@/context/NativeBridgeProvider';
 import type { Category } from '@/pages/CourseDetail/repository/type';
 
@@ -45,7 +48,7 @@ const Courses: React.FC = () => {
   const debouncedSetSearch = useDebounce((val: string) => setSearch(val), 400);
 
   const handleSearchInput = (e: any) => {
-    debouncedSetSearch(e.detail.value);
+    debouncedSetSearch(e);
   };
 
   const handleScroll = (e: any) => {
@@ -80,28 +83,27 @@ const Courses: React.FC = () => {
         {/* Header */}
         <view className={styles.header}>
           <Text size={TextType.h1} fontWeight="bold" color="white">
-            Kursus
+            Explore Kursus
           </Text>
 
           {/* Search + filter trigger row */}
-          <view className="mt-4 flex-row gap-3 flex">
-            <view className={`${styles.searchBar} flex-1`}>
-              <text className={styles.searchIcon}>🔍</text>
-              <input
-                className={styles.searchInput}
-                placeholder="Search courses"
-                bindinput={handleSearchInput}
-              />
-            </view>
+          <view className="mt-2 flex-row gap-3 rounded-2xl bg-white flex relative overflow-hidden">
+            <Input
+              title=""
+              placeholder="Search courses"
+              bindChange={(val) => {
+                handleSearchInput(val);
+              }}
+            />
 
             {/* Filter toggle button */}
             <view
-              bindtap={() => setShowFilters(!showFilters)}
-              className={`h-12 w-12 items-center rounded-2xl justify-center ${
-                hasActiveFilters ? 'bg-blue-500' : 'bg-white/20'
+              bindtap={handleSearchInput}
+              className={`z-50 h-full w-12 items-center rounded-2xl p-2 absolute right-2 justify-center ${
+                hasActiveFilters ? 'bg-[#1a73e8]' : 'bg-white/20'
               }`}
             >
-              <text className="text-lg">⚙️</text>
+              <CustomImage src={searchIcon} className="h-full w-full" />
             </view>
           </view>
 
@@ -115,7 +117,7 @@ const Courses: React.FC = () => {
                     key={tag.value}
                     bindtap={() => setLevelTag(levelTag === tag.value ? '' : tag.value)}
                     className={`rounded-full px-3 py-1 ${
-                      levelTag === tag.value ? 'bg-blue-500' : 'bg-white/20'
+                      levelTag === tag.value ? 'bg-[#1a73e8]' : 'bg-white/20'
                     }`}
                   >
                     <Text
@@ -190,7 +192,7 @@ const Courses: React.FC = () => {
           ) : courses.length === 0 ? (
             <view className={styles.emptyState}>
               <text className="mb-2 text-4xl">🔍</text>
-              <text className={styles.emptyText}>No courses match your search.</text>
+              <text className={styles.emptyText}>TIdak ada kursus yang ditemukan.</text>
             </view>
           ) : (
             <view className="animate-fade-in">
@@ -198,7 +200,7 @@ const Courses: React.FC = () => {
                 <CourseCard
                   key={course.id}
                   bindTap={() =>
-                    navigateTo('courseDetail.lynx.bundle', {
+                    navigateTo('courseDetail', {
                       courseId: course.id,
                       course_slug: course.slug,
                     })

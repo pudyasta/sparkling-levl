@@ -7,7 +7,7 @@ import Sparkling
 import SparklingMethod
 import Sparkling_Router
 
-class RouterServiceImpl: RouterService {
+class RouterServiceImpl: RouterService {    
     func closeContainer(withParams params: Sparkling_Router.CloseMethodParamModel, completion: @escaping SparklingMethod.PipeMethod.CompletionBlock) {
         if SPKRouter.close(container: params.context?.pipeContainer) {
             completion(.succeeded(), nil)
@@ -19,10 +19,15 @@ class RouterServiceImpl: RouterService {
     func openScheme(withParams params: Sparkling_Router.OpenMethodParamModel, completion: @escaping SparklingMethod.PipeMethod.CompletionBlock) {
         let urlString = params.scheme
         let context = SPKContext()
+        context.customUIElements = [
+            SparklingLynxElement(lynxElementName: "input", lynxElementClassName: LynxInput.self),
+            SparklingLynxElement(lynxElementName: "native-svg", lynxElementClassName: NativeSVGView.self),
+            SparklingLynxElement(lynxElementName: "video-player", lynxElementClassName: VideoPlayerView.self),
+        ]
         
-        DispatchQueue.main.async {
-            func openWithRouter(completionHandler: ((Bool) -> Void)? = nil) {
-                if let (_, success) = SPKRouter.open(withURL: urlString, context: context), success {
+        DispatchQueue.main.async {  
+             func openWithRouter(completionHandler: ((Bool) -> Void)? = nil) {
+                 if let (_, success) = SPKRouter.open(withURL: urlString, context: context), success {
                     completionHandler?(true)
                     completion(.succeeded(), nil)
                 } else {

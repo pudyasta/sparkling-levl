@@ -19,7 +19,6 @@ export const useUpdateProfile = (options?: Options) => {
       options?.onSuccess?.(res.data);
     },
     onError: (error: any) => {
-      console.log('useUpdateProfile error:', JSON.stringify(error, null, 2));
       options?.onError?.(error);
     },
   });
