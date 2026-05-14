@@ -137,12 +137,6 @@ export default function LearningDashboard() {
                       src={recentLearning[0].course?.thumbnail || ''}
                       className="h-full w-full"
                     />
-                    <image
-                      src={
-                        'https://levl-buckets.sgp1.cdn.digitaloceanspaces.com/courses/2/thumbnail/7/Thumbnail-Sistem-Analis.png'
-                      }
-                      style={{ width: '100px', height: '100px' }}
-                    />
                   </view>
                   <view className="flex-1 flex-col gap-1 flex">
                     <Text size={TextType.b1} fontWeight="bold" className="text-slate-800">

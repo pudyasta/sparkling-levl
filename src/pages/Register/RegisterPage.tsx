@@ -1,5 +1,6 @@
 import { useRef, useState } from '@lynx-js/react';
 
+import { logo } from '@/assets/images/icon';
 import { searchMascot } from '@/assets/images/mascot';
 import { loginBanner } from '@/assets/images/pages/';
 import Input, { type InputRef } from '@/components/Input/Input';
@@ -8,6 +9,7 @@ import { Modal, ModalTemplate } from '@/components/Modal/Modal.view';
 import Text from '@/components/Text';
 import { TextType } from '@/components/Text/types';
 import Button from '@/components/common/Button';
+import CustomImage from '@/components/common/CustomImage/CustomImage';
 import { Colors } from '@/constant/style';
 import { useNativeBridge } from '@/context/NativeBridgeProvider';
 import { useKeyboardShift } from '@/hooks/useKeyboardShift';
@@ -24,7 +26,7 @@ export default function RegisterPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { kbHeight } = useKeyboardShift('panel');
-  const { isLoading, error, execute } = useRegister({
+  const { isLoading, execute } = useRegister({
     onSuccess: () => {
       navigateTo('emailConfirmation', { close: true });
     },
@@ -55,17 +57,6 @@ export default function RegisterPage() {
     });
   }
 
-  // DEBUG ONLY: Auto-fill form for testing
-  function autoFillForm() {
-    execute({
-      email: `test${Date.now().toString().slice(-4)}@example.com`,
-      username: `testuser${Date.now().toString().slice(-4)}`,
-      name: 'Test User',
-      password: 'Coba-123456',
-      password_confirmation: 'Coba-123456',
-    });
-  }
-
   return (
     <scroll-view
       scroll-orientation="vertical"
@@ -84,8 +75,8 @@ export default function RegisterPage() {
       >
         {/* Header Section - Note: items-start based on your CSS */}
         <view className="w-full flex-col items-start gap-[10px] flex">
-          <view className="h-14 w-14 items-center rounded-[16px] bg-white/20 flex justify-center">
-            <Text size={TextType.h1}>📖</Text>
+          <view className="h-14 w-14 items-center rounded-[16px] bg-white/20 p-2 flex justify-center">
+            <CustomImage src={logo} className="h-full w-full" />
           </view>
 
           <Text size={TextType.h1} color="white" fontWeight="bold">

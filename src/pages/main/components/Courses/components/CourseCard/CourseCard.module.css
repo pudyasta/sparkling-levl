@@ -8,8 +8,8 @@
 .contentWrapper {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem; /* gap-3 */
-  margin-right: 0.75rem; /* mr-3 */
+  gap: 8px;
+  margin-right: 12px;
   flex: 1;
 }
 
@@ -17,46 +17,53 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 0.5rem; /* gap-2 */
+  gap: 6px;
 }
 
 .title {
-  font-size: 1.25rem; /* text-xl */
+  font-family: inter, sans-serif;
+  font-size: 14px;
   font-weight: 600;
-  color: #000000;
+  color: #202124;
+  line-height: 20px;
 }
 
 .badge {
-  padding: 0.125rem 0.75rem; /* py-0.5 px-3 */
-  border-radius: 9999px; /* rounded-full */
-  background-color: #dbeafe; /* bg-blue-100 */
+  padding: 3px 8px;
+  border-radius: 9999px;
+  background-color: #e8f0fe;
 }
 
 .badgeText {
-  font-size: 0.875rem; /* text-sm */
-  color: #4b5563; /* text-gray-600 */
+  font-family: inter, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: #0c447c;
 }
 
 .description {
-  font-size: 1rem; /* text-md */
-  color: #6b7280; /* text-gray-500 */
+  font-family: inter, sans-serif;
+  font-size: 13px;
+  color: #6b7280;
+  line-height: 18px;
 }
 
 .metaRow {
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 0.75rem; /* gap-3 */
+  gap: 12px;
 }
 
 .metaText {
-  font-size: 0.75rem; /* text-xs */
+  font-family: inter, sans-serif;
+  font-size: 12px;
   color: #6b7280;
 }
 
 .statusIconWrapper {
-  width: 2rem; /* w-8 */
-  height: 2rem; /* h-8 */
+  width: 32px;
+  height: 32px;
   border-radius: 9999px;
   display: flex;
   align-items: center;
@@ -64,11 +71,11 @@
 }
 
 .iconCompleted {
-  color: #10b981; /* text-green-500 */
-  font-size: 1.25rem;
+  color: #28a745;
+  font-size: 18px;
 }
 
 .iconPending {
-  color: #d1d5db; /* text-gray-300 */
-  font-size: 1.25rem;
+  color: #d1d5db;
+  font-size: 18px;
 }

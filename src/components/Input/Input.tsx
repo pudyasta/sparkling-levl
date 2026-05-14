@@ -3,9 +3,6 @@ import { useEffect, useRef } from 'react';
 
 import { eyeClose, eyeOpen } from '../../assets/images/icon';
 import { Colors } from '../../constant/style';
-import Text from '../Text';
-import { TextType } from '../Text/types';
-import handleFontSize from '../Text/utils/handleFontSize';
 import CustomImage from '../common/CustomImage/CustomImage';
 import style from './Input.module.css';
 
@@ -39,7 +36,6 @@ const Input = forwardRef<InputRef, InputProps>(
     const [showPassword, setShowPassword] = useState(false);
     const timerRef = useRef<number | null>(null);
     const [debouncedValue, setDebouncedValue] = useState<string>(initialValue || '');
-    const isFloating = focused || debouncedValue.length > 0;
     const [error, setError] = useState<string[] | null>(null);
     const onChangeCallbackRef = useRef<((value: any) => void) | null>(null);
     const nativeInputRef = useRef<any>(null);
@@ -47,9 +43,7 @@ const Input = forwardRef<InputRef, InputProps>(
     useEffect(() => {
       setError(null);
       return () => {
-        if (timerRef.current) {
-          clearTimeout(timerRef.current);
-        }
+        if (timerRef.current) clearTimeout(timerRef.current);
       };
     }, []);
 
@@ -80,27 +74,20 @@ const Input = forwardRef<InputRef, InputProps>(
 
     const handleInput = (res: any) => {
       const newValue = res;
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
-      }
+      if (timerRef.current) clearTimeout(timerRef.current);
       timerRef.current = setTimeout(() => {
         onChangeCallbackRef.current?.(newValue);
         setDebouncedValue(newValue);
       }, 300) as unknown as number;
     };
 
+    const borderColor = error ? Colors.Error : focused ? Colors.Primary : Colors.Border;
+
     return (
       <view className={style.container}>
-        {title !== '' && (
-          <Text style={{ backgroundColor: Colors.Background, marginBottom: '8px' }}>{title}</Text>
-        )}
+        {title !== '' && <text className={style.label}>{title}</text>}
 
-        <view
-          className={style.input + ' relative overflow-hidden'}
-          style={{
-            borderColor: error ? Colors.Error : isFloating ? Colors.Primary : Colors.Accent,
-          }}
-        >
+        <view className={style.inputWrapper} style={{ borderColor }}>
           <input
             disabled={disabled}
             id={id}
@@ -108,42 +95,35 @@ const Input = forwardRef<InputRef, InputProps>(
             type={variant === 'password' && !showPassword ? 'password' : 'text'}
             bindfocus={() => setFocused(true)}
             bindblur={() => {
-              if (debouncedValue.length === 0) {
-                setFocused(false);
-              }
+              if (debouncedValue.length === 0) setFocused(false);
             }}
-            bindinput={(res: any) => {
-              handleInput(res.detail.value);
-            }}
+            bindinput={(res: any) => handleInput(res.detail.value)}
             style={{
-              color: Colors.Neutral,
-              width: '100%',
-              height: '100%',
-              marginLeft: '4px',
-              zIndex: 20,
-              position: 'relative',
-              fontSize: `${handleFontSize({ size: TextType.h3 })}px`,
+              color: disabled ? Colors.TextDisabled : Colors.TextPrimary,
+              fontSize: '14px',
+              fontFamily: 'inter',
+              lineHeight: '20px',
               minHeight: '20px',
+              width: '100%',
             }}
-            // placeholder={debouncedValue === '' ? placeholder : ''}
             value={debouncedValue}
           />
+
           {variant === 'password' && (
             <text
               bindtap={() => setShowPassword(!showPassword)}
-              style={{ color: 'black', cursor: 'pointer' }}
+              style={{ marginLeft: '8px', cursor: 'pointer' }}
             >
               {!showPassword ? (
-                <CustomImage src={eyeClose} className="h-6 w-[18px]" />
+                <CustomImage src={eyeClose} className="h-5 w-5" />
               ) : (
-                <CustomImage src={eyeOpen} className="h-6 w-[18px]" />
+                <CustomImage src={eyeOpen} className="h-5 w-5" />
               )}
             </text>
           )}
         </view>
-        <view className={`py-2 ${error ? 'block' : 'hidden'}`}>
-          {error && <Text color="red">{error[0]}</Text>}
-        </view>
+
+        {error && <text className={style.errorText}>{error[0]}</text>}
       </view>
     );
   }

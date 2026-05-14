@@ -4,7 +4,73 @@ import { Colors } from '@/constant/style';
 
 import { Loading } from '../Loading/Loading';
 
-// Assuming your palette is exported from here
+// interface ButtonProps {
+//   children: ReactNode;
+//   /** Visual variant — use 'danger' for destructive actions, 'ghost' for tertiary */
+//   color?: 'primary' | 'secondary' | 'white' | 'danger';
+//   variant?: 'filled' | 'outlined' | 'ghost';
+//   size?: 'small' | 'medium' | 'large' | 'sm' | 'md' | 'lg';
+//   onPress?: () => void;
+//   disabled?: boolean;
+//   className?: string;
+//   rounded?: boolean;
+//   isLoading?: boolean;
+//   style?: Record<string, string | number>;
+// }
+
+const PADDING: Record<
+  string,
+  {
+    paddingTop: string;
+    paddingBottom: string;
+    paddingLeft: string;
+    paddingRight: string;
+    fontSize: string;
+  }
+> = {
+  sm: {
+    paddingTop: '6px',
+    paddingBottom: '6px',
+    paddingLeft: '12px',
+    paddingRight: '12px',
+    fontSize: '12px',
+  },
+  small: {
+    paddingTop: '6px',
+    paddingBottom: '6px',
+    paddingLeft: '12px',
+    paddingRight: '12px',
+    fontSize: '12px',
+  },
+  md: {
+    paddingTop: '10px',
+    paddingBottom: '10px',
+    paddingLeft: '16px',
+    paddingRight: '16px',
+    fontSize: '14px',
+  },
+  medium: {
+    paddingTop: '10px',
+    paddingBottom: '10px',
+    paddingLeft: '16px',
+    paddingRight: '16px',
+    fontSize: '14px',
+  },
+  lg: {
+    paddingTop: '14px',
+    paddingBottom: '14px',
+    paddingLeft: '24px',
+    paddingRight: '24px',
+    fontSize: '15px',
+  },
+  large: {
+    paddingTop: '14px',
+    paddingBottom: '14px',
+    paddingLeft: '24px',
+    paddingRight: '24px',
+    fontSize: '15px',
+  },
+};
 
 interface ButtonProps {
   children: ReactNode;

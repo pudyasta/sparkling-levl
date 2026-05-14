@@ -4,15 +4,9 @@
 
 @layer utilities {
   @keyframes press-bounce {
-    0% {
-      transform: scale(1);
-    }
-    50% {
-      transform: scale(0.95);
-    }
-    100% {
-      transform: scale(1);
-    }
+    0% { transform: scale(1); }
+    50% { transform: scale(0.95); }
+    100% { transform: scale(1); }
   }
 
   .animate-press-bounce {
@@ -31,17 +25,93 @@
 }
 
 :root {
+  /* Font families */
   --font-inter: 'inter', sans-serif;
   --font-jakarta: 'jakarta', sans-serif;
 
+  /* Brand colors */
   --primary: #1a73e8;
+  --primary-dark: #1557b0;
+  --primary-light: #e8f0fe;
   --secondary: #ffc107;
+  --secondary-dark: #e0a800;
+  --secondary-light: #fff8e1;
   --accent: #e8f0fe;
+
+  /* Semantic colors */
   --success: #28a745;
+  --success-bg: #e6f4ea;
+  --warning: #ffc107;
+  --warning-bg: #fff8e1;
   --error: #dc3545;
+  --error-bg: #fde8e9;
+  --info: #1a73e8;
+  --info-bg: #e8f0fe;
+
+  /* Neutral scale */
+  --n50: #f9fafb;
+  --n100: #f3f4f6;
+  --n200: #e5e7eb;
+  --n300: #d1d5db;
+  --n400: #9aa0a6;
+  --n500: #6b7280;
+  --n600: #4b5563;
+  --n700: #374151;
+  --n900: #202124;
+
+  /* Legacy aliases */
   --neutral: #202124;
-  --background: #ffffff;
   --disabled: #9aa0a6;
+  --background: #ffffff;
+
+  /* Surface / layout */
+  --surface: #ffffff;
+  --canvas: #f9fafb;
+  --border: #e5e7eb;
+  --divider: #f3f4f6;
+
+  /* Text */
+  --text-primary: #202124;
+  --text-secondary: #4b5563;
+  --text-tertiary: #6b7280;
+  --text-disabled: #9aa0a6;
+  --text-inverse: #ffffff;
+
+  /* Border radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+
+  /* Spacing (4pt base) */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-lg: 16px;
+  --space-xl: 24px;
+  --space-2xl: 32px;
+  --space-3xl: 48px;
+
+  /* Typography scale */
+  --text-caption: 12px;
+  --text-body-sm: 13px;
+  --text-body: 14px;
+  --text-body-lg: 16px;
+  --text-h3: 16px;
+  --text-h2: 18px;
+  --text-h1: 22px;
+  --text-display: 28px;
+
+  /* Line heights */
+  --leading-caption: 16px;
+  --leading-body-sm: 18px;
+  --leading-body: 20px;
+  --leading-body-lg: 24px;
+  --leading-h3: 24px;
+  --leading-h2: 26px;
+  --leading-h1: 30px;
+  --leading-display: 36px;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -53,53 +123,47 @@
     --error: #f28b82;
     --neutral: #e8eaed;
     --background: #121212;
+    --surface: #1e1e1e;
+    --canvas: #121212;
     --disabled: #5f6368;
+    --border: #3c4043;
+    --divider: #2d2e31;
+    --text-primary: #e8eaed;
+    --text-secondary: #9aa0a6;
+    --text-tertiary: #80868b;
   }
 }
 
 * {
   font-family: var(--font-inter);
-
   transition:
     background-color 0.3s ease,
     color 0.3s ease;
 }
 
 page {
-  background-color: var(--background);
-  color: var(--neutral);
+  background-color: var(--canvas);
+  color: var(--text-primary);
 }
 
-.font-inter {
-  font-family: var(--font-inter);
-}
+/* Font utilities */
+.font-inter { font-family: var(--font-inter); }
+.font-jakarta { font-family: var(--font-jakarta); }
 
-.font-jakarta {
-  font-family: var(--font-jakarta);
-}
+/* Color utilities */
+.text-primary { color: var(--primary); }
+.text-secondary { color: var(--secondary); }
+.text-muted { color: var(--text-tertiary); }
+.text-subtle { color: var(--text-secondary); }
+.text-error { color: var(--error); }
+.text-success { color: var(--success); }
 
-.text-primary {
-  color: var(--primary);
-}
-.text-secondary {
-  color: var(--secondary);
-}
+.bg-primary { background-color: var(--primary); }
+.bg-secondary { background-color: var(--secondary); }
+.bg-canvas { background-color: var(--canvas); }
+.bg-surface { background-color: var(--surface); }
 
-.bg-primary {
-  background-color: var(--primary);
-}
-.bg-secondary {
-  background-color: var(--secondary);
-}
-
-.border-primary {
-  border-color: var(--primary);
-}
-
-.border-secondary {
-  border-color: var(--secondary);
-}
-
-.border-neutral {
-  border-color: var(--neutral);
-}
+.border-primary { border-color: var(--primary); }
+.border-secondary { border-color: var(--secondary); }
+.border-neutral { border-color: var(--neutral); }
+.border-default { border-color: var(--border); }

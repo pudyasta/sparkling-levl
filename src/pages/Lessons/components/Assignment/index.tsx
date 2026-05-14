@@ -2,14 +2,17 @@ import { useEffect, useRef, useState } from 'react';
 
 import type { InputRef } from '@/components/Input/Input';
 import Input from '@/components/Input/Input';
+import { Modal, ModalTemplate } from '@/components/Modal/Modal.view';
 import Text from '@/components/Text';
 import { TextType } from '@/components/Text/types';
 import Button from '@/components/common/Button';
 import { Colors } from '@/constant/style';
 import { pickAnyFile } from '@/lib/helper/filePicker';
+import { callToast } from '@/lib/helper/showToast';
 
 import type { AssignmentStudentResponse } from '../../repository/type/assignment';
-import type { SubmitAssignmentRequest } from '../../usecase/useSubmitAssignment';
+import { useSubmitAssignment } from '../../usecase/useSubmitAssignment';
+import { useSubmitFinalAssignment } from '../../usecase/useSubmitFinalAssignment';
 
 export interface MediaFile {
   name: string;
@@ -20,12 +23,10 @@ export interface MediaFile {
 
 const AssignmentContent = ({
   data,
-  onSubmit,
-  onSubmitFinal,
+  onDataChanged,
 }: {
   data: AssignmentStudentResponse;
-  onSubmit: (reques: SubmitAssignmentRequest) => void;
-  onSubmitFinal: () => void;
+  onDataChanged: () => void;
 }) => {
   const answerRef = useRef<InputRef>(null);
   const [fileError, setFileError] = useState('');
@@ -34,28 +35,40 @@ const AssignmentContent = ({
 
   const [isFileEdited, setIsFileEdited] = useState(false);
   const [isAnswerEdited, setIsAnswerEdited] = useState(false);
+  const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
 
   const isGraded = data.submission_status === 'graded';
+  const { execute: submitAssignment } = useSubmitAssignment({
+    onSuccess: () => onDataChanged(),
+  });
+
+  const { execute: submitFinalAssignment, isLoading: isSubmittingFinal } = useSubmitFinalAssignment(
+    {
+      onSuccess: () => {
+        setIsSubmitModalOpen(false);
+        onDataChanged();
+      },
+      onError: () => setIsSubmitModalOpen(false),
+    }
+  );
+
   const choose = () => {
     if (['submitted', 'graded'].includes(data?.submission_status || '')) {
       return;
     }
     pickAnyFile('all', (res) => {
-      console.log('pickAnyFile', JSON.stringify(res.data.tempFiles.length));
       if (res.data?.tempFiles?.length > 0) {
-        const mappedFile = res.data.tempFiles.map((m: any) => {
-          return {
-            ...m,
-            mimeType: m.name.split('.')[m.name.split('.').length - 1],
-          };
-        });
+        const mappedFile = res.data.tempFiles.map((m: any) => ({
+          ...m,
+          mimeType: m.name.split('.')[m.name.split('.').length - 1],
+        }));
         setSelectedFiles(mappedFile);
         setIsFileEdited(true);
       }
     });
   };
 
-  const validateBeforeSubmit = () => {
+  const validateAndSubmitDraft = () => {
     setFileError('');
     answerRef.current?.setError('');
 
@@ -74,7 +87,7 @@ const AssignmentContent = ({
       return;
     }
 
-    onSubmit({
+    submitAssignment({
       assignmentID:
         data.submission_status !== 'draft'
           ? data.id
@@ -84,6 +97,15 @@ const AssignmentContent = ({
       type: data.submission_type,
       method: data.submission_status === 'draft' ? 'PUT' : 'POST',
     });
+  };
+
+  const handleConfirmFinalSubmit = () => {
+    const submissionId = data.submissions[data.submissions.length - 1]?.id;
+    if (!submissionId) {
+      callToast('Submission tidak ditemukan', 'error');
+      return;
+    }
+    submitFinalAssignment({ submission_id: submissionId });
   };
 
   useEffect(() => {
@@ -124,39 +146,37 @@ const AssignmentContent = ({
           </Text>
         </view>
 
-        {/* 2. Status Score Card (Only shows if submitted/graded) */}
-        {
-          <view
-            className={`mb-6 flex-row items-center rounded-2xl p-4 flex justify-between ${isGraded ? 'border border-green-100 bg-green-50' : 'border border-blue-100 bg-blue-50'}`}
-          >
-            <view className="flex-col flex">
-              <Text
-                size={TextType.b2}
-                fontWeight={'bold'}
-                className={isGraded ? 'text-green-700' : 'text-blue-700'}
-              >
-                Status: {data.submission_status_label}
-              </Text>
-              {data.submitted_at && (
-                <Text size={TextType.b2} className={isGraded ? 'text-green-600' : 'text-blue-600'}>
-                  Dikumpulkan pada {new Date(data.submitted_at).toLocaleDateString()}
-                </Text>
-              )}
-            </view>
-            <view className="items-end">
-              <Text
-                size={TextType.b2}
-                fontWeight={'bold'}
-                className={isGraded ? 'text-green-700' : 'text-blue-700'}
-              >
-                {data.score || '-'}
-              </Text>
+        {/* 2. Status Score Card */}
+        <view
+          className={`mb-6 flex-row items-center rounded-2xl p-4 flex justify-between ${isGraded ? 'border border-green-100 bg-green-50' : 'border border-blue-100 bg-blue-50'}`}
+        >
+          <view className="flex-col flex">
+            <Text
+              size={TextType.b2}
+              fontWeight={'bold'}
+              className={isGraded ? 'text-green-700' : 'text-blue-700'}
+            >
+              Status: {data.submission_status_label}
+            </Text>
+            {data.submitted_at && (
               <Text size={TextType.b2} className={isGraded ? 'text-green-600' : 'text-blue-600'}>
-                Skor Akhir
+                Dikumpulkan pada {new Date(data.submitted_at).toLocaleDateString()}
               </Text>
-            </view>
+            )}
           </view>
-        }
+          <view className="items-end">
+            <Text
+              size={TextType.b2}
+              fontWeight={'bold'}
+              className={isGraded ? 'text-green-700' : 'text-blue-700'}
+            >
+              {data.score || '-'}
+            </Text>
+            <Text size={TextType.b2} className={isGraded ? 'text-green-600' : 'text-blue-600'}>
+              Skor Akhir
+            </Text>
+          </view>
+        </view>
 
         {/* 3. Instructions */}
         <view className="mb-6">
@@ -202,11 +222,7 @@ const AssignmentContent = ({
                 initialValue={answerInitialValue}
                 disabled={['submitted', 'graded'].includes(data?.submission_status || '')}
                 bindChange={(value: any) => {
-                  if (value !== answerInitialValue) {
-                    setIsAnswerEdited(true);
-                  } else {
-                    setIsAnswerEdited(false);
-                  }
+                  setIsAnswerEdited(value !== answerInitialValue);
                 }}
               />
             )}
@@ -254,7 +270,7 @@ const AssignmentContent = ({
         <view className="mt-8">
           <Button
             disabled={data.submission_status == 'submitted' || data.submission_status == 'graded'}
-            onPress={validateBeforeSubmit}
+            onPress={validateAndSubmitDraft}
             className="h-14 w-full"
             variant="outlined"
           >
@@ -262,12 +278,46 @@ const AssignmentContent = ({
           </Button>
           <Button
             disabled={data.submission_status != 'draft' || isFileEdited || isAnswerEdited}
-            onPress={onSubmitFinal}
+            onPress={() => setIsSubmitModalOpen(true)}
             className="mt-2 h-14 w-full"
           >
             Kumpulkan Tugas
           </Button>
         </view>
+        <Modal
+          template={ModalTemplate.Custom}
+          visible={isSubmitModalOpen}
+          onClose={() => setIsSubmitModalOpen(false)}
+        >
+          <view className="flex-col gap-4 flex">
+            <Text size={TextType.h2} fontWeight="600" className="text-center">
+              Kumpulkan tugas?
+            </Text>
+            <Text className="text-[#5f6368] text-center">
+              Setelah dikumpulkan, kamu tidak bisa mengubah jawaban lagi. Pastikan semua sudah benar
+              ya.
+            </Text>
+            <view className="flex-col gap-3 flex">
+              <Button
+                size="small"
+                variant="filled"
+                color="primary"
+                onPress={handleConfirmFinalSubmit}
+                isLoading={isSubmittingFinal}
+              >
+                Kumpulkan sekarang
+              </Button>
+              <Button
+                size="small"
+                variant="outlined"
+                color="primary"
+                onPress={() => setIsSubmitModalOpen(false)}
+              >
+                Periksa lagi
+              </Button>
+            </view>
+          </view>
+        </Modal>
       </view>
     )
   );

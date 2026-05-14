@@ -18,7 +18,6 @@ export const useGetDashboardSummary = <T = DashboardData>(options?: QueryOptions
     queryKey: ['dashboard-summary'],
     queryFn: async (): Promise<DashboardResponse> => {
       const response = await getDashboardSummaryApi();
-      console.log(JSON.stringify(response, null, 2));
       return response;
     },
   });

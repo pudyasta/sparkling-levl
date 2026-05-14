@@ -13,11 +13,12 @@ import { useEnrollCourse } from '../usecase/useEnrollCourse';
 
 interface EnrollProps {
   courseSlug: string;
+  status?: string;
   enrollmentType: EnrollmentType;
   onEnrollSuccess?: () => void;
 }
 
-export const Enroll = ({ courseSlug, enrollmentType, onEnrollSuccess }: EnrollProps) => {
+export const Enroll = ({ courseSlug, status, enrollmentType, onEnrollSuccess }: EnrollProps) => {
   const [keyError, setKeyError] = useState<string | null>(null);
   const [showPendingInfo, setShowPendingInfo] = useState(false);
   const inputRef = useRef<InputRef>(null);
@@ -57,7 +58,7 @@ export const Enroll = ({ courseSlug, enrollmentType, onEnrollSuccess }: EnrollPr
   };
 
   // Approval pending state
-  if (showPendingInfo) {
+  if (showPendingInfo || status == 'pending') {
     return (
       <view className="items-center">
         <text className="mb-2 text-4xl">⏳</text>

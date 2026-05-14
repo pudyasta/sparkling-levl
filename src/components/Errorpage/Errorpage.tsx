@@ -105,7 +105,7 @@ export const ErrorPage = ({ error, onRetry }: ErrorPageProps) => {
 
         {/* Primary action */}
         <Button
-          className="mb-3 h-14 w-full items-center rounded-2xl bg-blue-500 justify-center"
+          className="mb-3 h-14 w-full"
           onPress={handlePrimary}
         >
           {isUnauthorized ? 'Log In Again' : 'Coba Lagi'}

@@ -1,7 +1,9 @@
-import { useEffect, useRef, useState } from '@lynx-js/react';
+import { useEffect, useLynxGlobalEventListener, useRef, useState } from '@lynx-js/react';
 import pipe from 'sparkling-method';
 import { getItem } from 'sparkling-storage';
 
+import { BackInterceptor } from '@/components/BackInterceptor/BackInterceptor';
+import { useConfirmation } from '@/components/ConfirmationModal/ConfitmationModal';
 import Input, { type InputRef } from '@/components/Input/Input';
 import { Loading } from '@/components/Loading/Loading';
 import { Modal, ModalTemplate } from '@/components/Modal/Modal.view';
@@ -15,40 +17,45 @@ import { callToast } from '@/lib/helper/showToast';
 
 import type { QuizCoreProps } from '../Lessons/components/Quiz';
 import type {
-  GetQuestionByPageResponse,
-  QuestionOptionItem,
-  QuizQuestionResource,
+  QuizOverviewOptionValue,
+  QuizOverviewQuestion,
   SaveAnswerPayload,
 } from './type/QuizData';
-import { useGetQuestion } from './usecase/useGetQuestion';
+import { useGetQuizOverview } from './usecase/useGetQuizOverview';
 import { useSaveAnswer } from './usecase/useSaveAnswer';
 import { useSubmitQuiz } from './usecase/useSubmitQuiz';
+
+const getOptionText = (option: QuizOverviewOptionValue): string =>
+  typeof option === 'string' ? option : option.text;
 
 const QuizPage = () => {
   const { routerParams, navigateTo } = useNativeBridge();
   const quizId: number = routerParams?.quizId;
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalQuestions, setTotalQuestions] = useState<number>(0);
   const submission = useRef<QuizCoreProps | null>(null);
   const inputRef = useRef<InputRef>(null);
+  const localAnswers = useRef<
+    Record<number, { content: string | null; selected_options: string[] | null }>
+  >({});
 
-  const [timeLeft, setTimeLeft] = useState(0);
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const hasAutoSubmitted = useRef(false);
+  const [questions, setQuestions] = useState<QuizOverviewQuestion[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalQuestions, setTotalQuestions] = useState(0);
 
-  const [question, setQuestion] = useState<QuizQuestionResource | null>(null);
-  const [meta, setMeta] = useState<GetQuestionByPageResponse['data']['meta'] | null>(null);
   const [currentAnswer, setCurrentAnswer] = useState<any>(null);
-  const [flaggedQuestions, setFlaggedQuestions] = useState<number[]>([]);
   const [answeredQuestions, setAnsweredQuestions] = useState<number[]>([]);
+  const [flaggedQuestions, setFlaggedQuestions] = useState<number[]>([]);
   const [isBackModalOpen, setIsBackModalOpen] = useState(false);
+  const { confirm, ConfirmationModal } = useConfirmation();
 
   const [isSaving, setIsSaving] = useState(false);
   const [phase, setPhase] = useState<'loading' | 'quiz' | 'submitting' | 'error'>('loading');
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isNavVisible, setIsNavVisible] = useState(false);
   const [isNavAnimated, setIsNavAnimated] = useState(false);
+
+  const [timeLeft, setTimeLeft] = useState(-1);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const hasAutoSubmitted = useRef(false);
 
   const openNav = () => {
     setIsNavVisible(true);
@@ -70,7 +77,7 @@ const QuizPage = () => {
   const timerColor = (() => {
     if (timeLeft <= 60) return { bg: 'bg-red-50', text: 'text-red-600', dot: 'bg-red-500' };
     if (timeLeft <= 300) return { bg: 'bg-amber-50', text: 'text-amber-600', dot: 'bg-amber-500' };
-    return { bg: 'bg-blue-50', text: 'text-blue-600', dot: 'bg-blue-500' };
+    return { bg: 'bg-[#e8f0fe]', text: 'text-[#1a73e8]', dot: 'bg-[#1a73e8]' };
   })();
 
   const startTimer = () => {
@@ -103,47 +110,34 @@ const QuizPage = () => {
     }
   }, [timeLeft]);
 
-  const { execute: fetchQuestionMutation } = useGetQuestion({
+  const { execute: fetchOverview } = useGetQuizOverview({
     onSuccess: (res) => {
-      const q = res.data.data;
-      const nav = res.data.meta.pagination;
-      const existingAnswer = res.data.answer;
-      console.log('Fetched question:', JSON.stringify(res, null, 2));
+      const data = res.data;
 
-      setQuestion(q);
-      setMeta({
-        pagination: {
-          current_page: nav.current_page,
-          total: nav.total,
-          has_next: nav.has_next,
-          has_prev: nav.has_prev,
-        },
+      setTotalQuestions(data.total_questions);
+      setQuestions(data.questions);
+
+      // Seed local answer cache from server-provided answers
+      data.questions.forEach((q) => {
+        localAnswers.current[q.id] = q.answer
+          ? { content: q.answer.content, selected_options: q.answer.selected_options }
+          : { content: null, selected_options: null };
       });
-      setTotalQuestions(nav.total);
+      // Initialize answered set from server summary
+      const answered = data.summary.filter((s) => s.is_answered).map((s) => s.order - 1);
+      setAnsweredQuestions(answered);
 
-      if (existingAnswer?.selected_options) {
-        setCurrentAnswer(
-          q.type === 'checkbox'
-            ? existingAnswer.selected_options
-            : (existingAnswer.selected_options[0] ?? null)
-        );
-      } else if (existingAnswer?.content) {
-        if (q.type === 'essay') {
-          console.log('setValue');
-          inputRef.current?.setValue(existingAnswer.content);
-          setCurrentAnswer(existingAnswer.content);
-        } else {
-          setCurrentAnswer(existingAnswer.content);
-        }
+      // Timer: trust server's time_remaining_seconds over local cache
+      if (data.is_time_limited && data.time_remaining_seconds != null) {
+        setTimeLeft(data.time_remaining_seconds);
+        if (data.time_remaining_seconds > 0) startTimer();
       } else {
-        setCurrentAnswer(q.type === 'checkbox' ? [] : null);
+        setTimeLeft(-1);
       }
 
       setPhase('quiz');
     },
     onError: (err) => {
-      console.log('Fetched question:', JSON.stringify(err, null, 2));
-      setErrorMessage('Failed to load question.');
       setPhase('error');
     },
   });
@@ -156,6 +150,7 @@ const QuizPage = () => {
   const { execute: submitQuiz } = useSubmitQuiz({
     sessionToken: submission.current?.sessionToken || '',
     onSuccess: (data) => {
+      console.log('SUBMIT', JSON.stringify(data, null, 2));
       stopTimer();
       callToast('Jawaban berhasil di kirim.', 'success');
       setTimeout(() => {
@@ -181,104 +176,93 @@ const QuizPage = () => {
   // ─── Init ─────────────────────────────────────────────────────────────────
   useEffect(() => {
     getItem({ key: PrefKey.SubmissionId + quizId, biz: BizKey.Quiz }, (res) => {
-      const savedId = res.data.data?.submissionId;
-      console.log(JSON.stringify(res, null, 2));
-      if (savedId) {
-        submission.current = res.data.data;
-        fetchQuestion(1);
-        setTimeLeft(2000);
-
-        if (res.data.data.timeLeft > 0) {
-          setTimeLeft(res.data.data.timeLeft);
-          startTimer();
-        } else {
-          setTimeLeft(-1);
-        }
-      }
+      const data = res.data.data as QuizCoreProps | null;
+      if (!data?.submissionId) return;
+      submission.current = data;
+      setPhase('loading');
+      fetchOverview({ submissionId: data.submissionId, sessionToken: data.sessionToken });
     });
     return () => stopTimer();
   }, []);
 
+  // ─── Restore answer when page changes ────────────────────────────────────
+  // Reads from localAnswers ref so we always show what the user last entered,
+  // even if they navigated away and came back before the API confirmed.
   useEffect(() => {
-    pipe.call('navigation.setBackInterceptor', { enabled: true }, (res) => {
-      console.log('object');
-    });
-    return () => {
-      pipe.call('navigation.setBackInterceptor', { enabled: false }, () => {});
-    };
-  }, []);
-
-  // useEffect(() => {
-  //   const handleBackPress = () => {
-  //     setIsBackModalOpen(true);
-  //   };
-  //   pipe.on('backandroid', handleBackPress);
-  //   return () => {
-  //     pipe.off('backandroid', handleBackPress);
-  //   };
-  // }, []);
-
-  const handleConfirmBack = () => {
-    setIsBackModalOpen(false);
-    pipe.call('navigation.setBackInterceptor', { enabled: false }, () => {
-      pipe.call('navigation.goBack', {}, (res) => {
-        console.log('object');
-      });
-    });
-  };
+    if (phase !== 'quiz' || questions.length === 0) return;
+    const q = questions[currentPage - 1];
+    if (!q) return;
+    const cached = localAnswers.current[q.id];
+    if (cached?.selected_options?.length) {
+      setCurrentAnswer(
+        q.type === 'checkbox' ? cached.selected_options : (cached.selected_options[0] ?? null)
+      );
+    } else if (cached?.content) {
+      if (q.type === 'essay') inputRef.current?.setValue(cached.content);
+      setCurrentAnswer(cached.content);
+    } else {
+      setCurrentAnswer(q.type === 'checkbox' ? [] : null);
+    }
+  }, [currentPage, phase]);
 
   // ─── Helpers ──────────────────────────────────────────────────────────────
-  const fetchQuestion = (page: number) => {
-    if (!submission.current) return;
-    setPhase('loading');
-    setCurrentPage(page);
-    fetchQuestionMutation({
-      submissionId: submission.current.submissionId,
-      page,
-      sessionToken: submission.current?.sessionToken || '',
-    });
-  };
+  const currentQuestion = questions[currentPage - 1] ?? null;
 
   const buildPayload = (): SaveAnswerPayload => {
-    console.log('build payload', currentAnswer);
-    if (!question) return {} as SaveAnswerPayload;
-    if (question.type === 'essay') {
+    if (!currentQuestion) return {} as SaveAnswerPayload;
+    if (currentQuestion.type === 'essay') {
       return {
-        quiz_question_id: question.id,
+        quiz_question_id: currentQuestion.id,
         selected_options: null,
         content: inputRef.current?.getValue() || '',
       };
     }
-    if (question.type === 'checkbox') {
+    if (currentQuestion.type === 'checkbox') {
       return {
-        quiz_question_id: question.id,
+        quiz_question_id: currentQuestion.id,
         selected_options: currentAnswer as number[],
         content: null,
       };
     }
     return {
-      quiz_question_id: question.id,
+      quiz_question_id: currentQuestion.id,
       selected_options: [currentAnswer as number],
       content: null,
     };
   };
 
+  const persistAnswerLocally = (payload: SaveAnswerPayload) => {
+    if (!currentQuestion) return;
+    localAnswers.current[currentQuestion.id] = {
+      content: payload.content,
+      selected_options: payload.selected_options?.map(String) ?? null,
+    };
+    setAnsweredQuestions((prev) =>
+      prev.includes(currentPage - 1) ? prev : [...prev, currentPage - 1]
+    );
+  };
+
   const handleNext = async () => {
-    if (!submission.current || !question) return;
+    if (!submission.current || !currentQuestion) return;
     const payload = buildPayload();
-    if (!payload) return;
     setIsSaving(true);
     saveAnswer(
       { submissionId: submission.current.submissionId, payload },
       {
         onSettled: () => {
-          if (!submission.current) return;
+          persistAnswerLocally(payload);
           setIsSaving(false);
-          if (meta?.pagination.has_next) {
-            fetchQuestion(currentPage + 1);
+          if (currentPage < totalQuestions) {
+            setCurrentPage((p) => p + 1);
           } else {
             stopTimer();
-            submitQuiz(submission.current.submissionId);
+            confirm(() => {
+              if (!submission.current) {
+                callToast('Maaf sedang terjadi kendala. Coba beberapa saat lagi', 'error');
+                return;
+              }
+              submitQuiz(submission.current!.submissionId);
+            });
           }
         },
       }
@@ -286,7 +270,7 @@ const QuizPage = () => {
   };
 
   const handleBack = () => {
-    if (!submission.current || !question) return;
+    if (!submission.current || !currentQuestion || currentPage <= 1) return;
     const payload = buildPayload();
     if (!payload) return;
     setIsSaving(true);
@@ -294,28 +278,26 @@ const QuizPage = () => {
       { submissionId: submission.current.submissionId, payload },
       {
         onSettled: () => {
-          if (!submission.current) return;
+          persistAnswerLocally(payload);
           setIsSaving(false);
-          if (currentPage > 1) {
-            fetchQuestion(currentPage - 1);
-          }
+          setCurrentPage((p) => p - 1);
         },
       }
     );
   };
 
-  const handleJumpTo = (page: number) => {
-    setIsNavVisible(false);
-    if (!submission.current || !question) return;
+  const handleJumpTo = (index: number) => {
+    closeNav();
+    if (!submission.current || !currentQuestion) return;
     const payload = buildPayload();
-    if (!payload) return;
     setIsSaving(true);
     saveAnswer(
       { submissionId: submission.current.submissionId, payload },
       {
         onSettled: () => {
+          persistAnswerLocally(payload);
           setIsSaving(false);
-          fetchQuestion(page + 1);
+          setTimeout(() => setCurrentPage(index + 1), 300);
         },
       }
     );
@@ -330,8 +312,8 @@ const QuizPage = () => {
   };
 
   const handleSelection = (optionId: string) => {
-    if (!question) return;
-    if (question.type === 'checkbox') {
+    if (!currentQuestion) return;
+    if (currentQuestion.type === 'checkbox') {
       const prev = Array.isArray(currentAnswer) ? currentAnswer : [];
       setCurrentAnswer(
         prev.includes(optionId) ? prev.filter((id: string) => id !== optionId) : [...prev, optionId]
@@ -343,16 +325,14 @@ const QuizPage = () => {
   };
 
   const isSelected = (optionId: string) => {
-    if (question?.type === 'checkbox') {
+    if (currentQuestion?.type === 'checkbox') {
       return Array.isArray(currentAnswer) && currentAnswer.includes(optionId);
     }
     return currentAnswer === optionId;
   };
 
-  const isNextDisabled = () => {
-    if (isSaving || phase === 'submitting' || timeLeft === 0) return true;
-    if (!question) return true;
-  };
+  const isNextDisabled = () =>
+    isSaving || phase === 'submitting' || timeLeft === 0 || !currentQuestion;
 
   useEffect(() => {
     console.log(JSON.stringify(routerParams, null, 2));
@@ -360,7 +340,7 @@ const QuizPage = () => {
   }, [routerParams]);
 
   const progressWidth = totalQuestions > 0 ? (currentPage / totalQuestions) * 100 : 0;
-  const options = Array.isArray(question?.options) ? question!.options : [];
+  const options = Array.isArray(currentQuestion?.options) ? currentQuestion!.options : [];
   const isFlagged = flaggedQuestions.includes(currentPage - 1);
 
   if (phase === 'submitting') {
@@ -379,7 +359,7 @@ const QuizPage = () => {
     <view className="flex-col gap-3 flex">
       {options.map((option, index) => {
         const active = isSelected(index.toString());
-        const isCheckbox = question?.type === 'checkbox';
+        const isCheckbox = currentQuestion?.type === 'checkbox';
         return (
           <view
             key={index}
@@ -391,7 +371,7 @@ const QuizPage = () => {
             <view
               className={`mr-4 h-6 w-6 items-center border-2 justify-center ${
                 isCheckbox ? 'rounded-md' : 'rounded-full'
-              } ${active ? 'border-blue-500 bg-blue-500' : 'border-slate-200'}`}
+              } ${active ? 'border-[#1a73e8] bg-[#1a73e8]' : 'border-slate-200'}`}
             >
               {active && (
                 <view
@@ -399,7 +379,7 @@ const QuizPage = () => {
                 />
               )}
             </view>
-            <Text size={TextType.b2}>{option}</Text>
+            <Text size={TextType.b2}>{getOptionText(option)}</Text>
           </view>
         );
       })}
@@ -414,8 +394,8 @@ const QuizPage = () => {
 
   const renderTrueFalse = () => {
     const tfOptions = [
-      { label: 'Benar', hint: 'Pilih jika pernyataan benar', isTrue: true },
-      { label: 'Salah', hint: 'Pilih jika pernyataan salah', isTrue: false },
+      { label: 'Benar', isTrue: true },
+      { label: 'Salah', isTrue: false },
     ];
 
     return (
@@ -530,7 +510,7 @@ const QuizPage = () => {
             <view className="flex-row flex justify-between">
               <view className="items-center rounded-full bg-[#FFF8E6] px-3 py-1 flex">
                 <text className="uppercase text-[10px] font-bold text-[#FBB03B]">
-                  {question?.type_label ?? 'Question'}
+                  {currentQuestion?.type_label ?? 'Question'}
                 </text>
               </view>
               <view
@@ -553,12 +533,12 @@ const QuizPage = () => {
               fontWeight="bold"
               className="my-6 leading-tight text-slate-800"
             >
-              {htmlToPlainText(question?.content || '')}
+              {htmlToPlainText(currentQuestion?.content || '')}
             </Text>
 
-            {question?.type === 'essay'
+            {currentQuestion?.type === 'essay'
               ? renderEssay()
-              : question?.type === 'true_false'
+              : currentQuestion?.type === 'true_false'
                 ? renderTrueFalse()
                 : renderOptions()}
           </view>
@@ -569,21 +549,12 @@ const QuizPage = () => {
       <view className="border-t border-slate-100 bg-white p-5 pb-10">
         <view className="flex-row gap-3 flex">
           {currentPage > 1 && (
-            <view
-              bindtap={handleBack}
-              className="h-14 flex-1 items-center rounded-2xl border-2 border-slate-200 justify-center"
-            >
-              <text className="font-bold text-slate-600">Back</text>
-            </view>
+            <Button onPress={handleBack} isLoading={isSaving} color="white">
+              Kembali
+            </Button>
           )}
-          <Button
-            disabled={isNextDisabled()}
-            onPress={handleNext}
-            className={`h-14 flex-1 rounded-2xl ${isNextDisabled() ? 'bg-slate-200' : 'bg-blue-600'}`}
-          >
-            <text className={`font-bold ${isNextDisabled() ? 'text-slate-400' : 'text-white'}`}>
-              {isSaving ? 'Saving...' : meta?.pagination.has_next ? 'Next' : 'Finish Quiz ✓'}
-            </text>
+          <Button disabled={isNextDisabled()} onPress={handleNext} isLoading={isSaving}>
+            {currentPage < totalQuestions ? 'Next' : 'Finish Quiz ✓'}
           </Button>
         </view>
       </view>
@@ -608,7 +579,7 @@ const QuizPage = () => {
           >
             <view className="mb-6 flex-row items-center flex justify-between">
               <Text size={TextType.h2} fontWeight="bold">
-                Question List
+                Daftar Pertanyaan
               </Text>
               <view bindtap={closeNav} className="p-2">
                 <text className="font-bold text-slate-400">✕</text>
@@ -624,15 +595,12 @@ const QuizPage = () => {
                       key={i}
                       className={`h-12 w-12 items-center rounded-xl border-2 flex relative justify-center ${
                         isCurrent
-                          ? 'border-blue-600 bg-blue-50'
+                          ? 'border-blue-600 bg-blue-100 text-blue-700'
                           : answeredQuestions.includes(i)
-                            ? 'border-slate-100 bg-slate-50'
-                            : 'border-transparent'
+                            ? 'border-green-500 bg-green-100 text-green-700'
+                            : 'border-slate-300 bg-white text-slate-400'
                       }`}
-                      bindtap={() => {
-                        closeNav();
-                        setTimeout(() => handleJumpTo(i), 300);
-                      }}
+                      bindtap={() => handleJumpTo(i)}
                     >
                       <text
                         className={`font-bold ${isCurrent ? 'text-blue-600' : 'text-slate-600'}`}
@@ -650,35 +618,11 @@ const QuizPage = () => {
               </view>
             </scroll-view>
           </view>
-          <Modal
-            template={ModalTemplate.Custom}
-            visible={isBackModalOpen}
-            onClose={() => setIsBackModalOpen(false)}
-          >
-            <view className="flex-col gap-4 flex">
-              <Text size={TextType.h2} fontWeight="600" className="text-center">
-                Keluar dari halaman ini?
-              </Text>
-              <Text className="text-[#5f6368] text-center">
-                Kemajuan kamu akan hilang jika kamu keluar.
-              </Text>
-              <view className="flex-col gap-3 flex">
-                <Button size="small" variant="filled" color="primary" onPress={handleConfirmBack}>
-                  Keluar
-                </Button>
-                <Button
-                  size="small"
-                  variant="outlined"
-                  color="primary"
-                  onPress={() => setIsBackModalOpen(false)}
-                >
-                  Tetap di sini
-                </Button>
-              </view>
-            </view>
-          </Modal>
         </view>
       )}
+      <ConfirmationModal />
+
+      <BackInterceptor />
     </view>
   );
 };

@@ -1,14 +1,11 @@
-import { useEffect, useLynxGlobalEventListener, useState } from '@lynx-js/react';
-import pipe from 'sparkling-method';
+import { useEffect, useState } from '@lynx-js/react';
 
+import { BackInterceptor } from '@/components/BackInterceptor/BackInterceptor';
 import { Loading } from '@/components/Loading/Loading';
-import { Modal, ModalTemplate } from '@/components/Modal/Modal.view';
 import Text from '@/components/Text';
 import { TextType } from '@/components/Text/types';
-import Button from '@/components/common/Button';
 import { Colors } from '@/constant/style';
 import { useNativeBridge } from '@/context/NativeBridgeProvider';
-import { callToast } from '@/lib/helper/showToast';
 
 import AssignmentContent from './components/Assignment';
 import LessonContent from './components/Lessons';
@@ -17,13 +14,9 @@ import type { AssignmentStudentResponse } from './repository/type/assignment';
 import type { LessonData } from './repository/type/lessons';
 import type { QuizStudentResponse } from './repository/type/quiz';
 import { useGetLessons } from './usecase/useGetLessons';
-import { useMarkAsDone } from './usecase/useMarkAsDone';
-import { type SubmitAssignmentRequest, useSubmitAssignment } from './usecase/useSubmitAssignment';
-import { useSubmitFinalAssignment } from './usecase/useSubmitFinalAssignment';
 
 const LessonPage = () => {
   const { routerParams } = useNativeBridge();
-  const { execute } = useMarkAsDone();
 
   const [currentParams, setCurrentParams] = useState({
     lesson_slug: routerParams?.lesson_slug || '',
@@ -36,10 +29,7 @@ const LessonPage = () => {
   const [progressPercentage, setProgressPercentage] = useState(0);
   const [completedLessons, setCompletedLessons] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
-  const [isButtonLoading, setIsButtonLoading] = useState(false);
-  const [isBackModalOpen, setIsBackModalOpen] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
+  const [totalLessons, setTotalLessons] = useState(0);
 
   let allLessons = routerParams?.all_lessons || [];
 
@@ -56,16 +46,8 @@ const LessonPage = () => {
     quiz_id: currentParams.assignment_id,
   });
 
-  const { execute: submitAssignment } = useSubmitAssignment({
-    onSuccess: (data: any) => {
-      refetch();
-      callToast('Tugas berhasil disimpan sebagai draft', 'success');
-    },
-  });
-
   const handlePageChange = (index: number) => {
     setIsLoading(true);
-
     const target = allLessons[index];
     if (!target || target.is_locked) return;
 
@@ -75,14 +57,11 @@ const LessonPage = () => {
       assignment_id: target.id,
       type: target.type,
     });
-
     setIsSheetOpen(false);
   };
 
   useEffect(() => {
-    refetch().finally(() => {
-      setIsLoading(false);
-    });
+    refetch().finally(() => setIsLoading(false));
   }, [currentParams, isLoading]);
 
   const handleSetCompleted = () => {
@@ -92,40 +71,24 @@ const LessonPage = () => {
   };
 
   useEffect(() => {
+    setTotalLessons(allLessons.length);
     handleSetCompleted();
   }, []);
+
+  const handleLessonCompleted = (nextIndex: number) => {
+    allLessons[lessons!.data?.order - 1].is_completed = true;
+    if (lessons!.data?.order && lessons!.data?.order < allLessons?.length) {
+      allLessons[lessons!.data?.order].is_locked = false;
+    }
+    handleSetCompleted();
+    refetch();
+    handlePageChange(nextIndex);
+  };
 
   const handleBottomSheetHeight = (length: number) => {
     if (length <= 2) return '25vh';
     if (length <= 4) return '40vh';
     return '45vh';
-  };
-
-  const handleMarkAsDoneLessons = () => {
-    setIsButtonLoading(true);
-    execute(currentParams.lesson_slug, {
-      onSuccess: (data) => {
-        setIsButtonLoading(false);
-        refetch();
-        allLessons[lessons!.data?.order - 1].is_completed = true;
-        if (lessons!.data?.order && lessons!.data?.order < allLessons?.length) {
-          allLessons[lessons!.data?.order].is_locked = false;
-        }
-        handleSetCompleted();
-        setIsModalOpen(true);
-
-        return;
-      },
-      onError: (error) => {
-        setIsModalOpen(true);
-        setIsButtonLoading(false);
-        return;
-      },
-    });
-  };
-
-  const handleSubmitAssignment = (request: SubmitAssignmentRequest) => {
-    submitAssignment({ ...request });
   };
 
   const renderContent = () => {
@@ -134,8 +97,7 @@ const LessonPage = () => {
         return (
           <AssignmentContent
             data={lessons?.data as AssignmentStudentResponse}
-            onSubmit={handleSubmitAssignment}
-            onSubmitFinal={handleOpenSubmitModal}
+            onDataChanged={refetch}
           />
         );
       case 'quiz':
@@ -144,61 +106,13 @@ const LessonPage = () => {
         return (
           <LessonContent
             data={lessons?.data as LessonData}
-            handleMarkAsDoneLessons={handleMarkAsDoneLessons}
-            loading={isButtonLoading}
+            lessonSlug={currentParams.lesson_slug}
+            onCompleted={handleLessonCompleted}
           />
         );
     }
   };
 
-  const handleConfirmBack = () => {
-    setIsBackModalOpen(false);
-    pipe.call('navigation.setBackInterceptor', { enabled: false }, () => {
-      pipe.call('navigation.goBack', {}, (res) => {});
-    });
-  };
-
-  useEffect(() => {
-    pipe.call('navigation.setBackInterceptor', { enabled: true }, (res) => {});
-    return () => {
-      pipe.call('navigation.setBackInterceptor', { enabled: false }, () => {});
-    };
-  }, []);
-
-  useLynxGlobalEventListener('nativeBackPressed', () => {
-    setIsBackModalOpen(true);
-  });
-
-  useEffect(() => {
-    console.log('lessons', JSON.stringify(lessons, null, 2));
-  }, [lessons]);
-
-  const { execute: submitFinalAssignment, isLoading: isSubmittingFinal } = useSubmitFinalAssignment(
-    {
-      onSuccess: () => {
-        setIsSubmitModalOpen(false);
-        refetch();
-      },
-      onError: () => {
-        setIsSubmitModalOpen(false);
-      },
-    }
-  );
-
-  const handleOpenSubmitModal = () => {
-    setIsSubmitModalOpen(true);
-  };
-
-  const handleConfirmFinalSubmit = () => {
-    const quizData = lessons?.data as AssignmentStudentResponse;
-    const submissionId = quizData.submissions[quizData.submissions.length - 1]?.id;
-
-    if (!submissionId) {
-      callToast('Submission tidak ditemukan', 'error');
-      return;
-    }
-    submitFinalAssignment({ submission_id: submissionId });
-  };
   return (
     !isLoadingApi && (
       <view className="h-screen w-full relative">
@@ -224,13 +138,13 @@ const LessonPage = () => {
         >
           <view className="mb-2 flex-row flex justify-between">
             <Text size={TextType.b1}>
-              Course Progress {completedLessons}/{routerParams?.all_lessons?.length || 0}
+              Progres Kursus {completedLessons} / {totalLessons}
             </Text>
             <Text>{isSheetOpen ? '▼' : '▲'}</Text>
           </view>
           <view className="h-1.5 w-full rounded-full bg-[#f1f3f4]">
             <view
-              className={`h-full rounded-full transition duration-300 ease-in-out`}
+              className="h-full rounded-full transition duration-300 ease-in-out"
               style={{ backgroundColor: Colors.Primary, width: `${progressPercentage}%` }}
             />
           </view>
@@ -274,85 +188,8 @@ const LessonPage = () => {
             })}
           </scroll-view>
         </view>
-        {currentParams.type === 'lesson' && (
-          <>
-            <Modal
-              template={ModalTemplate.Sad}
-              visible={isModalOpen}
-              onClose={() => setIsModalOpen(false)}
-              title="Yeay kamu berhasil"
-              body={`Kamu mendapatkan +${lessons?.data.xp_reward} XP`}
-              buttonText="Lanjut ke lesson selanjutnya"
-              onButtonPress={() => {
-                console.log('index', lessons!.data.order);
-                handlePageChange(lessons!.data.order);
-              }}
-            />
-          </>
-        )}
 
-        <Modal
-          template={ModalTemplate.Custom}
-          visible={isBackModalOpen}
-          onClose={() => setIsBackModalOpen(false)}
-        >
-          <view className="flex-col gap-4 flex">
-            <Text size={TextType.h2} fontWeight="600" className="text-center">
-              Keluar dari halaman ini?
-            </Text>
-            <Text className="text-[#5f6368] text-center">
-              Kemajuan kamu akan hilang jika kamu keluar.
-            </Text>
-            <view className="flex-col gap-3 flex">
-              <Button size="small" variant="filled" color="primary" onPress={handleConfirmBack}>
-                Keluar
-              </Button>
-              <Button
-                size="small"
-                variant="outlined"
-                color="primary"
-                onPress={() => setIsBackModalOpen(false)}
-              >
-                Tetap di sini
-              </Button>
-            </view>
-          </view>
-        </Modal>
-
-        <Modal
-          template={ModalTemplate.Custom}
-          visible={isSubmitModalOpen}
-          onClose={() => setIsSubmitModalOpen(false)}
-        >
-          <view className="flex-col gap-4 flex">
-            <Text size={TextType.h2} fontWeight="600" className="text-center">
-              Kumpulkan tugas?
-            </Text>
-            <Text className="text-[#5f6368] text-center">
-              Setelah dikumpulkan, kamu tidak bisa mengubah jawaban lagi. Pastikan semua sudah benar
-              ya.
-            </Text>
-            <view className="flex-col gap-3 flex">
-              <Button
-                size="small"
-                variant="filled"
-                color="primary"
-                onPress={handleConfirmFinalSubmit}
-                isLoading={isSubmittingFinal}
-              >
-                Kumpulkan sekarang
-              </Button>
-              <Button
-                size="small"
-                variant="outlined"
-                color="primary"
-                onPress={() => setIsSubmitModalOpen(false)}
-              >
-                Periksa lagi
-              </Button>
-            </view>
-          </view>
-        </Modal>
+        <BackInterceptor />
       </view>
     )
   );

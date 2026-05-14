@@ -117,6 +117,8 @@ export const NativeBridgeProvider = ({ children }: { children: React.ReactNode }
     params: Record<string, any> = {},
     callback?: () => void
   ) => {
+    console.log('navigating bg');
+    console.log(isNavigating);
     if (isNavigating) return;
     setIsNavigating(true);
     setParams(params);
@@ -126,10 +128,11 @@ export const NativeBridgeProvider = ({ children }: { children: React.ReactNode }
         options: {
           params: { ...params, hide_nav_bar: 1 },
           replace: params.close,
-          replaceType: 'alwaysCloseBeforeOpen',
+          // replaceType: 'alwaysCloseBeforeOpen',
         },
       },
-      () => {
+      (res) => {
+        console.log('NAvigating', JSON.stringify(res, null, 2));
         callback?.();
         setIsNavigating(false);
       }
