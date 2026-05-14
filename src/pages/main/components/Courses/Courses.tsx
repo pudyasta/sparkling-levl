@@ -48,7 +48,6 @@ const Courses: React.FC = () => {
   const debouncedSetSearch = useDebounce((val: string) => setSearch(val), 400);
 
   const handleSearchInput = (e: any) => {
-    console.log('haha');
     debouncedSetSearch(e);
   };
 

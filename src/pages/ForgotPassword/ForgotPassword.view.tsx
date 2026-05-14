@@ -106,7 +106,7 @@ export default function ForgotPasswordPageß() {
         >
           Udah punya akun?{' '}
           <Text typeof={TextType.b1} style={{ color: Colors.Primary }}>
-            Daftar disini wkwkwk
+            Daftar disini
           </Text>
         </Text>
       </view>

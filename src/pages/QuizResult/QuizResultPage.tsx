@@ -1,6 +1,7 @@
 import { useEffect, useState } from '@lynx-js/react';
 import * as router from 'sparkling-navigation';
 
+import { useBackInterceptor } from '@/components/BackInterceptor/BackInterceptor';
 import { Loading } from '@/components/Loading/Loading';
 import Text from '@/components/Text';
 import { TextType } from '@/components/Text/types';
@@ -59,20 +60,11 @@ const ScoreRing = ({ percentage, isPassed }: { percentage: number; isPassed: boo
 };
 
 const StatCard = ({ label, value }: { label: string; value: string }) => (
-  <view
-    style={{
-      flex: 1,
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      borderRadius: '12px',
-      border: `1px solid ${Colors.Border}`,
-      backgroundColor: Colors.Canvas,
-      padding: '16px',
-    }}
-  >
-    <Text size={TextType.p} color={Colors.TextTertiary}>{label}</Text>
-    <Text size={TextType.h3} fontWeight="700" color={Colors.N900} style={{ marginTop: '4px' }}>
+  <view className="flex-1 flex-col items-center rounded-2xl border border-slate-100 bg-slate-50 p-4 flex">
+    <Text size={TextType.p} className="text-slate-400">
+      {label}
+    </Text>
+    <Text size={TextType.h3} fontWeight="bold" className="mt-1 text-slate-800">
       {value}
     </Text>
   </view>
@@ -104,66 +96,39 @@ const AnswerReviewItem = ({ answer, index }: { answer: QuizAnswerResource; index
       : 'Salah';
 
   return (
-    <view
-      style={{
-        marginBottom: '12px',
-        borderRadius: '12px',
-        border: `1px solid ${Colors.Border}`,
-        backgroundColor: Colors.Surface,
-        overflow: 'hidden',
-      }}
-    >
+    <view className="mb-3 rounded-2xl border border-slate-100 bg-white overflow-hidden">
       <view
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'center',
-          padding: '16px',
-          justifyContent: 'space-between',
-        }}
+        className="flex-row items-center p-4 flex justify-between"
         bindtap={() => setIsOpen(!isOpen)}
       >
-        <view style={{ flex: 1, display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '12px' }}>
+        <view className="flex-1 flex-row items-center gap-3 flex">
           <view
-            style={{
-              height: '32px',
-              width: '32px',
-              alignItems: 'center',
-              justifyContent: 'center',
-              borderRadius: '9999px',
-              backgroundColor: `${statusColor}20`,
-            }}
+            className="h-8 w-8 items-center rounded-full justify-center"
+            style={{ backgroundColor: `${statusColor}20` }}
           >
-            <text style={{ fontSize: '11px', fontWeight: '700', fontFamily: 'inter', color: statusColor }}>
+            <text className="text-xs font-bold" style={{ color: statusColor }}>
               {index + 1}
             </text>
           </view>
-          <Text size={TextType.b2} color={Colors.N700} style={{ flex: 1 }}>
+          <Text size={TextType.b2} className="flex-1 text-slate-700">
             {htmlToPlainText(question?.content ?? '—')}
           </Text>
         </view>
-        <view style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '8px' }}>
-          <Badge variant={statusVariant}>{statusLabel}</Badge>
-          <text style={{ fontSize: '12px', color: Colors.N300 }}>{isOpen ? '▲' : '▼'}</text>
+        <view className="flex-row items-center gap-2 flex">
+          <text className="text-xs font-bold" style={{ color: statusColor }}>
+            {statusLabel}
+          </text>
+          <text className="text-slate-300">{isOpen ? '▲' : '▼'}</text>
         </view>
       </view>
 
       {isOpen && (
-        <view
-          style={{
-            borderTopWidth: '1px',
-            borderTopStyle: 'solid',
-            borderTopColor: Colors.Border,
-            paddingLeft: '16px',
-            paddingRight: '16px',
-            paddingTop: '12px',
-            paddingBottom: '16px',
-          }}
-        >
-          <Text size={TextType.p} color={Colors.TextTertiary} style={{ marginBottom: '4px' }}>
+        <view className="border-t border-slate-100 px-4 pb-4 pt-3">
+          {/* Your answer */}
+          <Text size={TextType.b3} className="mb-1 text-slate-400">
             Jawaban kamu:
           </Text>
-          <Text size={TextType.b2} color={Colors.N700} style={{ marginBottom: '12px' }}>
+          <Text size={TextType.b2} className="mb-3 text-slate-700">
             {isEssay
               ? (answer.content ?? '—')
               : isTrueFalse
@@ -173,28 +138,29 @@ const AnswerReviewItem = ({ answer, index }: { answer: QuizAnswerResource; index
                     return Number(selected) === 0 ? 'Benar' : 'Salah';
                   })()
                 : (answer.selected_options
-                    ?.map((o) => answer.question?.options[Number(o)]?.text ?? o)
+                    ?.map((o) => {
+                      return answer.question?.options[Number(o)]?.text ?? o;
+                    })
                     .join(', ') ?? '—')}
           </Text>
 
-          <view style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '8px' }}>
-            <Text size={TextType.p} color={Colors.TextTertiary}>Skor:</Text>
-            <Text size={TextType.b2} fontWeight="700" color={Colors.N900}>
+          {/* Score */}
+          <view className="flex-row items-center gap-2 flex">
+            <Text size={TextType.b3} className="text-slate-400">
+              Skor:
+            </Text>
+            <Text size={TextType.b2} fontWeight="bold" className="text-slate-800">
               {answer.score ?? (isPendingGrade ? 'Pending penilaian manual' : '0')}
               {!isPendingGrade && ` / ${question?.max_score ?? '—'}`}
             </Text>
           </view>
 
+          {/* Feedback */}
           {answer.feedback && (
-            <view
-              style={{
-                marginTop: '12px',
-                borderRadius: '8px',
-                backgroundColor: Colors.InfoBg,
-                padding: '12px',
-              }}
-            >
-              <Text size={TextType.p} color={Colors.InfoBadgeText}>{answer.feedback}</Text>
+            <view className="mt-3 rounded-xl bg-blue-50 p-3">
+              <Text size={TextType.b3} className="text-blue-600">
+                {answer.feedback}
+              </Text>
             </view>
           )}
         </view>
@@ -211,6 +177,9 @@ const QuizResultPage = () => {
 
   const [submission, setSubmission] = useState<QuizSubmissionResource | null>(null);
   const [phase, setPhase] = useState<'loading' | 'done' | 'error'>('loading');
+  const { confirmBack } = useBackInterceptor({
+    onBackPressed: () => confirmBack(),
+  });
 
   useEffect(() => {
     console.log(JSON.stringify(routerParams, null, 2));
@@ -262,13 +231,15 @@ const QuizResultPage = () => {
         }}
       >
         <text style={{ fontSize: '48px', marginBottom: '12px' }}>⚠️</text>
-        <Text size={TextType.h2} fontWeight="700" color={Colors.N900}
-          style={{ marginBottom: '24px', textAlign: 'center' }}>
+        <Text
+          size={TextType.h2}
+          fontWeight="700"
+          color={Colors.N900}
+          style={{ marginBottom: '24px', textAlign: 'center' }}
+        >
           Oops, Kami baru tidak bisa memuat hasil quiz
         </Text>
-        <Button onPress={() => navigateTo('main', { close: true })}>
-          Kembali ke materi
-        </Button>
+        <Button onPress={() => navigateTo('main', { close: true })}>Kembali ke materi</Button>
       </view>
     );
   }
@@ -279,7 +250,15 @@ const QuizResultPage = () => {
   const hasEssay = answers.some((a) => a.question?.type === 'essay');
 
   return (
-    <view style={{ height: '100vh', width: '100%', display: 'flex', flexDirection: 'column', backgroundColor: Colors.Canvas }}>
+    <view
+      style={{
+        height: '100vh',
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        backgroundColor: Colors.Canvas,
+      }}
+    >
       <scroll-view className="flex-1 px-5 pt-6" scroll-y>
         {/* Score ring card */}
         <view
@@ -335,8 +314,8 @@ const QuizResultPage = () => {
 
         {/* Answer review */}
         {answers.length > 0 && (
-          <view style={{ marginBottom: '24px' }}>
-            <Text size={TextType.h3} fontWeight="700" color={Colors.N900} style={{ marginBottom: '12px' }}>
+          <view className="mb-6">
+            <Text size={TextType.h3} fontWeight="bold" className="mb-3 text-slate-800">
               Review Jawaban
             </Text>
             {answers.map((answer, i) => (
@@ -360,10 +339,9 @@ const QuizResultPage = () => {
         }}
       >
         <Button
-          size="lg"
           onPress={() => {
             setParams({ courseId: routerParams?.courseId, course_slug: routerParams?.course_slug });
-            router.close();
+            confirmBack();
           }}
         >
           Kembali ke Materi

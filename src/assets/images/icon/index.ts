@@ -8,6 +8,7 @@ import dummy from './dummy.png';
 import eye from './eye.png';
 import fire from './fire.png';
 import fireSvg from './fire.svg';
+import logo from './logo.svg';
 import setting from './setting.svg';
 import thropy from './thropy.png';
 import time from './time.svg';
@@ -30,4 +31,5 @@ export {
   eyeOpen,
   eyeClose,
   searchIcon,
+  logo,
 };

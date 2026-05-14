@@ -44,7 +44,7 @@ const MyCourse: React.FC = () => {
         <view className="flex-col gap-1 px-4 flex">
           {myCourseData.data.map((item) => (
             <Card
-              className="flex-row items-center gap-2 rounded-2xl bg-white p-4 flex shadow-sm"
+              className="flex-row items-center gap-4 rounded-2xl bg-white p-1 flex shadow-sm"
               bindTap={() =>
                 navigateTo('courseDetail', {
                   courseId: item.id,
@@ -52,15 +52,15 @@ const MyCourse: React.FC = () => {
                 })
               }
             >
-              <view className="h-20 w-20 rounded-xl overflow-hidden">
-                <CustomImage src={item.thumbnail} className="h-full w-full" />
+              <view className="h-24 w-24 rounded-xl overflow-hidden">
+                <CustomImage src={item.thumbnail || ''} className="h-full w-full" />
               </view>
               <view className="flex-1 flex-col gap-1 flex">
                 <Text size={TextType.b1} fontWeight="bold" className="text-slate-800">
                   {item.title || ''}
                 </Text>
                 <Text size={TextType.b3} color={Colors.Primary}>
-                  {item.progress.completed_items} of {item.progress.total_items} items
+                  {item.progress.completed_items} dari {item.progress.total_items} materi
                 </Text>
                 <view className="mt-1 flex-row items-center gap-2 flex">
                   <view className="h-2 flex-1 rounded-full bg-slate-100 overflow-hidden">

@@ -225,6 +225,7 @@ export const CourseDetail: FC = () => {
             ) : (
               <Enroll
                 courseSlug={courses?.slug}
+                status={courses.enrollment_status}
                 enrollmentType={courses?.enrollment_type as EnrollmentType} // 'auto_accept' | 'key_based' | 'approval'
                 onEnrollSuccess={() => refetch()}
               />

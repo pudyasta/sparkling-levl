@@ -352,10 +352,10 @@ const ProfilePage = () => {
             </view>
 
             <view className="flex-1 flex-col flex">
-              <Text size={TextType.h2} fontWeight="bold" className="text-white">
+              <Text size={TextType.h2} fontWeight="bold" color="white">
                 {profile.name}
               </Text>
-              <Text size={TextType.b2} className="text-blue-200">
+              <Text size={TextType.b2} color="white">
                 @{profile.username}
               </Text>
               <view className="mt-1 self-start rounded-full bg-white/20 px-2 py-0.5">
@@ -365,29 +365,6 @@ const ProfilePage = () => {
               </view>
             </view>
           </view>
-
-          {profile.statistics && (
-            <view className="mt-4 flex-row gap-3 flex">
-              {[
-                { label: 'Courses', value: profile.statistics.total_courses },
-                { label: 'Completed', value: profile.statistics.completed_courses },
-                { label: 'XP', value: profile.statistics.total_xp },
-                { label: 'Level', value: profile.statistics.current_level },
-              ].map((stat) => (
-                <view
-                  key={stat.label}
-                  className="flex-1 items-center rounded-xl bg-white/20 py-2"
-                >
-                  <Text size={TextType.h3} fontWeight="bold" className="text-white">
-                    {stat.value}
-                  </Text>
-                  <Text size={TextType.b3} className="text-blue-200">
-                    {stat.label}
-                  </Text>
-                </view>
-              ))}
-            </view>
-          )}
         </view>
 
         {/* Settings list */}
@@ -397,7 +374,7 @@ const ProfilePage = () => {
             fontWeight="bold"
             className="uppercase mb-2 px-1 tracking-wider text-slate-400"
           >
-            Account Settings
+            Pengaturan Akun
           </Text>
           <view className="mb-4 rounded-2xl overflow-hidden">
             <MenuItem

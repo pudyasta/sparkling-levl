@@ -1,6 +1,6 @@
-import { useCallback, useRef, useState } from '@lynx-js/react';
-import * as storage from 'sparkling-storage';
+import { useRef, useState } from '@lynx-js/react';
 
+import { logo } from '@/assets/images/icon';
 import { hiMascot } from '@/assets/images/mascot';
 import { loginBanner } from '@/assets/images/pages';
 import Input, { type InputRef } from '@/components/Input/Input';
@@ -9,6 +9,7 @@ import { Modal, ModalTemplate } from '@/components/Modal/Modal.view';
 import Text from '@/components/Text';
 import { FontFamily, TextType } from '@/components/Text/types';
 import Button from '@/components/common/Button';
+import CustomImage from '@/components/common/CustomImage/CustomImage';
 import { Colors } from '@/constant/style';
 import { useNativeBridge } from '@/context/NativeBridgeProvider';
 import { useKeyboardShift } from '@/hooks/useKeyboardShift';
@@ -61,8 +62,8 @@ export default function LoginPage() {
         }}
       >
         <view className="w-full flex-col items-end gap-[10px] flex justify-end">
-          <view className="h-14 w-14 items-center rounded-[16px] bg-white/20 flex justify-center">
-            <Text size={TextType.h1}>📖</Text>
+          <view className="h-14 w-14 items-center rounded-[16px] bg-white/20 p-2 flex justify-center">
+            <CustomImage src={logo} className="h-full w-full" />
           </view>
 
           <Text color="white" fontWeight="bold" size={TextType.h1} fontFamily={FontFamily.jakarta}>
@@ -96,7 +97,7 @@ export default function LoginPage() {
         </Text>
 
         <Button color="primary" onPress={loginUser} disabled={isLoading}>
-          {isLoading ? <Loading size={32} /> : 'Sign In'}
+          {isLoading ? <Loading size={32} /> : 'Masuk'}
         </Button>
 
         {/* Signup */}

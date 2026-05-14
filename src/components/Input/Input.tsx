@@ -65,7 +65,9 @@ const Input = forwardRef<InputRef, InputProps>(
         },
         setError: (message: string | null) => setError(message ? [message] : null),
         getError: () => error,
-        onChange: (callback) => { onChangeCallbackRef.current = callback; },
+        onChange: (callback) => {
+          onChangeCallbackRef.current = callback;
+        },
       }),
       [debouncedValue, error]
     );
@@ -79,17 +81,11 @@ const Input = forwardRef<InputRef, InputProps>(
       }, 300) as unknown as number;
     };
 
-    const borderColor = error
-      ? Colors.Error
-      : focused
-        ? Colors.Primary
-        : Colors.Border;
+    const borderColor = error ? Colors.Error : focused ? Colors.Primary : Colors.Border;
 
     return (
       <view className={style.container}>
-        {title !== '' && (
-          <text className={style.label}>{title}</text>
-        )}
+        {title !== '' && <text className={style.label}>{title}</text>}
 
         <view className={style.inputWrapper} style={{ borderColor }}>
           <input
@@ -103,12 +99,12 @@ const Input = forwardRef<InputRef, InputProps>(
             }}
             bindinput={(res: any) => handleInput(res.detail.value)}
             style={{
-              flex: 1,
               color: disabled ? Colors.TextDisabled : Colors.TextPrimary,
               fontSize: '14px',
               fontFamily: 'inter',
               lineHeight: '20px',
               minHeight: '20px',
+              width: '100%',
             }}
             value={debouncedValue}
           />
@@ -127,9 +123,7 @@ const Input = forwardRef<InputRef, InputProps>(
           )}
         </view>
 
-        {error && (
-          <text className={style.errorText}>{error[0]}</text>
-        )}
+        {error && <text className={style.errorText}>{error[0]}</text>}
       </view>
     );
   }

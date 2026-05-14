@@ -2,9 +2,9 @@
 // Please do not change this file!
 interface CssExports {
   container: string;
-  label: string;
-  inputWrapper: string;
   errorText: string;
+  inputWrapper: string;
+  label: string;
 }
 declare const cssExports: CssExports;
 export default cssExports;

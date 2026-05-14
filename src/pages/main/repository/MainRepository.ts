@@ -48,7 +48,6 @@ export const useMainRepository = () => {
       method: GET_METHOD,
       timeout: 5000,
     });
-    console.log('RES', JSON.stringify(response, null, 2));
 
     return response?.data;
   };

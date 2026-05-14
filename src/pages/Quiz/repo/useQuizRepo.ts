@@ -1,13 +1,15 @@
 import { getItem, setItem } from 'sparkling-storage';
 
 import { GET_METHOD, POST_METHOD } from '@/constant/api';
-import { TAKEOVER_QUIZ_ENDPOINT } from '@/constant/route';
+import { QUIZ_OVERVIEW_ENDPOINT, TAKEOVER_QUIZ_ENDPOINT } from '@/constant/route';
 import { useApiClient } from '@/lib/api/core';
 import { BizKey, PrefKey } from '@/lib/helper/localStorage';
 
 import type {
+  ApiResponse,
   GetQuestionByPageResponse,
   GetQuizSubmissionsResponse,
+  QuizOverviewData,
   SaveAnswerPayload,
   SaveAnswerResponse,
   StartQuizResponse,
@@ -111,6 +113,18 @@ export const useQuizRepo = () => {
 
     return res?.data;
   };
+
+  const getQuizOverviewApi = async (
+    submissionId: number,
+    sessionToken: string
+  ): Promise<ApiResponse<QuizOverviewData>> => {
+    const res = await api(QUIZ_OVERVIEW_ENDPOINT.replace('SUBMISSION_ID', String(submissionId)), {
+      method: GET_METHOD,
+      headers: { 'X-Session-Token': sessionToken },
+    });
+    return res?.data;
+  };
+
   return {
     startQuizApi,
     getQuestionApi,
@@ -118,5 +132,6 @@ export const useQuizRepo = () => {
     submitQuizApi,
     getResultsApi,
     takeoverQuizApi,
+    getQuizOverviewApi,
   };
 };

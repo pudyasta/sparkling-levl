@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from '@lynx-js/react';
 import pipe from 'sparkling-method';
 
-import { Loading } from '@/components/Loading/Loading';
+import { Modal, ModalTemplate } from '@/components/Modal/Modal.view';
 import Text from '@/components/Text';
 import { TextType } from '@/components/Text/types';
 import Button from '@/components/common/Button';
@@ -10,23 +10,26 @@ import { Colors } from '@/constant/style';
 import { htmlToLynx } from '@/lib/helper/htmlToLynx';
 
 import type { LessonBlock, LessonData } from '../../repository/type/lessons';
+import { useMarkAsDone } from '../../usecase/useMarkAsDone';
 import { DownloadToast, FileCard } from '../DownloadFile/DownloadFile';
 
 const LessonContent = ({
   data,
-  handleMarkAsDoneLessons,
-  loading,
+  lessonSlug,
+  onCompleted,
 }: {
   data: LessonData;
-  handleMarkAsDoneLessons: () => void;
-  loading: boolean;
+  lessonSlug: string;
+  onCompleted: (nextIndex: number) => void;
 }) => {
-  // ── Toast state lives here so it's positioned relative to the screen ────────
+  const [isButtonLoading, setIsButtonLoading] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [toastVisible, setToastVisible] = useState(false);
   const [downloadedPath, setDownloadedPath] = useState<string | null>(null);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Auto-dismiss after 4s
+  const { execute } = useMarkAsDone();
+
   useEffect(() => {
     if (toastVisible) {
       toastTimer.current = setTimeout(() => setToastVisible(false), 4000);
@@ -37,7 +40,6 @@ const LessonContent = ({
   }, [toastVisible]);
 
   const handleDownloadSuccess = useCallback((localPath: string) => {
-    console.log(localPath);
     setDownloadedPath(localPath);
     setToastVisible(true);
   }, []);
@@ -45,7 +47,6 @@ const LessonContent = ({
   const handleLihat = useCallback(() => {
     if (!downloadedPath) return;
     setToastVisible(false);
-
     pipe.call('file.open', { localPath: downloadedPath }, (res: any) => {
       if (!res.data.success) {
         console.warn('file.open failed:', res.data.error);
@@ -53,8 +54,21 @@ const LessonContent = ({
     });
   }, [downloadedPath]);
 
+  const handleMarkAsDone = () => {
+    setIsButtonLoading(true);
+    execute(lessonSlug, {
+      onSuccess: () => {
+        setIsButtonLoading(false);
+        setIsModalOpen(true);
+      },
+      onError: () => {
+        setIsButtonLoading(false);
+        setIsModalOpen(true);
+      },
+    });
+  };
+
   return (
-    // position: relative so the absolute toast is anchored to this screen container
     <view className="mt-5 flex-1 relative">
       <view className="flex-col px-5 pb-[50px] pt-[60px] flex">
         {/* Header */}
@@ -98,7 +112,6 @@ const LessonContent = ({
               </view>
             )}
 
-            {/* FileCard no longer owns the toast — just calls back on success */}
             {block.block_type === 'file' && block.media && (
               <FileCard
                 filename={block.media.file_name}
@@ -113,18 +126,30 @@ const LessonContent = ({
         {/* Mark as done */}
         <view className="mt-8">
           <Button
-            onPress={handleMarkAsDoneLessons}
+            onPress={handleMarkAsDone}
             disabled={data.is_completed}
             className="h-14 w-full"
-            isLoading={loading}
+            isLoading={isButtonLoading}
           >
-            {data.is_completed ? '✓ Selesai' : 'Tandai Sudah Selesai'}
+            {data.is_completed ? 'Selesai' : 'Tandai Sudah Selesai'}
           </Button>
         </view>
       </view>
 
       {/* Toast — absolute inside this relative container = screen-level */}
       <DownloadToast visible={toastVisible} onLihat={handleLihat} />
+      <Modal
+        template={ModalTemplate.Sad}
+        visible={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title="Yeay kamu berhasil"
+        body={`Kamu mendapatkan +${data.xp_reward} XP`}
+        buttonText="Lanjut ke lesson selanjutnya"
+        onButtonPress={() => {
+          setIsModalOpen(false);
+          onCompleted(data.order);
+        }}
+      />
     </view>
   );
 };
