@@ -1,7 +1,7 @@
 import { router } from 'expo-router';
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 
-import { refreshTokenApi } from '@/lib/api/core';
+import { refreshTokenApi } from '@/lib/api/refresh';
 import { isTokenValid } from '@/lib/helper/isTokenValid';
 import { BizKey, PrefKey, getStorageItem, removeStorageItem, setStorageItem } from '@/lib/helper/localStorage';
 import type { Token, User } from '@/pages/Login/repository/type';

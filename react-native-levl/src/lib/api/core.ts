@@ -1,10 +1,9 @@
 import axios, { type AxiosRequestConfig } from 'axios';
 
-import { API_BASE_URL, POST_METHOD } from '@/constant/api';
-import { AUTH_REFRESH_ENDPOINT } from '@/constant/route';
+import { API_BASE_URL } from '@/constant/api';
 import { useNativeBridge } from '@/context/NativeBridgeProvider';
-import type { Token } from '@/pages/Login/repository/type';
 import { callToast } from '../helper/showToast';
+import { refreshTokenApi } from './refresh';
 
 export interface ApiResponse<T> {
   success: boolean;
@@ -18,14 +17,6 @@ const instance = axios.create({
   baseURL: API_BASE_URL,
   headers: { 'Content-Type': 'application/json' },
 });
-
-export const refreshTokenApi = async (refreshToken: string): Promise<ApiResponse<Token>> => {
-  const response = await guestAPIClient(AUTH_REFRESH_ENDPOINT, {
-    method: POST_METHOD,
-    data: { refresh_token: refreshToken },
-  });
-  return response.data;
-};
 
 export const guestAPIClient = async (url: string, config: AxiosRequestConfig = {}) => {
   try {

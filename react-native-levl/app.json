@@ -22,19 +22,14 @@
         "foregroundImage": "./src/assets/images/icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.levl.app",
-      "edgeToEdgeEnabled": true
+      "package": "com.levl.app"
     },
     "web": {
       "bundler": "metro",
       "output": "static",
       "favicon": "./src/assets/images/icon.png"
     },
-    "plugins": [
-      "expo-router",
-      "expo-font",
-      "expo-secure-store"
-    ],
+    "plugins": ["expo-router", "expo-font", "expo-secure-store"],
     "experiments": {
       "typedRoutes": true
     }
