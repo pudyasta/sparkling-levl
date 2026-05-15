@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from '@lynx-js/react';
 
 import type { InputRef } from '@/components/Input/Input';
 import Input from '@/components/Input/Input';

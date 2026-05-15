@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect } from '@lynx-js/react';
 
 import { Loading } from '@/components/Loading/Loading';
 import Text from '@/components/Text';
