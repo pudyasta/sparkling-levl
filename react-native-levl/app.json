@@ -29,9 +29,19 @@
       "output": "static",
       "favicon": "./src/assets/images/icon.png"
     },
-    "plugins": ["expo-router", "expo-font", "expo-secure-store"],
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      "expo-secure-store"
+    ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "aed21f3c-881a-47d2-a95e-c981877beabe"
+      }
     }
   }
 }
