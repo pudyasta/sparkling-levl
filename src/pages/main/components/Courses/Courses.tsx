@@ -1,5 +1,4 @@
-import { useCallback, useRef, useState } from '@lynx-js/react';
-import { useEffect } from 'react';
+import { useCallback, useEffect, useRef, useState } from '@lynx-js/react';
 
 import { searchIcon } from '@/assets/images/icon';
 import CourseCard from '@/components/CoursesCard/CoursesCard';

@@ -1,5 +1,4 @@
-import { useMemo } from '@lynx-js/react/compat';
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useMemo, useState } from '@lynx-js/react';
 import * as router from 'sparkling-navigation';
 import { getItem, setItem } from 'sparkling-storage';
 

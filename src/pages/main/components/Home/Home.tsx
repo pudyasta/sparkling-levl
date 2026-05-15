@@ -1,6 +1,6 @@
-import { useEffect } from 'react';
+import { useEffect } from '@lynx-js/react';
 
-import { fire, fireSvg, xpFilled } from '@/assets/images/icon';
+import { fireSvg, xpFilled } from '@/assets/images/icon';
 import CourseCard from '@/components/CoursesCard/CoursesCard';
 import { PullToRefresh } from '@/components/PullToRefresh/PullToRefresh';
 import Text from '@/components/Text';
