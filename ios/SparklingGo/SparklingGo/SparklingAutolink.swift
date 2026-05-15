@@ -9,7 +9,7 @@ struct SparklingAutolinkModule {
 
 let sparklingAutolinkBundleId = "com.example.sparkling.go"
 let sparklingAutolinkModules: [SparklingAutolinkModule] = [
-    SparklingAutolinkModule(name: "sparkling-navigation", iosModuleName: "Router", className: "RouterMethod"),
     SparklingAutolinkModule(name: "sparkling-debug-tool", iosModuleName: "DebugTool", className: "SparklingDebugTool"),
+    SparklingAutolinkModule(name: "sparkling-navigation", iosModuleName: "Router", className: "RouterMethod"),
     SparklingAutolinkModule(name: "sparkling-storage", iosModuleName: "SPKStorage", className: "StorageMethod")
 ]
