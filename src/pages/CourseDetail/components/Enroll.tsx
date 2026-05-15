@@ -1,6 +1,4 @@
-import { useState } from '@lynx-js/react';
-import { useRef } from 'node_modules/@lynx-js/react/runtime/lib/hooks/react';
-import { type RefObject, useEffect } from 'react';
+import { type RefObject, useEffect, useRef, useState } from '@lynx-js/react';
 
 import Input, { type InputRef } from '@/components/Input/Input';
 import Text from '@/components/Text';

@@ -11,7 +11,6 @@ export default defineConfig({
     entry: {
       main: './src/pages/Main/index.tsx',
       login: './src/pages/Login/index.tsx',
-      second: './src/pages/second/index.tsx',
       register: './src/pages/Register/index.tsx',
       emailConfirmation: './src/pages/EmailConfirmation/index.tsx',
       courseDetail: './src/pages/CourseDetail/index.tsx',

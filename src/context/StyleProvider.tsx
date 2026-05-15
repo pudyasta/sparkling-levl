@@ -2,7 +2,7 @@
 // import { Theme } from '../../constant/style';
 import { Theme } from '../constant/style';
 import { PrefKey, setPref } from '@/lib/helper/localStorage';
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState } from '@lynx-js/react';
 
 type StyleContextType = {
   theme: Theme;

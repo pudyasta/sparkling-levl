@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState } from '@lynx-js/react';
 import * as router from 'sparkling-navigation';
 // Delete this file
 type RouterParamsContextType = {

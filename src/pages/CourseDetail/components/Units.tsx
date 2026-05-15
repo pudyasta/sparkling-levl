@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from '@lynx-js/react';
 
 import Text from '@/components/Text';
 import { TextType } from '@/components/Text/types';
