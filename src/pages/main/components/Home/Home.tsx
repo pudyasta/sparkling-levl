@@ -178,7 +178,7 @@ export default function LearningDashboard() {
               {summary && (
                 <view className="mt-2 flex-row items-center gap-2 flex">
                   {/* Streak Badge */}
-                  <view
+                  {/* <view
                     className="flex-row items-center gap-2 rounded-xl px-5 py-2 flex"
                     style={{ background: 'linear-gradient(90deg, #e23d3d, #e98980)' }}
                   >
@@ -191,7 +191,7 @@ export default function LearningDashboard() {
                         Hari Streak
                       </Text>
                     </view>
-                  </view>
+                  </view> */}
 
                   {/* XP Badge */}
                   <view

@@ -215,8 +215,8 @@ const ProfilePage = () => {
 
   if (isLoading || !profile) {
     return (
-      <view className="h-screen w-full flex-col items-center bg-slate-50 flex justify-center">
-        <Loading />
+      <view className="h-full items-center flex justify-center">
+        <Loading size={32} />
       </view>
     );
   }
