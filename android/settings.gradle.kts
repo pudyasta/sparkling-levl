@@ -21,6 +21,7 @@ dependencyResolutionManagement {
 
 rootProject.name = "Sparkling"
 include(":app")
+include(":macrobenchmark")
 
 // BEGIN SPARKLING AUTOLINK
 val sparklingAutolinkProjects = listOf<Pair<String, java.io.File>>(

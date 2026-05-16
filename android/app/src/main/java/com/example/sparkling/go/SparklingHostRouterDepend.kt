@@ -3,9 +3,9 @@
 // LICENSE file in the root directory of this source tree.
 package com.example.sparkling.go
 
+import android.app.Activity
 import android.content.Context
-import com.tiktok.sparkling.Sparkling
-import com.tiktok.sparkling.SparklingContext
+import android.content.Intent
 import com.tiktok.sparkling.hybridkit.service.HybridActivityStackManager
 import com.tiktok.sparkling.method.registry.core.BridgePlatformType
 import com.tiktok.sparkling.method.registry.core.IBridgeContext
@@ -20,9 +20,14 @@ class SparklingHostRouterDepend: IHostRouterDepend {
         platformType: BridgePlatformType,
         context: Context?
     ): Boolean {
-        val sparklingContext = SparklingContext()
-        sparklingContext.scheme = scheme
-        context?.let {  Sparkling.Companion.build(it, sparklingContext).navigate() }
+        context?.let {
+            val intent = Intent(it, LoadingActivity::class.java)
+            intent.putExtra(LoadingActivity.EXTRA_SCHEME, scheme)
+            if (it !is Activity) {
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            it.startActivity(intent)
+        }
         return true
     }
 

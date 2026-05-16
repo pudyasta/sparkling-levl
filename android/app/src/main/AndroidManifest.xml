@@ -26,6 +26,10 @@
       </intent-filter>
     </activity>
     <activity
+      android:name=".LoadingActivity"
+      android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
+      android:exported="false" />
+    <activity
       android:name=".VerifyActivity"
       android:exported="true">
       <intent-filter>
