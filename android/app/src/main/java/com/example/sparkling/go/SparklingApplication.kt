@@ -75,7 +75,7 @@ class SparklingApplication : Application() {
 
     private fun initHybridKit() {
         HybridKit.init(this)
-        val baseInfoConfig = BaseInfoConfig(isDebug = BuildConfig.DEBUG)
+        val baseInfoConfig = BaseInfoConfig(isDebug = false)
         val lynxConfig = SparklingLynxConfig.build(this) {
             addBehaviors(listOf(
                 object : Behavior("input", false) {
@@ -102,10 +102,7 @@ class SparklingApplication : Application() {
         HybridKit.setHybridConfig(hybridConfig, this)
         HybridKit.initLynxKit()
         LynxEnv.inst().enableLynxDebug(true)
-        // Turn on Lynx DevTool
         LynxEnv.inst().enableDevtool(true)
-        // LynxEnv.inst().enableLogBox(true)
-
     }
 
 

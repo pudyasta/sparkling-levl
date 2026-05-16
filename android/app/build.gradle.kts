@@ -88,8 +88,8 @@ dependencies {
 
     // BEGIN SPARKLING AUTOLINK
     listOf(
-        project(":sparkling-storage"),
-        project(":sparkling-navigation")
+        project(":sparkling-navigation"),
+        project(":sparkling-storage")
     ).forEach { dep -> add("implementation", dep) }
     // END SPARKLING AUTOLINK
 }
