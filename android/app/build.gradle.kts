@@ -16,6 +16,7 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
         ndk {
             abiFilters.addAll(listOf("armeabi-v7a", "arm64-v8a"))
         }
@@ -23,12 +24,24 @@ android {
     // ✅ moved out of defaultConfig
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
+
         }
+        debug {
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro",
+            )
+
+        }
+
     }
 
     // ✅ moved out of defaultConfig
@@ -88,6 +101,7 @@ dependencies {
 
     // BEGIN SPARKLING AUTOLINK
     listOf(
+        project(":sparkling-debug-tool"),
         project(":sparkling-navigation"),
         project(":sparkling-storage")
     ).forEach { dep -> add("implementation", dep) }

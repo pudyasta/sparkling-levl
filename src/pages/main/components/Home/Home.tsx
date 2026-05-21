@@ -140,45 +140,53 @@ export default function LearningDashboard() {
   return (
     recommendedCourses && (
       <PullToRefresh onRefresh={async () => refetchAll()}>
-        <scroll-view className="flex-1 animate-fade-in bg-slate-50 pb-[80px]">
-          {/* Header Section */}
-          <view
-            className="min-h-[20vh] flex-col px-4 pb-10 pt-8 flex"
-            style={{ background: gradients[timeOfDay] || gradients.pagi }}
+        {(scrollProps) => (
+          <scroll-view
+            className="flex-1 animate-fade-in bg-slate-50 pb-[80px]"
+            bindscrolltoupper={scrollProps.bindscrolltoupper}
+            bindscroll={scrollProps.bindscroll}
           >
-            <view className="w-full flex-col gap-2.5 flex">
-              <view className="flex-row items-center flex justify-between">
-                <view className="flex-col gap-1 flex">
-                  <Text
-                    size={TextType.b2}
-                    color={timeOfDay == 'malam' ? 'white' : 'black'}
-                    className="opacity-90"
-                  >
-                    Selamat {timeOfDay},
-                  </Text>
-                  <Text
-                    size={TextType.h1}
-                    fontWeight="bold"
-                    color={timeOfDay == 'malam' ? 'white' : 'black'}
-                  >
-                    {user?.name || ''}
-                  </Text>
-                </view>
-                <view className="h-[60px] w-[60px] items-center rounded-full border border-white/30 bg-white/20 flex justify-center">
-                  {user?.avatar_url ? (
-                    <CustomImage src={user?.avatar_url || ''} className="h-12 w-12 rounded-full" />
-                  ) : (
-                    <Text color="white" size={TextType.h3} fontWeight="bold">
-                      {user?.name.split(' ')[0][0] + (user?.name.split(' ')[1][0] || '')}
+            {/* Header Section */}
+            <view
+              className="min-h-[20vh] flex-col px-4 pb-10 pt-8 flex"
+              style={{ background: gradients[timeOfDay] || gradients.pagi }}
+            >
+              <view className="w-full flex-col gap-2.5 flex">
+                <view className="flex-row items-center flex justify-between">
+                  <view className="flex-col gap-1 flex">
+                    <Text
+                      size={TextType.b2}
+                      color={timeOfDay == 'malam' ? 'white' : 'black'}
+                      className="opacity-90"
+                    >
+                      Selamat {timeOfDay},
                     </Text>
-                  )}
+                    <Text
+                      size={TextType.h1}
+                      fontWeight="bold"
+                      color={timeOfDay == 'malam' ? 'white' : 'black'}
+                    >
+                      {user?.name || ''}
+                    </Text>
+                  </view>
+                  <view className="h-[60px] w-[60px] items-center rounded-full border border-white/30 bg-white/20 flex justify-center">
+                    {user?.avatar_url ? (
+                      <CustomImage
+                        src={user?.avatar_url || ''}
+                        className="h-12 w-12 rounded-full"
+                      />
+                    ) : (
+                      <Text color="white" size={TextType.h3} fontWeight="bold">
+                        {user?.name.split(' ')[0][0] + (user?.name.split(' ')[1][0] || '')}
+                      </Text>
+                    )}
+                  </view>
                 </view>
-              </view>
 
-              {summary && (
-                <view className="mt-2 flex-row items-center gap-2 flex">
-                  {/* Streak Badge */}
-                  {/* <view
+                {summary && (
+                  <view className="mt-2 flex-row items-center gap-2 flex">
+                    {/* Streak Badge */}
+                    {/* <view
                     className="flex-row items-center gap-2 rounded-xl px-5 py-2 flex"
                     style={{ background: 'linear-gradient(90deg, #e23d3d, #e98980)' }}
                   >
@@ -193,115 +201,116 @@ export default function LearningDashboard() {
                     </view>
                   </view> */}
 
-                  {/* XP Badge */}
-                  <view
-                    className="items-center gap-2 self-stretch rounded-xl px-3 py-3 flex"
-                    style={{ background: 'linear-gradient(180deg, #f7b500, #f2d06b)' }}
-                  >
-                    <CustomImage src={xpFilled} className="h-6 w-[18px]" />
+                    {/* XP Badge */}
+                    <view
+                      className="items-center gap-2 self-stretch rounded-xl px-3 py-3 flex"
+                      style={{ background: 'linear-gradient(180deg, #f7b500, #f2d06b)' }}
+                    >
+                      <CustomImage src={xpFilled} className="h-6 w-[18px]" />
 
-                    <Text size={TextType.b1} fontWeight="bold" color="white">
-                      {summary.gamification_stats.xp || 0} XP
-                    </Text>
-                  </view>
-                </view>
-              )}
-            </view>
-          </view>
-          <view className="mt-5 flex-col gap-4 px-4 flex">
-            {/* Continue Learning */}
-            {recentLearning && recentLearning.length > 0 && (
-              <view className="flex-col gap-3 flex">
-                <SectionHeader title="Lanjut Belajar" bindTap={() => navigateTo('myCourse')} />
-                <Card
-                  className="flex-row items-center gap-4 rounded-2xl bg-white p-1 flex shadow-sm"
-                  bindTap={() =>
-                    navigateTo('courseDetail', {
-                      courseId: recentLearning[0].course.id,
-                      course_slug: recentLearning[0].course.slug,
-                    })
-                  }
-                >
-                  <view className="h-24 w-24 rounded-xl overflow-hidden">
-                    <CustomImage
-                      src={recentLearning[0].course?.thumbnail || ''}
-                      className="h-full w-full"
-                    />
-                  </view>
-                  <view className="flex-1 flex-col gap-1 flex">
-                    <Text size={TextType.b1} fontWeight="bold" className="text-slate-800">
-                      {recentLearning[0].course?.title || ''}
-                    </Text>
-                    <Text size={TextType.b3} color={Colors.Primary}>
-                      {recentLearning[0].progress.completed_lessons} dari{' '}
-                      {recentLearning[0].progress.total_lessons} materi
-                    </Text>
-                    <view className="mt-1 flex-row items-center gap-2 flex">
-                      <view className="h-2 flex-1 rounded-full bg-slate-100 overflow-hidden">
-                        <view
-                          className="h-full rounded-full"
-                          style={{
-                            backgroundColor: Colors.Primary,
-                            width: `${recentLearning[0].progress.percentage}%`,
-                          }}
-                        />
-                      </view>
-                      <Text size={TextType.b3} className="text-slate-400">
-                        {recentLearning[0].progress.percentage}%
+                      <Text size={TextType.b1} fontWeight="bold" color="white">
+                        {summary.gamification_stats.xp || 0} XP
                       </Text>
                     </view>
                   </view>
-                </Card>
+                )}
               </view>
-            )}
-
-            {/* Recent Achievements */}
-            {achievements && achievements.length > 0 && (
-              <view className="flex-col gap-1 flex">
-                <SectionHeader title="Pencapaian Terbaru" />
-                <scroll-view scroll-x className="flex-row py-1 flex">
-                  {achievements?.map((i, idx) => {
-                    return (
-                      <view key={idx} className="mr-4 w-[80px] flex-col items-center flex">
-                        <view className="mb-2 rounded-2xl border border-slate-50 bg-white overflow-hidden shadow-sm">
-                          <CustomImage className="h-20 w-20" src={i?.icon_url || ''} />
+            </view>
+            <view className="mt-5 flex-col gap-4 px-4 flex">
+              {/* Continue Learning */}
+              {recentLearning && recentLearning.length > 0 && (
+                <view className="flex-col gap-3 flex">
+                  <SectionHeader title="Lanjut Belajar" bindTap={() => navigateTo('myCourse')} />
+                  <Card
+                    className="flex-row items-center gap-4 rounded-2xl bg-white p-1 flex shadow-sm"
+                    bindTap={() =>
+                      navigateTo('courseDetail', {
+                        courseId: recentLearning[0].course.id,
+                        course_slug: recentLearning[0].course.slug,
+                      })
+                    }
+                  >
+                    <view className="h-24 w-24 rounded-xl overflow-hidden">
+                      <CustomImage
+                        src={recentLearning[0].course?.thumbnail || ''}
+                        className="h-full w-full"
+                      />
+                    </view>
+                    <view className="flex-1 flex-col gap-1 flex">
+                      <Text size={TextType.b1} fontWeight="bold" className="text-slate-800">
+                        {recentLearning[0].course?.title || ''}
+                      </Text>
+                      <Text size={TextType.b3} color={Colors.Primary}>
+                        {recentLearning[0].progress.completed_lessons} dari{' '}
+                        {recentLearning[0].progress.total_lessons} materi
+                      </Text>
+                      <view className="mt-1 flex-row items-center gap-2 flex">
+                        <view className="h-2 flex-1 rounded-full bg-slate-100 overflow-hidden">
+                          <view
+                            className="h-full rounded-full"
+                            style={{
+                              backgroundColor: Colors.Primary,
+                              width: `${recentLearning[0].progress.percentage}%`,
+                            }}
+                          />
                         </view>
-                        <Text className="text-slate-600 text-center" size={TextType.b3}>
-                          {i.name}
+                        <Text size={TextType.b3} className="text-slate-400">
+                          {recentLearning[0].progress.percentage}%
                         </Text>
                       </view>
-                    );
-                  })}
-                </scroll-view>
-              </view>
-            )}
+                    </view>
+                  </Card>
+                </view>
+              )}
 
-            {/* Recommended Course */}
-            <view className="flex-col gap-1 flex">
-              <SectionHeader title="Rekomendasi Kursus" isSeeAll={false} />
-              {recommendedCourses.map((course) => (
-                <CourseCard
-                  bindTap={() =>
-                    navigateTo('courseDetail', {
-                      courseId: course.id,
-                      course_slug: course.slug,
-                    })
-                  }
-                  key={course.id}
-                  course={{
-                    id: course.id.toString(),
-                    title: course.title,
-                    description: course.short_desc,
-                    level: course.level_tag,
-                    category: course.category?.name || '',
-                    image: course.thumbnail,
-                    lessons: course.units?.length || 0,
-                  }}
-                />
-              ))}
+              {/* Recent Achievements */}
+              {achievements && achievements.length > 0 && (
+                <view className="flex-col gap-1 flex">
+                  <SectionHeader title="Pencapaian Terbaru" />
+                  <scroll-view scroll-x className="flex-row py-1 flex">
+                    {achievements?.map((i, idx) => {
+                      return (
+                        <view key={idx} className="mr-4 w-[80px] flex-col items-center flex">
+                          <view className="mb-2 rounded-2xl border border-slate-50 bg-white overflow-hidden shadow-sm">
+                            <CustomImage className="h-20 w-20" src={i?.icon_url || ''} />
+                          </view>
+                          <Text className="text-slate-600 text-center" size={TextType.b3}>
+                            {i.name}
+                          </Text>
+                        </view>
+                      );
+                    })}
+                  </scroll-view>
+                </view>
+              )}
+
+              {/* Recommended Course */}
+              <view className="flex-col gap-1 flex">
+                <SectionHeader title="Rekomendasi Kursus" isSeeAll={false} />
+                {recommendedCourses.map((course) => (
+                  <CourseCard
+                    bindTap={() =>
+                      navigateTo('courseDetail', {
+                        courseId: course.id,
+                        course_slug: course.slug,
+                      })
+                    }
+                    key={course.id}
+                    course={{
+                      id: course.id.toString(),
+                      title: course.title,
+                      description: course.short_desc,
+                      level: course.level_tag,
+                      category: course.category?.name || '',
+                      image: course.thumbnail,
+                      lessons: course.units?.length || 0,
+                    }}
+                  />
+                ))}
+              </view>
             </view>
-          </view>
-        </scroll-view>
+          </scroll-view>
+        )}
       </PullToRefresh>
     )
   );

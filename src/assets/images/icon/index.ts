@@ -28,7 +28,6 @@ export {
   time,
   back,
   setting,
-  fire,
   eyeOpen,
   eyeClose,
   searchIcon,

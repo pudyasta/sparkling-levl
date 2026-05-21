@@ -1,9 +1,12 @@
+import { useState } from '@lynx-js/react';
+
 import { API_BASE_URL } from '@/constant/api';
 import {
   SUBMIT_ASSIGNMENT_DETAIL_ENDPOINT,
   UPDATE_ASSIGNMENT_DETAIL_ENDPOINT,
 } from '@/constant/route';
 import { useNativeBridge } from '@/context/NativeBridgeProvider';
+import { callToast } from '@/lib/helper/showToast';
 import { submitAssignmentNative } from '@/lib/helper/uploadFile';
 
 import type { MediaFile } from '../components/Assignment';
@@ -15,10 +18,37 @@ export interface NativeSubmitFileParams {
   mimeType: string;
 }
 
+function extractErrorMessage(error: any): string {
+  try {
+    // The msg field contains the actual HTTP response as a string
+    const rawMsg = error?.msg || error?.message || '';
+
+    // Extract the JSON part after "HTTP 422: "
+    const jsonMatch = rawMsg.match(/HTTP \d+: (.+)/);
+    if (!jsonMatch) return rawMsg;
+
+    const parsed = JSON.parse(jsonMatch[1]);
+
+    // 1. Try to get the first validation error
+    if (parsed.errors) {
+      const firstField = Object.keys(parsed.errors)[0];
+      const firstError = parsed.errors[firstField]?.[0];
+      if (firstError) return firstError;
+    }
+
+    // 2. Fall back to the main message
+    return parsed.message || 'Terjadi kesalahan';
+  } catch {
+    return 'Terjadi kesalahan';
+  }
+}
+
 export const useSubmitAssignmentRepo = () => {
   const { accessToken } = useNativeBridge();
+  const [isLoading, setIsLoading] = useState(false);
 
   const submitAssignment = (request: SubmitAssignmentRequest) => {
+    setIsLoading(true);
     if (!request.assignmentID) {
       return;
     }
@@ -53,12 +83,19 @@ export const useSubmitAssignmentRepo = () => {
       headers: { Authorization: `Bearer ${accessToken?.access_token}` },
       method: request.method,
       callback(res) {
-        console.log('resss', JSON.stringify(res, null, 2));
+        setIsLoading(false);
+        console.log(JSON.stringify(res, null, 2));
+        if (res.code == 1) {
+          callToast('Tugas berhasil disimpan sebagai draft.', 'success');
+          return;
+        }
+        const msg = extractErrorMessage(res);
+        callToast(msg, 'error');
       },
     });
 
     return res;
   };
 
-  return { submitAssignment };
+  return { submitAssignment, isLoading };
 };

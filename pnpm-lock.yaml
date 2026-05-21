@@ -81,6 +81,9 @@ importers:
       sparkling-app-cli:
         specifier: ~2.0.1
         version: 2.0.1(@rspack/core@1.7.11(@swc/helpers@0.5.21))(@types/node@25.6.0)(typescript@5.9.3)(webpack@5.106.2)
+      sparkling-debug-tool:
+        specifier: ^2.0.0
+        version: 2.0.0
       tailwindcss:
         specifier: ^3.4.19
         version: 3.4.19
@@ -2825,6 +2828,10 @@ packages:
     resolution: {integrity: sha512-iViB2k4YMkfBJZrbHUF1/b74qOefqpaNmljVZ1xUPmZibw8k8KZTdJ2ixyqupF7awZiP5Onkm7PZC74oV+yioA==}
     engines: {node: ^22 || ^24}
     hasBin: true
+
+  sparkling-debug-tool@2.0.0:
+    resolution: {integrity: sha512-LZoWdOv8pZxMkmZG9OuY6KPUbj+AN+qKzgIadpiQ8VCLizwbejKLFuOraZ3ECorB0v0SHzQ/M3QIUnYMIxJ/RA==}
+    engines: {node: ^22 || ^24}
 
   sparkling-method@2.0.1:
     resolution: {integrity: sha512-TXbCs5RhPB6Qz62jxrm3TvFMxWROFvpe8DmYDi1UcLMTKvJ5tTPZy2o8V/sQJ7FwhVevcDf51gvVIAuXUMVuzA==}
@@ -6152,6 +6159,8 @@ snapshots:
       - typescript
       - utf-8-validate
       - webpack
+
+  sparkling-debug-tool@2.0.0: {}
 
   sparkling-method@2.0.1: {}
 

@@ -1,4 +1,4 @@
-import { useState } from '@lynx-js/react';
+import { useEffect, useState } from '@lynx-js/react';
 import { setItem } from 'sparkling-storage';
 
 import { useConfirmation } from '@/components/ConfirmationModal/ConfitmationModal';
@@ -94,6 +94,10 @@ const QuizContent = ({ data }: { data: QuizStudentResponse }) => {
     takeover(existingID);
     setIsModalOpen(false);
   };
+
+  useEffect(() => {
+    console.log(JSON.stringify(data, null, 2));
+  }, []);
 
   return (
     data && (
