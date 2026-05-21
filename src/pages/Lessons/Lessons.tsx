@@ -7,7 +7,6 @@ import { useConfirmation } from '@/components/ConfirmationModal/ConfitmationModa
 import { Loading } from '@/components/Loading/Loading';
 import Text from '@/components/Text';
 import { TextType } from '@/components/Text/types';
-import { Button } from '@/components/common';
 import CustomImage from '@/components/common/CustomImage/CustomImage';
 import { Colors } from '@/constant/style';
 import { useNativeBridge } from '@/context/NativeBridgeProvider';
@@ -197,9 +196,6 @@ const LessonPage = () => {
                 </view>
               );
             })}
-            <Button variant="outlined" color="secondary" onPress={() => router.close()}>
-              Keluar
-            </Button>
           </scroll-view>
         </view>
 

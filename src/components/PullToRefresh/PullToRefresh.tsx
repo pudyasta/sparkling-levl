@@ -1,80 +1,120 @@
-// lib/components/PullToRefresh.tsx
 import { useRef, useState } from '@lynx-js/react';
+
+export interface PTRScrollProps {
+  bindscrolltoupper: () => void;
+  bindscroll: (e: any) => void;
+}
 
 interface PullToRefreshProps {
   onRefresh: () => Promise<void>;
-  children: React.ReactNode;
+  /** Render prop — wire the returned handlers onto your inner scroll-view */
+  children: (scrollProps: PTRScrollProps) => React.ReactNode;
   threshold?: number;
 }
 
 type PullState = 'idle' | 'pulling' | 'ready' | 'refreshing';
 
+interface Visual {
+  distance: number;
+  state: PullState;
+  transitioning: boolean;
+}
+
 const THRESHOLD = 80;
-const INDICATOR_HEIGHT = 64;
+const INDICATOR_HEIGHT = 60;
 const TRANSITION_DURATION = 300;
+const RESISTANCE = 0.4;
+const SPINNER_DOTS = Array.from({ length: 8 });
 
 export const PullToRefresh = ({
   onRefresh,
   children,
   threshold = THRESHOLD,
 }: PullToRefreshProps) => {
-  const [pullState, setPullState] = useState<PullState>('idle');
-  const [pullDistance, setPullDistance] = useState(0);
-  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [visual, setVisual] = useState<Visual>({
+    distance: 0,
+    state: 'idle',
+    transitioning: false,
+  });
 
-  const startY = useRef<number>(0);
-  const isDragging = useRef<boolean>(false);
+  const startY = useRef(0);
+  const isDragging = useRef(false);
+  const isRefreshing = useRef(false);
+  const isAtTop = useRef(true);
+  const rafPending = useRef(false);
+  const nextDistance = useRef(0);
+  const nextState = useRef<PullState>('idle');
   const refreshTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const indicatorTranslate = Math.min(pullDistance, threshold) - INDICATOR_HEIGHT;
-  const contentTranslate =
-    pullState === 'refreshing' ? INDICATOR_HEIGHT : Math.min(pullDistance, threshold);
-  const pullProgress = Math.min(pullDistance / threshold, 1);
-  const spinnerDots = Array.from({ length: 8 });
-
-  const snapBack = () => {
-    setIsTransitioning(true);
-    setPullDistance(0);
-    setPullState('idle');
-    setTimeout(() => setIsTransitioning(false), TRANSITION_DURATION);
+  // ── Visual commit (called by RAF, max once per frame) ────────────────────
+  const commitVisual = () => {
+    rafPending.current = false;
+    if (!isDragging.current) return; // stale RAF after touchEnd — ignore
+    setVisual((prev) => {
+      const d = nextDistance.current;
+      const s = nextState.current;
+      if (prev.distance === d && prev.state === s) return prev;
+      return { distance: d, state: s, transitioning: false };
+    });
   };
 
+  const snapBack = () => {
+    isRefreshing.current = false;
+    nextDistance.current = 0;
+    nextState.current = 'idle';
+    setVisual({ distance: 0, state: 'idle', transitioning: true });
+    setTimeout(() => setVisual((prev) => ({ ...prev, transitioning: false })), TRANSITION_DURATION);
+  };
+
+  // ── Scroll event handlers — pass these to the inner scroll-view ──────────
+  const bindscrolltoupper = () => {
+    isAtTop.current = true;
+  };
+
+  const bindscroll = (e: any) => {
+    isAtTop.current = (e?.detail?.scrollTop ?? 0) <= 0;
+  };
+
+  // ── Touch handlers on the outer wrapper ──────────────────────────────────
   const handleTouchStart = (e: any) => {
-    if (pullState === 'refreshing') return;
+    if (isRefreshing.current || !isAtTop.current) return;
     startY.current = e.touches?.[0]?.clientY ?? 0;
     isDragging.current = true;
   };
 
   const handleTouchMove = (e: any) => {
-    if (!isDragging.current || pullState === 'refreshing') return;
+    if (!isDragging.current || isRefreshing.current) return;
 
-    const currentY = e.touches?.[0]?.clientY ?? 0;
-    const delta = currentY - startY.current;
+    const delta = (e.touches?.[0]?.clientY ?? 0) - startY.current;
 
     if (delta <= 0) {
-      setPullDistance(0);
-      setPullState('idle');
-      return;
+      // Hot path during normal scroll — bail with zero allocations
+      if (nextDistance.current === 0) return;
+      nextDistance.current = 0;
+      nextState.current = 'idle';
+    } else {
+      const d = delta < threshold ? delta : threshold + (delta - threshold) * RESISTANCE;
+      nextDistance.current = d;
+      nextState.current = d >= threshold ? 'ready' : 'pulling';
     }
 
-    // Rubber-band resistance past threshold
-    const resistance = delta < threshold ? delta : threshold + (delta - threshold) * 0.7;
-    setPullDistance(resistance);
-    setPullState(resistance >= threshold ? 'ready' : 'pulling');
+    if (!rafPending.current) {
+      rafPending.current = true;
+      requestAnimationFrame(commitVisual);
+    }
   };
 
   const handleTouchEnd = async () => {
     isDragging.current = false;
 
-    if (pullState !== 'ready') {
+    if (nextState.current !== 'ready') {
       snapBack();
       return;
     }
 
-    setIsTransitioning(true);
-    setPullState('refreshing');
-    setPullDistance(threshold);
-    setTimeout(() => setIsTransitioning(false), TRANSITION_DURATION);
+    isRefreshing.current = true;
+    setVisual({ distance: threshold, state: 'refreshing', transitioning: true });
+    setTimeout(() => setVisual((prev) => ({ ...prev, transitioning: false })), TRANSITION_DURATION);
 
     const minDisplay = new Promise<void>((r) => {
       refreshTimeout.current = setTimeout(r, 600);
@@ -88,32 +128,40 @@ export const PullToRefresh = ({
     }
   };
 
+  const { distance, state, transitioning } = visual;
+  // Indicator slides in from above: -INDICATOR_HEIGHT (hidden) → 0 (fully visible)
+  const indicatorTranslate =
+    state === 'refreshing' ? 0 : Math.min(distance, threshold) - INDICATOR_HEIGHT;
+  const pullProgress = Math.min(distance / threshold, 1);
+
   return (
     <view
       className="flex-1 overflow-hidden"
+      style={{ position: 'relative' }}
       bindtouchstart={handleTouchStart}
       bindtouchmove={handleTouchMove}
       bindtouchend={handleTouchEnd}
     >
-      {/* Pull indicator */}
+      {/* Indicator overlays from top — content never shifts */}
       <view
         className="items-center absolute left-0 right-0 justify-center"
         style={{
           height: `${INDICATOR_HEIGHT}px`,
           top: 0,
+          zIndex: 100,
           transform: `translateY(${indicatorTranslate}px)`,
-          transition: isTransitioning ? `transform ${TRANSITION_DURATION}ms ease-out` : 'none',
+          transition: transitioning ? `transform ${TRANSITION_DURATION}ms ease-out` : 'none',
         }}
       >
         <view className="h-10 w-10 items-center rounded-full bg-white justify-center shadow-md">
-          {pullState === 'refreshing' ? (
+          {state === 'refreshing' ? (
             <view className="h-6 w-6 items-center justify-center">
-              {spinnerDots.map((_, i) => (
+              {SPINNER_DOTS.map((_, i) => (
                 <view
                   key={i}
                   className="h-1 w-1 rounded-full bg-blue-500 absolute"
                   style={{
-                    opacity: (i + 1) / spinnerDots.length,
+                    opacity: (i + 1) / SPINNER_DOTS.length,
                     transform: `rotate(${i * 45}deg) translateY(-10px)`,
                   }}
                 />
@@ -125,7 +173,7 @@ export const PullToRefresh = ({
                 fontSize: '18px',
                 transition: `transform 150ms ease-out, color 150ms ease-out`,
                 transform: `rotate(${pullProgress * 180}deg)`,
-                color: pullState === 'ready' ? '#3b82f6' : '#94a3b8',
+                color: state === 'ready' ? '#3b82f6' : '#94a3b8',
               }}
             >
               ↓
@@ -134,16 +182,8 @@ export const PullToRefresh = ({
         </view>
       </view>
 
-      {/* Page content */}
-      <view
-        className="flex-1"
-        style={{
-          transform: `translateY(${contentTranslate}px)`,
-          transition: isTransitioning ? `transform ${TRANSITION_DURATION}ms ease-out` : 'none',
-        }}
-      >
-        {children}
-      </view>
+      {/* Content: scroll-view scrolls natively, untouched by PTR transforms */}
+      {children({ bindscrolltoupper, bindscroll })}
     </view>
   );
 };
