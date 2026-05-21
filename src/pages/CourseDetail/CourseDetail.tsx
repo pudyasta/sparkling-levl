@@ -142,77 +142,87 @@ export const CourseDetail: FC = () => {
   return isLoading ? (
     <CourseDetailSkeleton />
   ) : (
-    <scroll-view className="h-[100vh] animate-fade-in flex-col bg-slate-50 flex" scroll-y>
-      <PullToRefresh onRefresh={async () => refetchAll()}>
-        {/* 1. Hero Header */}
-        <view
-          className="bg-cover bg-center px-6 pb-[70px] pt-[50px]"
-          style={{
-            backgroundImage: `linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0) 100%), url(${courses?.banner})`,
-          }}
+    <PullToRefresh onRefresh={async () => refetchAll()}>
+      {(scrollProps) => (
+        <scroll-view
+          className="h-[100vh] animate-fade-in flex-col bg-slate-50 flex"
+          scroll-y
+          bindscrolltoupper={scrollProps.bindscrolltoupper}
+          bindscroll={scrollProps.bindscroll}
         >
-          <view className="mb-6 flex-row flex justify-between">
-            <view
-              className="h-10 w-10 items-center rounded-full bg-white/20 flex justify-center shadow-lg"
-              bindtap={() => close()}
-            >
-              <CustomImage src={back} className="h-[18px] w-[18px] text-white" />
-            </view>
-          </view>
-
+          {/* 1. Hero Header */}
           <view
-            className="mb-3 self-start rounded-lg px-3 py-1"
-            style={{ backgroundColor: Colors.Primary }}
+            className="bg-cover bg-center px-6 pb-[70px] pt-[50px]"
+            style={{
+              backgroundImage: `linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0) 100%), url(${courses?.banner})`,
+            }}
           >
-            <Text className="text-xs font-bold text-white" size={TextType.b3} color="white">
-              {courses?.category.name}
+            <view className="mb-6 flex-row flex justify-between">
+              <view
+                className="h-10 w-10 items-center rounded-full bg-white/20 flex justify-center shadow-lg"
+                bindtap={() => close()}
+              >
+                <CustomImage src={back} className="h-[18px] w-[18px] text-white" />
+              </view>
+            </view>
+
+            <view
+              className="mb-3 self-start rounded-lg px-3 py-1"
+              style={{ backgroundColor: Colors.Primary }}
+            >
+              <Text className="text-xs font-bold text-white" size={TextType.b3} color="white">
+                {courses?.category.name}
+              </Text>
+            </view>
+
+            <Text
+              className="mb-4 text-[32px] font-extrabold leading-10 text-white"
+              size={TextType.h1}
+              fontFamily={FontFamily.jakarta}
+              color="white"
+            >
+              {courses?.title}
             </Text>
+
+            <Text
+              className="mb-8 text-[15px] leading-6 text-white"
+              size={TextType.b2}
+              color="white"
+            >
+              {htmlToPlainText(courses?.short_desc)}
+            </Text>
+
+            <view className="flex-row items-center flex" />
           </view>
 
-          <Text
-            className="mb-4 text-[32px] font-extrabold leading-10 text-white"
-            size={TextType.h1}
-            fontFamily={FontFamily.jakarta}
-            color="white"
-          >
-            {courses?.title}
-          </Text>
-
-          <Text className="mb-8 text-[15px] leading-6 text-white" size={TextType.b2} color="white">
-            {htmlToPlainText(courses?.short_desc)}
-          </Text>
-
-          <view className="flex-row items-center flex" />
-        </view>
-
-        {/* 2. Overlapping Progress Card */}
-        <view className="-mt-[60px] px-5 pb-10">
-          <Card className="p-6 shadow-[0_10px_25px_rgba(0,0,0,0.1)]">
-            {courses?.enrollment_status === 'active' ||
-            courses?.enrollment_status === 'completed' ? (
-              <>
-                <view className="mb-3 flex-row gap-3 flex justify-between">
-                  <Text className="text-base font-bold text-slate-800" size={TextType.b1}>
-                    Progres Kamu
-                  </Text>
-                  <Text
-                    className="text-lg font-extrabold"
-                    color={Colors.Primary}
-                    size={TextType.h2}
-                  >
-                    {courses?.progress?.percentage}%
-                  </Text>
-                </view>
-                <view className="mb-5 h-[10px] rounded-full bg-slate-100 overflow-hidden">
-                  <view
-                    className="h-[10px] rounded-full"
-                    style={{
-                      width: `${courses?.progress?.percentage}%`,
-                      backgroundColor: Colors.Primary,
-                    }}
-                  />
-                </view>
-                {/* <Button
+          {/* 2. Overlapping Progress Card */}
+          <view className="-mt-[60px] px-5 pb-10">
+            <Card className="p-6 shadow-[0_10px_25px_rgba(0,0,0,0.1)]">
+              {courses?.enrollment_status === 'active' ||
+              courses?.enrollment_status === 'completed' ? (
+                <>
+                  <view className="mb-3 flex-row gap-3 flex justify-between">
+                    <Text className="text-base font-bold text-slate-800" size={TextType.b1}>
+                      Progres Kamu
+                    </Text>
+                    <Text
+                      className="text-lg font-extrabold"
+                      color={Colors.Primary}
+                      size={TextType.h2}
+                    >
+                      {courses?.progress?.percentage}%
+                    </Text>
+                  </view>
+                  <view className="mb-5 h-[10px] rounded-full bg-slate-100 overflow-hidden">
+                    <view
+                      className="h-[10px] rounded-full"
+                      style={{
+                        width: `${courses?.progress?.percentage}%`,
+                        backgroundColor: Colors.Primary,
+                      }}
+                    />
+                  </view>
+                  {/* <Button
                     variant="outlined"
                     color="primary"
                     onPress={() => {
@@ -221,39 +231,43 @@ export const CourseDetail: FC = () => {
                   >
                     Continue Learning
                   </Button> */}
-              </>
-            ) : (
-              <Enroll
-                courseSlug={courses?.slug}
-                status={courses.enrollment_status}
-                enrollmentType={courses?.enrollment_type as EnrollmentType} // 'auto_accept' | 'key_based' | 'approval'
-                onEnrollSuccess={() => refetch()}
-              />
+                </>
+              ) : (
+                <Enroll
+                  courseSlug={courses?.slug}
+                  status={courses.enrollment_status}
+                  enrollmentType={courses?.enrollment_type as EnrollmentType} // 'auto_accept' | 'key_based' | 'approval'
+                  onEnrollSuccess={() => refetch()}
+                />
+              )}
+            </Card>
+
+            {/* 3. Course Units */}
+            {courses.units && (
+              <Text
+                className="mb-3 mt-2.5 text-xl font-extrabold text-slate-800"
+                size={TextType.h2}
+              >
+                Course Units
+              </Text>
             )}
-          </Card>
 
-          {/* 3. Course Units */}
-          {courses.units && (
-            <Text className="mb-3 mt-2.5 text-xl font-extrabold text-slate-800" size={TextType.h2}>
-              Course Units
-            </Text>
-          )}
-
-          {courses.units?.map((unit) => (
-            <UnitSection
-              key={unit.id}
-              unit={unit}
-              isLastAccessed={
-                courses?.progress?.last_accessed_unit
-                  ? unit.id == courses.progress.last_accessed_unit.id
-                  : false
-              }
-              courseSlug={courses.slug}
-              courseId={courses.id}
-            />
-          ))}
-        </view>
-      </PullToRefresh>
-    </scroll-view>
+            {courses.units?.map((unit) => (
+              <UnitSection
+                key={unit.id}
+                unit={unit}
+                isLastAccessed={
+                  courses?.progress?.last_accessed_unit
+                    ? unit.id == courses.progress.last_accessed_unit.id
+                    : false
+                }
+                courseSlug={courses.slug}
+                courseId={courses.id}
+              />
+            ))}
+          </view>
+        </scroll-view>
+      )}
+    </PullToRefresh>
   );
 };

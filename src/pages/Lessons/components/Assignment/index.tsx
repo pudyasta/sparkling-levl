@@ -38,7 +38,7 @@ const AssignmentContent = ({
   const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
 
   const isGraded = data.submission_status === 'graded';
-  const { execute: submitAssignment } = useSubmitAssignment({
+  const { execute: submitAssignment, isLoading: isSubmitDraft } = useSubmitAssignment({
     onSuccess: () => onDataChanged(),
   });
 
@@ -71,19 +71,17 @@ const AssignmentContent = ({
   const validateAndSubmitDraft = () => {
     setFileError('');
     answerRef.current?.setError('');
-
     if (data.submission_type !== 'file' && !answerRef.current?.getValue()) {
       answerRef.current?.setError('Kolom tautan jawaban harus diisi');
       return;
     }
 
-    if (selectedFiles.length === 0) {
+    if (data.submission_type !== 'text' && selectedFiles.length === 0) {
       setFileError('Kolom file harus diisi');
       return;
     }
 
     if (!data.submission_type) {
-      console.error('No data to submit');
       return;
     }
 
@@ -117,7 +115,7 @@ const AssignmentContent = ({
       if (data.submissions[data.submissions.length - 1]?.files?.length > 0) {
         setIsFileEdited(false);
         setSelectedFiles(
-          data.submissions[data.submissions.length - 1].files.map((f) => ({
+          data.submissions[data.submissions.length - 1].files?.map((f) => ({
             name: f.file_name,
             size: f.size,
             tempFilePath: f.file_url,
@@ -127,6 +125,10 @@ const AssignmentContent = ({
       }
     }
   }, [data]);
+
+  useEffect(() => {
+    console.log(JSON.stringify(data, null, 2));
+  }, []);
 
   return (
     data && (
@@ -189,26 +191,30 @@ const AssignmentContent = ({
         </view>
 
         {/* 4. Submission Requirements Grid */}
-        <view className="mb-6 flex-row gap-3 flex">
-          <view className="flex-1 flex-col rounded-xl border border-[#e8eaed] bg-[#f8f9fa] p-3 flex">
-            <Text size={TextType.b2} color={Colors.Primary}>
-              Format File
-            </Text>
-            <Text size={TextType.b2} fontWeight={'bold'} className="mt-1">
-              {data.accepted_formats.map((f) => f.split('.')[1].toUpperCase()).join(', ')}
-            </Text>
-          </view>
-          <view className="flex-1 flex-col rounded-xl border border-[#e8eaed] bg-[#f8f9fa] p-3 flex">
-            <Text size={TextType.b2} color={Colors.Primary}>
-              Ukuran Maksimal
-            </Text>
+        {(data.accepted_formats || data.max_file_size) && (
+          <view className="mb-6 flex-row gap-3 flex">
+            {data.accepted_formats && (
+              <view className="flex-1 flex-col rounded-xl border border-[#e8eaed] bg-[#f8f9fa] p-3 flex">
+                <Text size={TextType.b2} color={Colors.Primary}>
+                  Format File
+                </Text>
+                <Text size={TextType.b2} fontWeight={'bold'} className="mt-1">
+                  {data.accepted_formats?.map((f) => f.split('.')[1].toUpperCase()).join(', ')}
+                </Text>
+              </view>
+            )}
             {data.max_file_size && (
-              <Text size={TextType.b2} fontWeight={'bold'} className="mt-1">
-                {data.max_file_size} MB
-              </Text>
+              <view className="flex-1 flex-col rounded-xl border border-[#e8eaed] bg-[#f8f9fa] p-3 flex">
+                <Text size={TextType.b2} color={Colors.Primary}>
+                  Ukuran Maksimal
+                </Text>
+                <Text size={TextType.b2} fontWeight={'bold'} className="mt-1">
+                  {data.max_file_size} MB
+                </Text>
+              </view>
             )}
           </view>
-        </view>
+        )}
 
         {/* 5. Upload Area */}
         {!data.is_completed && (
@@ -273,6 +279,7 @@ const AssignmentContent = ({
             onPress={validateAndSubmitDraft}
             className="h-14 w-full"
             variant="outlined"
+            isLoading={isSubmitDraft}
           >
             Simpan sebagai Draft
           </Button>

@@ -431,7 +431,7 @@ const ProfilePage = () => {
           <BackHeader title="Kembali" />
           <scroll-view className="flex-1 p-4" scroll-y>
             <Section title="Session">
-              <Button onPress={logout}>Logout</Button>
+              <Button onPress={() => confirm(() => logout())}>Logout</Button>
             </Section>
 
             <Section title="Hapus akun">

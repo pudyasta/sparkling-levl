@@ -55,7 +55,6 @@ const submitText = (params: SubmitParams) => {
     },
     (res) => {
       params.callback?.(res);
-      console.log('Text submission result:', JSON.stringify(res, null, 2));
     }
   );
 };
