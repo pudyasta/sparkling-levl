@@ -3,6 +3,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import * as router from 'sparkling-navigation';
 import { getItem, setItem } from 'sparkling-storage';
 
+import { Loading } from '@/components/Loading/Loading';
 import { refreshTokenApi } from '@/lib/api/core';
 import { isTokenValid } from '@/lib/helper/isTokenValid';
 import { BizKey, PrefKey } from '@/lib/helper/localStorage';
@@ -139,28 +140,34 @@ export const NativeBridgeProvider = ({ children }: { children: React.ReactNode }
     );
   };
 
-  return (
-    hydrate && (
-      <NativeBridgeContext.Provider
-        value={{
-          accessToken,
-          setAccessToken,
-          user,
-          setUser,
-          logout,
-          isAuthenticated,
-          hydrate,
-          routerParams,
-          setRouterParams: setParams,
-          navigateTo,
-          isRefreshing,
+  if (!hydrate) {
+    return (
+      <view className="h-full items-center flex justify-center">
+        <Loading size={32} />
+      </view>
+    );
+  }
 
-          setParams,
-        }}
-      >
-        {children}
-      </NativeBridgeContext.Provider>
-    )
+  return (
+    <NativeBridgeContext.Provider
+      value={{
+        accessToken,
+        setAccessToken,
+        user,
+        setUser,
+        logout,
+        isAuthenticated,
+        hydrate,
+        routerParams,
+        setRouterParams: setParams,
+        navigateTo,
+        isRefreshing,
+
+        setParams,
+      }}
+    >
+      {children}
+    </NativeBridgeContext.Provider>
   );
 };
 export function useNativeBridge(): NativeBridgeContextType {

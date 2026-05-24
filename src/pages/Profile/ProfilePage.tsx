@@ -215,8 +215,8 @@ const ProfilePage = () => {
 
   if (isLoading || !profile) {
     return (
-      <view className="h-screen w-full flex-col items-center bg-slate-50 flex justify-center">
-        <Loading />
+      <view className="h-full items-center flex justify-center">
+        <Loading size={32} />
       </view>
     );
   }
@@ -431,7 +431,7 @@ const ProfilePage = () => {
           <BackHeader title="Kembali" />
           <scroll-view className="flex-1 p-4" scroll-y>
             <Section title="Session">
-              <Button onPress={logout}>Logout</Button>
+              <Button onPress={() => confirm(() => logout())}>Logout</Button>
             </Section>
 
             <Section title="Hapus akun">

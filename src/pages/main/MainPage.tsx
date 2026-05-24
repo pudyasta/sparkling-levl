@@ -3,8 +3,8 @@ import { useEffect } from '@lynx-js/react';
 import { useNativeBridge } from '@/context/NativeBridgeProvider';
 
 import {
-  bookActive,
   bookInactive,
+  booksvg,
   homeActive,
   homeInactive,
   rankingActive,
@@ -34,7 +34,7 @@ const MainPage: React.FC<Props> = ({}) => {
     {
       label: {
         text: 'Courses',
-        srcActive: bookActive,
+        srcActive: booksvg,
         srcInactive: bookInactive,
       },
       content: <Courses />,

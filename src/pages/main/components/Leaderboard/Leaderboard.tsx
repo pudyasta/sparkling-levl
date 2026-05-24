@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect } from '@lynx-js/react';
 
 import { thropy } from '@/assets/images/icon';
 import { loginBanner } from '@/assets/images/pages';

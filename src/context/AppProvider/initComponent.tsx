@@ -22,9 +22,9 @@ export function initComponent<P extends object>(Component: React.ComponentType<P
   const nativeProps = (lynx.__globalProps || {}) as P;
   root.render(
     <AppProvider>
-      <ErrorBoundary>
-        <Component {...nativeProps} />
-      </ErrorBoundary>
+      {/* <ErrorBoundary> */}
+      <Component {...nativeProps} />
+      {/* </ErrorBoundary> */}
     </AppProvider>
   );
 

@@ -1,5 +1,4 @@
-import { forwardRef, useImperativeHandle, useState } from '@lynx-js/react';
-import { useEffect, useRef } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from '@lynx-js/react';
 
 import { eyeClose, eyeOpen } from '../../assets/images/icon';
 import { Colors } from '../../constant/style';

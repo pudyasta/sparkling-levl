@@ -3,6 +3,10 @@
 // LICENSE file in the root directory of this source tree.
 package com.example.sparkling.go
 
+import android.app.Activity
+import android.app.Application
+import android.content.Context
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.OnBackPressedCallback
@@ -13,6 +17,7 @@ import com.lynx.tasm.LynxView
 import com.tiktok.sparkling.Sparkling
 import com.tiktok.sparkling.SparklingContext
 import com.tiktok.sparkling.method.registry.core.utils.JsonUtils
+import java.net.URLEncoder
 
 class SplashActivity : AppCompatActivity() {
     private lateinit var lynxView: LynxView
@@ -20,8 +25,6 @@ class SplashActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                Log.d("COBADEG","Cobs")
-
                 val params = JavaOnlyArray()
                 val data = JavaOnlyMap()
                 data.putString("source", "android_back")
@@ -34,11 +37,11 @@ class SplashActivity : AppCompatActivity() {
     }
     private fun gotoSparklingPage() {
         val initData = mapOf<Any, Any>()
-        val initialData: String = JsonUtils.toJson(initData)
-
+        val initialData = JsonUtils.toJson(initData)
         val context = SparklingContext()
         context.scheme = "hybrid://lynxview_page?bundle=main.lynx.bundle&hide_nav_bar=1&screen_orientation=portrait"
-        context.withInitData("{ \"initial_data\":$initialData}")
+        context.withInitData(initialData)
+
         Sparkling.build(this, context).navigate()
         finish()
     }

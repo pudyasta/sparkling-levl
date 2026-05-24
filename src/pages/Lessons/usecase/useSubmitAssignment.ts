@@ -29,8 +29,6 @@ export const useSubmitAssignment = (options?: UseSubmitAssigmentProps) => {
     },
     onSuccess: (data) => {
       options?.onSuccess?.(data);
-      console.log(JSON.stringify(data, null, 2));
-      callToast('Tugas berhasil disimpan sebagai draft', 'success');
     },
     onError: (error: any) => {
       console.log('ERRRR', JSON.stringify(error, null, 2));
