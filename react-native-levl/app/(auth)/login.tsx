@@ -1,19 +1,26 @@
 import { useRef, useState } from 'react';
 import {
-  Image, ImageBackground, KeyboardAvoidingView, Platform,
-  ScrollView, StyleSheet, TouchableOpacity, View,
+  Image,
+  ImageBackground,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
 } from 'react-native';
-import { hiMascot } from '@/assets/images/mascot';
-import { loginBanner } from '@/assets/images/pages';
-import Input, { type InputRef } from '@/components/Input/Input';
-import { Loading } from '@/components/Loading/Loading';
-import { Modal, ModalTemplate } from '@/components/Modal/Modal.view';
-import Text from '@/components/Text';
-import { FontFamily, TextType } from '@/components/Text/types';
-import Button from '@/components/common/Button';
-import { Colors } from '@/constant/style';
-import { useNativeBridge } from '@/context/NativeBridgeProvider';
-import { useLogin } from '@/pages/Login/usecase/useLogin';
+
+import { hiMascot } from '../../src/assets/images/mascot';
+import { loginBanner } from '../../src/assets/images/pages';
+import Input, { type InputRef } from '../../src/components/Input/Input';
+import { Loading } from '../../src/components/Loading/Loading';
+import { Modal, ModalTemplate } from '../../src/components/Modal/Modal.view';
+import Text from '../../src/components/Text';
+import { FontFamily, TextType } from '../../src/components/Text/types';
+import Button from '../../src/components/common/Button';
+import { Colors } from '../../src/constant/style';
+import { useNativeBridge } from '../../src/context/NativeBridgeProvider';
+import { useLogin } from '../../src/pages/Login/usecase/useLogin';
 
 export default function LoginScreen() {
   const emailRef = useRef<InputRef>(null);
@@ -48,16 +55,21 @@ export default function LoginScreen() {
     >
       <ScrollView style={{ flex: 1 }} keyboardShouldPersistTaps="handled">
         {/* Banner Section */}
-        <ImageBackground
-          source={loginBanner}
-          style={styles.banner}
-          resizeMode="cover"
-        >
+        <ImageBackground source={loginBanner} style={styles.banner} resizeMode="cover">
           <View style={styles.bannerContent}>
             <View style={styles.logoBox}>
-              <Image source={require('@/assets/images/icon.png')} style={styles.logo} resizeMode="contain" />
+              <Image
+                source={require('@/assets/images/icon.png')}
+                style={styles.logo}
+                resizeMode="contain"
+              />
             </View>
-            <Text color="white" fontWeight="bold" size={TextType.h1} fontFamily={FontFamily.jakarta}>
+            <Text
+              color="white"
+              fontWeight="bold"
+              size={TextType.h1}
+              fontFamily={FontFamily.jakarta}
+            >
               Halo
             </Text>
             <Text color="white" size={TextType.b2}>
@@ -113,9 +125,12 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   logoBox: {
-    height: 56, width: 56,
-    alignItems: 'center', justifyContent: 'center',
-    borderRadius: 16, backgroundColor: 'rgba(255,255,255,0.2)',
+    height: 56,
+    width: 56,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 16,
+    backgroundColor: 'rgba(255,255,255,0.2)',
     padding: 8,
   },
   logo: { height: '100%', width: '100%' },

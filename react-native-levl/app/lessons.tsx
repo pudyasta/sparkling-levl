@@ -14,14 +14,14 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { Loading } from '@/components/Loading/Loading';
-import Button from '@/components/common/Button';
-import Text from '@/components/Text';
-import { TextType } from '@/components/Text/types';
-import { Colors } from '@/constant/style';
-import { htmlToPlainText } from '@/lib/helper/htmlToText';
-import type { LessonBlock, LessonData } from '@/pages/Lessons/repository/type/lessons';
-import { useGetLesson, useMarkAsDone } from '@/pages/Lessons/usecase/useGetLesson';
+import { Loading } from '../src/components/Loading/Loading';
+import Text from '../src/components/Text';
+import { TextType } from '../src/components/Text/types';
+import Button from '../src/components/common/Button';
+import { Colors } from '../src/constant/style';
+import { htmlToPlainText } from '../src/lib/helper/htmlToText';
+import type { LessonBlock, LessonData } from '../src/pages/Lessons/repository/type/lessons';
+import { useGetLesson, useMarkAsDone } from '../src/pages/Lessons/usecase/useGetLesson';
 
 function renderBlocks(blocks: LessonBlock[]) {
   return blocks.map((block) => {
@@ -55,11 +55,7 @@ function renderBlocks(blocks: LessonBlock[]) {
     if (block.block_type === 'image' && block.media) {
       return (
         <View key={block.id} style={styles.mediaBlock}>
-          <Image
-            source={{ uri: block.media.url }}
-            style={styles.imageBlock}
-            resizeMode="contain"
-          />
+          <Image source={{ uri: block.media.url }} style={styles.imageBlock} resizeMode="contain" />
           {block.content ? (
             <Text size={TextType.b3} color={Colors.TextTertiary} style={styles.imageCaption}>
               {htmlToPlainText(block.content)}
@@ -77,7 +73,9 @@ function renderBlocks(blocks: LessonBlock[]) {
         >
           <Text style={{ fontSize: 24 }}>📎</Text>
           <View style={{ flex: 1 }}>
-            <Text size={TextType.b2} fontWeight="600">{block.media.file_name}</Text>
+            <Text size={TextType.b2} fontWeight="600">
+              {block.media.file_name}
+            </Text>
             <Text size={TextType.p} color={Colors.TextTertiary}>
               {(block.media.size / 1024).toFixed(1)} KB
             </Text>
@@ -90,13 +88,7 @@ function renderBlocks(blocks: LessonBlock[]) {
 }
 
 export default function LessonsScreen() {
-  const {
-    course_slug,
-    unit_slug,
-    lesson_slug,
-    lesson_type,
-    courseId,
-  } = useLocalSearchParams<{
+  const { course_slug, unit_slug, lesson_slug, lesson_type, courseId } = useLocalSearchParams<{
     course_slug: string;
     unit_slug: string;
     lesson_slug: string;
@@ -106,7 +98,10 @@ export default function LessonsScreen() {
 
   const [currentLessonSlug, setCurrentLessonSlug] = useState(lesson_slug ?? '');
   const [isSheetOpen, setIsSheetOpen] = useState(false);
-  const [completedModal, setCompletedModal] = useState<{ visible: boolean; xp: number }>({ visible: false, xp: 0 });
+  const [completedModal, setCompletedModal] = useState<{ visible: boolean; xp: number }>({
+    visible: false,
+    xp: 0,
+  });
 
   const sheetAnim = useRef(new Animated.Value(0)).current;
   const { height } = useWindowDimensions();
@@ -114,7 +109,7 @@ export default function LessonsScreen() {
   const { lesson, isLoading, refetch } = useGetLesson(
     course_slug ?? '',
     unit_slug ?? '',
-    currentLessonSlug,
+    currentLessonSlug
   );
 
   const { execute: markAsDone, isLoading: isMarkingDone } = useMarkAsDone({
@@ -126,7 +121,12 @@ export default function LessonsScreen() {
 
   const toggleSheet = () => {
     const toValue = isSheetOpen ? 0 : 1;
-    Animated.spring(sheetAnim, { toValue, useNativeDriver: true, tension: 100, friction: 14 }).start();
+    Animated.spring(sheetAnim, {
+      toValue,
+      useNativeDriver: true,
+      tension: 100,
+      friction: 14,
+    }).start();
     setIsSheetOpen(!isSheetOpen);
   };
 
@@ -149,33 +149,26 @@ export default function LessonsScreen() {
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.Surface }}>
       {/* Floating progress header */}
       <View style={styles.progressHeader}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          style={styles.backCircle}
-        >
-          <Text size={TextType.b1} color={Colors.TextSecondary}>←</Text>
+        <TouchableOpacity onPress={() => router.back()} style={styles.backCircle}>
+          <Text size={TextType.b1} color={Colors.TextSecondary}>
+            ←
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity style={{ flex: 1 }} onPress={toggleSheet}>
           <View style={styles.progressLabelRow}>
-            <Text size={TextType.b2} fontWeight="600">{lesson.title}</Text>
+            <Text size={TextType.b2} fontWeight="600">
+              {lesson.title}
+            </Text>
             <Text size={TextType.b3}>{isSheetOpen ? '▼' : '▲'}</Text>
           </View>
           <View style={styles.progBg}>
-            <View
-              style={[
-                styles.progFill,
-                { width: lesson.is_completed ? '100%' : '50%' },
-              ]}
-            />
+            <View style={[styles.progFill, { width: lesson.is_completed ? '100%' : '50%' }]} />
           </View>
         </TouchableOpacity>
       </View>
 
       {/* Content */}
-      <ScrollView
-        style={{ flex: 1 }}
-        contentContainerStyle={styles.content}
-      >
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.content}>
         {/* Badge */}
         <View style={styles.typeBadge}>
           <Text size={TextType.p} fontWeight="bold" color="#16A34A">
@@ -219,14 +212,26 @@ export default function LessonsScreen() {
         <View style={styles.modalOverlay}>
           <View style={styles.modalCard}>
             <Text style={{ fontSize: 48, textAlign: 'center' }}>🎉</Text>
-            <Text size={TextType.h2} fontWeight="bold" style={{ textAlign: 'center', marginTop: 8 }}>
+            <Text
+              size={TextType.h2}
+              fontWeight="bold"
+              style={{ textAlign: 'center', marginTop: 8 }}
+            >
               Yeay kamu berhasil!
             </Text>
-            <Text size={TextType.b2} color={Colors.TextSecondary} style={{ textAlign: 'center', marginTop: 4 }}>
+            <Text
+              size={TextType.b2}
+              color={Colors.TextSecondary}
+              style={{ textAlign: 'center', marginTop: 4 }}
+            >
               Kamu mendapatkan +{completedModal.xp} XP
             </Text>
             <View style={{ marginTop: 20 }}>
-              <Button onPress={() => { setCompletedModal({ visible: false, xp: 0 }); }}>
+              <Button
+                onPress={() => {
+                  setCompletedModal({ visible: false, xp: 0 });
+                }}
+              >
                 Lanjut
               </Button>
             </View>
@@ -249,12 +254,19 @@ const styles = StyleSheet.create({
     borderBottomColor: Colors.Border,
     backgroundColor: Colors.Surface,
     zIndex: 10,
-    shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.06, shadowRadius: 2, elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.06,
+    shadowRadius: 2,
+    elevation: 2,
   },
   backCircle: {
-    width: 36, height: 36, borderRadius: 18,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     backgroundColor: Colors.N100,
-    alignItems: 'center', justifyContent: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   progressLabelRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 6 },
   progBg: { height: 6, borderRadius: 999, backgroundColor: Colors.N100, overflow: 'hidden' },

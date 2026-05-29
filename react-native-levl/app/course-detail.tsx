@@ -10,16 +10,19 @@ import {
   View,
 } from 'react-native';
 
-import Input, { type InputRef } from '@/components/Input/Input';
-import { Loading } from '@/components/Loading/Loading';
-import { Shimmer } from '@/components/common';
-import Button from '@/components/common/Button';
-import Text from '@/components/Text';
-import { FontFamily, TextType } from '@/components/Text/types';
-import { Colors } from '@/constant/style';
-import { htmlToPlainText } from '@/lib/helper/htmlToText';
-import type { LessonElement } from '@/pages/CourseDetail/repository/type';
-import { useEnrollCourse, useGetCourseDetail } from '@/pages/CourseDetail/usecase/useCourseDetail';
+import Input, { type InputRef } from '../src/components/Input/Input';
+import { Loading } from '../src/components/Loading/Loading';
+import Text from '../src/components/Text';
+import { FontFamily, TextType } from '../src/components/Text/types';
+import { Shimmer } from '../src/components/common';
+import Button from '../src/components/common/Button';
+import { Colors } from '../src/constant/style';
+import { htmlToPlainText } from '../src/lib/helper/htmlToText';
+import type { LessonElement } from '../src/pages/CourseDetail/repository/type';
+import {
+  useEnrollCourse,
+  useGetCourseDetail,
+} from '../src/pages/CourseDetail/usecase/useCourseDetail';
 
 function CourseDetailSkeleton() {
   return (
@@ -72,7 +75,10 @@ function EnrollCard({
 
   const { enroll, isLoading } = useEnrollCourse({
     onSuccess: () => {
-      if (enrollmentType === 'approval') { setIsPending(true); return; }
+      if (enrollmentType === 'approval') {
+        setIsPending(true);
+        return;
+      }
       onSuccess();
     },
   });
@@ -81,7 +87,9 @@ function EnrollCard({
     return (
       <View style={{ alignItems: 'center', gap: 8 }}>
         <Text style={{ fontSize: 32 }}>⏳</Text>
-        <Text size={TextType.h2} fontWeight="bold" style={{ textAlign: 'center' }}>Permintaan Terkirim!</Text>
+        <Text size={TextType.h2} fontWeight="bold" style={{ textAlign: 'center' }}>
+          Permintaan Terkirim!
+        </Text>
         <Text size={TextType.b2} color={Colors.TextTertiary} style={{ textAlign: 'center' }}>
           Pendaftaranmu sedang menunggu persetujuan admin.
         </Text>
@@ -97,7 +105,8 @@ function EnrollCard({
     }
     enroll({
       slug: courseSlug,
-      enrollmentKey: enrollmentType === 'key_based' ? (inputRef.current?.getValue() || undefined) : undefined,
+      enrollmentKey:
+        enrollmentType === 'key_based' ? inputRef.current?.getValue() || undefined : undefined,
     });
   };
 
@@ -105,23 +114,35 @@ function EnrollCard({
     <View style={{ gap: 12 }}>
       {enrollmentType === 'auto_accept' && (
         <>
-          <Text size={TextType.h2} fontWeight="bold">Daftar untuk mulai belajar!</Text>
-          <Text size={TextType.b2} color={Colors.TextTertiary}>Kursus ini terbuka buat semua orang. Gabung sekarang yuk!</Text>
+          <Text size={TextType.h2} fontWeight="bold">
+            Daftar untuk mulai belajar!
+          </Text>
+          <Text size={TextType.b2} color={Colors.TextTertiary}>
+            Kursus ini terbuka buat semua orang. Gabung sekarang yuk!
+          </Text>
         </>
       )}
       {enrollmentType === 'key_based' && (
         <>
-          <Text size={TextType.h2} fontWeight="bold">Input kode pendaftaran</Text>
+          <Text size={TextType.h2} fontWeight="bold">
+            Input kode pendaftaran
+          </Text>
           <Text size={TextType.b2} color={Colors.TextTertiary}>
             Kursus ini memerlukan kode pendaftaran.
           </Text>
           <Input title="Kode Pendaftaran" ref={inputRef} />
-          {keyError && <Text size={TextType.b3} color={Colors.Error}>{keyError}</Text>}
+          {keyError && (
+            <Text size={TextType.b3} color={Colors.Error}>
+              {keyError}
+            </Text>
+          )}
         </>
       )}
       {enrollmentType === 'approval' && (
         <>
-          <Text size={TextType.h2} fontWeight="bold">Minta untuk bergabung</Text>
+          <Text size={TextType.h2} fontWeight="bold">
+            Minta untuk bergabung
+          </Text>
           <Text size={TextType.b2} color={Colors.TextTertiary}>
             Kursus ini memerlukan persetujuan admin.
           </Text>
@@ -178,14 +199,22 @@ function UnitRow({
 
   return (
     <View style={[styles.unitCard, isLastAccessed && styles.unitCardHighlight]}>
-      <TouchableOpacity onPress={() => setExpanded(!expanded)} style={styles.unitHeader} activeOpacity={0.8}>
+      <TouchableOpacity
+        onPress={() => setExpanded(!expanded)}
+        style={styles.unitHeader}
+        activeOpacity={0.8}
+      >
         <View style={{ flex: 1, gap: 4 }}>
-          <Text size={TextType.b1} fontWeight="bold">{unit.title}</Text>
+          <Text size={TextType.b1} fontWeight="bold">
+            {unit.title}
+          </Text>
           <Text size={TextType.b3} color={Colors.TextTertiary}>
             {unit.progress?.completed_items ?? 0} / {unit.progress?.total_items ?? 0} materi
           </Text>
         </View>
-        <Text size={TextType.b2} color={Colors.Primary}>{expanded ? '▲' : '▼'}</Text>
+        <Text size={TextType.b2} color={Colors.Primary}>
+          {expanded ? '▲' : '▼'}
+        </Text>
       </TouchableOpacity>
 
       {/* Progress bar */}
@@ -209,11 +238,17 @@ function UnitRow({
                 </Text>
               </View>
               <View style={{ flex: 1 }}>
-                <Text size={TextType.b2} fontWeight={el.is_locked ? '400' : '500'} color={el.is_locked ? Colors.TextDisabled : Colors.TextPrimary}>
+                <Text
+                  size={TextType.b2}
+                  fontWeight={el.is_locked ? '400' : '500'}
+                  color={el.is_locked ? Colors.TextDisabled : Colors.TextPrimary}
+                >
                   {el.title}
                 </Text>
                 {el.xp_reward > 0 && (
-                  <Text size={TextType.p} color={Colors.Secondary}>+{el.xp_reward} XP</Text>
+                  <Text size={TextType.p} color={Colors.Secondary}>
+                    +{el.xp_reward} XP
+                  </Text>
                 )}
               </View>
             </TouchableOpacity>
@@ -238,7 +273,8 @@ export default function CourseDetailScreen() {
   if (isLoading && !course) return <CourseDetailSkeleton />;
   if (!course) return null;
 
-  const isEnrolled = course.enrollment_status === 'active' || course.enrollment_status === 'completed';
+  const isEnrolled =
+    course.enrollment_status === 'active' || course.enrollment_status === 'completed';
 
   return (
     <ScrollView
@@ -253,7 +289,9 @@ export default function CourseDetailScreen() {
       >
         <View style={styles.heroOverlay}>
           <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-            <Text color="white" size={TextType.b1}>←</Text>
+            <Text color="white" size={TextType.b1}>
+              ←
+            </Text>
           </TouchableOpacity>
 
           <View style={styles.categoryPill}>
@@ -262,7 +300,13 @@ export default function CourseDetailScreen() {
             </Text>
           </View>
 
-          <Text size={TextType.h1} fontWeight="bold" fontFamily={FontFamily.jakarta} color="white" style={{ marginBottom: 8 }}>
+          <Text
+            size={TextType.h1}
+            fontWeight="bold"
+            fontFamily={FontFamily.jakarta}
+            color="white"
+            style={{ marginBottom: 8 }}
+          >
             {course.title}
           </Text>
 
@@ -279,13 +323,20 @@ export default function CourseDetailScreen() {
           {isEnrolled ? (
             <>
               <View style={styles.progressRow}>
-                <Text size={TextType.b1} fontWeight="bold">Progres Kamu</Text>
+                <Text size={TextType.b1} fontWeight="bold">
+                  Progres Kamu
+                </Text>
                 <Text size={TextType.h2} fontWeight="bold" color={Colors.Primary}>
                   {course.progress?.percentage ?? 0}%
                 </Text>
               </View>
               <View style={styles.progBg}>
-                <View style={[styles.progFill, { width: `${course.progress?.percentage ?? 0}%` as any }]} />
+                <View
+                  style={[
+                    styles.progFill,
+                    { width: `${course.progress?.percentage ?? 0}%` as any },
+                  ]}
+                />
               </View>
             </>
           ) : (
@@ -334,9 +385,12 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   backBtn: {
-    width: 40, height: 40, borderRadius: 20,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     backgroundColor: 'rgba(255,255,255,0.2)',
-    alignItems: 'center', justifyContent: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
     marginBottom: 8,
   },
   categoryPill: {
@@ -352,10 +406,19 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.Surface,
     borderRadius: 16,
     padding: 20,
-    shadowColor: '#000', shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.12, shadowRadius: 14, elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.12,
+    shadowRadius: 14,
+    elevation: 4,
     marginBottom: 4,
   },
-  progressRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
+  progressRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
   progBg: { height: 10, borderRadius: 999, backgroundColor: Colors.N100, overflow: 'hidden' },
   progFill: { height: '100%', borderRadius: 999, backgroundColor: Colors.Primary },
   unitCard: {
@@ -368,7 +431,9 @@ const styles = StyleSheet.create({
   unitCardHighlight: { borderColor: Colors.Primary, borderWidth: 2 },
   unitHeader: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   lessonRow: {
-    flexDirection: 'row', alignItems: 'center', gap: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
     backgroundColor: Colors.Canvas,
     borderRadius: 10,
     padding: 10,

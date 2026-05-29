@@ -9,19 +9,36 @@ import {
   View,
 } from 'react-native';
 
-import CustomImage from '@/components/common/CustomImage/CustomImage';
-import Text from '@/components/Text';
-import { FontFamily, TextType } from '@/components/Text/types';
-import { Colors } from '@/constant/style';
-import { useNativeBridge } from '@/context/NativeBridgeProvider';
+import {
+  courses,
+  date,
+  documentLock,
+  editIcon,
+  manageAccount,
+  time,
+  xp,
+} from '@/assets/images/icon';
 import {
   useGetAchievements,
   useGetGamificationStats,
   useGetProfile,
 } from '@/pages/main/usecase/useGetProfile';
-import { courses, date, documentLock, editIcon, manageAccount, time, xp } from '@/assets/images/icon';
 
-function StatCard({ label, value, iconSrc }: { label: string; value: number | string; iconSrc: any }) {
+import Text from '../../src/components/Text';
+import { FontFamily, TextType } from '../../src/components/Text/types';
+import CustomImage from '../../src/components/common/CustomImage/CustomImage';
+import { Colors } from '../../src/constant/style';
+import { useNativeBridge } from '../../src/context/NativeBridgeProvider';
+
+function StatCard({
+  label,
+  value,
+  iconSrc,
+}: {
+  label: string;
+  value: number | string;
+  iconSrc: any;
+}) {
   return (
     <View style={styles.statCard}>
       <CustomImage src={iconSrc} width={24} height={24} />
@@ -36,16 +53,35 @@ function StatCard({ label, value, iconSrc }: { label: string; value: number | st
 }
 
 const SETTINGS_MENU = [
-  { icon: editIcon, label: 'Edit Profil', description: 'Ubah informasi profil Kamu', screen: 'profile' },
-  { icon: documentLock, label: 'Keamanan Akun', description: 'Ubah password dan email Kamu', screen: 'security' },
-  { icon: manageAccount, label: 'Akun', description: 'Logout atau hapus akun Kamu', screen: 'danger' },
+  {
+    icon: editIcon,
+    label: 'Edit Profil',
+    description: 'Ubah informasi profil Kamu',
+    screen: 'profile',
+  },
+  {
+    icon: documentLock,
+    label: 'Keamanan Akun',
+    description: 'Ubah password dan email Kamu',
+    screen: 'security',
+  },
+  {
+    icon: manageAccount,
+    label: 'Akun',
+    description: 'Logout atau hapus akun Kamu',
+    screen: 'danger',
+  },
 ];
 
 export default function ProfileScreen() {
   const { logout } = useNativeBridge();
   const { profile, isLoading: profileLoading, refetch: refetchProfile } = useGetProfile();
   const { stats, isLoading: statsLoading, refetch: refetchStats } = useGetGamificationStats();
-  const { achievements, isLoading: achievementsLoading, refetch: refetchAchievements } = useGetAchievements();
+  const {
+    achievements,
+    isLoading: achievementsLoading,
+    refetch: refetchAchievements,
+  } = useGetAchievements();
   const [refreshing, setRefreshing] = React.useState(false);
 
   const handleRefresh = async () => {
@@ -63,7 +99,12 @@ export default function ProfileScreen() {
   }
 
   const initials = profile?.name
-    ? profile.name.split(' ').map((n) => n[0]).join('').slice(0, 2).toUpperCase()
+    ? profile.name
+        .split(' ')
+        .map((n) => n[0])
+        .join('')
+        .slice(0, 2)
+        .toUpperCase()
     : '';
 
   return (
@@ -76,12 +117,24 @@ export default function ProfileScreen() {
       <View style={styles.header}>
         <View style={styles.avatarLarge}>
           {profile?.avatar_url ? (
-            <CustomImage src={profile.avatar_url} width={80} height={80} style={{ borderRadius: 40 }} />
+            <CustomImage
+              src={profile.avatar_url}
+              width={80}
+              height={80}
+              style={{ borderRadius: 40 }}
+            />
           ) : (
-            <Text size={TextType.h1} fontWeight="bold" color="white">{initials}</Text>
+            <Text size={TextType.h1} fontWeight="bold" color="white">
+              {initials}
+            </Text>
           )}
         </View>
-        <Text size={TextType.h1} fontWeight="bold" fontFamily={FontFamily.jakarta} style={{ textAlign: 'center' }}>
+        <Text
+          size={TextType.h1}
+          fontWeight="bold"
+          fontFamily={FontFamily.jakarta}
+          style={{ textAlign: 'center' }}
+        >
           {profile?.name || ''}
         </Text>
         <Text size={TextType.b2} color={Colors.TextSecondary} style={{ textAlign: 'center' }}>
@@ -116,7 +169,12 @@ export default function ProfileScreen() {
               </View>
             </View>
             <View style={styles.progressBarBg}>
-              <View style={[styles.progressBarFill, { width: `${stats.level.progress_percentage}%` as any }]} />
+              <View
+                style={[
+                  styles.progressBarFill,
+                  { width: `${stats.level.progress_percentage}%` as any },
+                ]}
+              />
             </View>
           </View>
         )}
@@ -125,9 +183,17 @@ export default function ProfileScreen() {
         {stats && (
           <View style={styles.statsGrid}>
             <StatCard label="Total XP" value={stats.xp.total} iconSrc={xp} />
-            <StatCard label="Total Kursus" value={stats.activity.total_course_enrolled} iconSrc={courses} />
+            <StatCard
+              label="Total Kursus"
+              value={stats.activity.total_course_enrolled}
+              iconSrc={courses}
+            />
             <StatCard label="Total Jam Belajar" value={stats.xp.period} iconSrc={time} />
-            <StatCard label="Streak Terpanjang" value={stats.activity.longest_streak} iconSrc={date} />
+            <StatCard
+              label="Streak Terpanjang"
+              value={stats.activity.longest_streak}
+              iconSrc={date}
+            />
           </View>
         )}
 
@@ -145,7 +211,12 @@ export default function ProfileScreen() {
                   <View style={styles.achievementImg}>
                     <CustomImage src={item.icon_url || ''} width={64} height={64} />
                   </View>
-                  <Text size={TextType.b3} color={Colors.TextSecondary} style={{ textAlign: 'center' }} numberOfLines={2}>
+                  <Text
+                    size={TextType.b3}
+                    color={Colors.TextSecondary}
+                    style={{ textAlign: 'center' }}
+                    numberOfLines={2}
+                  >
                     {item.name}
                   </Text>
                 </View>
@@ -179,7 +250,9 @@ export default function ProfileScreen() {
                 </View>
                 <View style={{ flex: 1 }}>
                   <Text size={TextType.b1}>{item.label}</Text>
-                  <Text size={TextType.p} color={Colors.TextTertiary}>{item.description}</Text>
+                  <Text size={TextType.p} color={Colors.TextTertiary}>
+                    {item.description}
+                  </Text>
                 </View>
               </TouchableOpacity>
             ))}
@@ -205,9 +278,12 @@ const styles = StyleSheet.create({
     borderBottomColor: Colors.Border,
   },
   avatarLarge: {
-    width: 88, height: 88, borderRadius: 44,
+    width: 88,
+    height: 88,
+    borderRadius: 44,
     backgroundColor: Colors.Primary,
-    alignItems: 'center', justifyContent: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
     overflow: 'hidden',
     marginBottom: 4,
   },
@@ -224,18 +300,32 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 16,
     gap: 12,
-    shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.06, shadowRadius: 4, elevation: 1,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.06,
+    shadowRadius: 4,
+    elevation: 1,
   },
   progressTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   levelBadge: {
-    width: 40, height: 40, borderRadius: 20,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     backgroundColor: Colors.Primary,
-    alignItems: 'center', justifyContent: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  progressBarBg: { height: 10, borderRadius: 999, backgroundColor: Colors.N100, overflow: 'hidden' },
+  progressBarBg: {
+    height: 10,
+    borderRadius: 999,
+    backgroundColor: Colors.N100,
+    overflow: 'hidden',
+  },
   progressBarFill: { height: '100%', borderRadius: 999, backgroundColor: Colors.Primary },
   statsGrid: {
-    flexDirection: 'row', flexWrap: 'wrap', gap: 10,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
   },
   statCard: {
     flex: 1,
@@ -252,9 +342,13 @@ const styles = StyleSheet.create({
   achievementGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
   achievementItem: { width: 80, alignItems: 'center', gap: 6 },
   achievementImg: {
-    borderRadius: 16, borderWidth: 1, borderColor: Colors.Border,
-    backgroundColor: Colors.Surface, overflow: 'hidden',
-    width: 64, height: 64,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: Colors.Border,
+    backgroundColor: Colors.Surface,
+    overflow: 'hidden',
+    width: 64,
+    height: 64,
   },
   settingsCard: {
     backgroundColor: Colors.Surface,
@@ -272,8 +366,11 @@ const styles = StyleSheet.create({
   },
   settingsDivider: { borderBottomWidth: 1, borderBottomColor: Colors.Divider },
   settingsIcon: {
-    width: 40, height: 40, borderRadius: 20,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     backgroundColor: Colors.N100,
-    alignItems: 'center', justifyContent: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

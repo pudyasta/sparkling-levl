@@ -1,11 +1,18 @@
 import { Tabs, router } from 'expo-router';
-import { Image, StyleSheet, View } from 'react-native';
 import { useEffect } from 'react';
+import { Image } from 'react-native';
+
 import {
-  bookActive, bookInactive, homeActive, homeInactive,
-  rankingActive, rankingInactive, userActive, userInactive,
-} from '@/assets/images/homeTabIcon';
-import { useNativeBridge } from '@/context/NativeBridgeProvider';
+  bookActive,
+  bookInactive,
+  homeActive,
+  homeInactive,
+  rankingActive,
+  rankingInactive,
+  userActive,
+  userInactive,
+} from '../../src/assets/images/homeTabIcon';
+import { useNativeBridge } from '../../src/context/NativeBridgeProvider';
 
 function TabIcon({ source, focused }: { source: any; focused: boolean }) {
   return <Image source={source} style={{ width: 28, height: 28 }} resizeMode="contain" />;

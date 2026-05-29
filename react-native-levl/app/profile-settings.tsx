@@ -9,13 +9,6 @@ import {
   View,
 } from 'react-native';
 
-import Input, { type InputRef } from '@/components/Input/Input';
-import { Loading } from '@/components/Loading/Loading';
-import Text from '@/components/Text';
-import { TextType } from '@/components/Text/types';
-import Button from '@/components/common/Button';
-import { Colors } from '@/constant/style';
-import { useNativeBridge } from '@/context/NativeBridgeProvider';
 import {
   useChangeEmail,
   useDeleteAccountConfirm,
@@ -25,6 +18,14 @@ import {
   useUpdateProfile,
   useVerifyEmailChange,
 } from '@/pages/ProfileSettings/usecase/useProfileSettings';
+
+import Input, { type InputRef } from '../src/components/Input/Input';
+import { Loading } from '../src/components/Loading/Loading';
+import Text from '../src/components/Text';
+import { TextType } from '../src/components/Text/types';
+import Button from '../src/components/common/Button';
+import { Colors } from '../src/constant/style';
+import { useNativeBridge } from '../src/context/NativeBridgeProvider';
 
 type Screen = 'profile' | 'security' | 'danger';
 
@@ -38,7 +39,9 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   return (
     <View style={styles.section}>
       <View style={styles.sectionHeader}>
-        <Text size={TextType.h3} fontWeight="bold">{title}</Text>
+        <Text size={TextType.h3} fontWeight="bold">
+          {title}
+        </Text>
       </View>
       <View style={styles.sectionBody}>{children}</View>
     </View>
@@ -82,7 +85,8 @@ export default function ProfileSettingsScreen() {
     onValidationError: (errors) => {
       if (errors.current_password) currentPassRef.current?.setError(errors.current_password);
       if (errors.new_password) newPassRef.current?.setError(errors.new_password);
-      if (errors.new_password_confirmation) confirmPassRef.current?.setError(errors.new_password_confirmation);
+      if (errors.new_password_confirmation)
+        confirmPassRef.current?.setError(errors.new_password_confirmation);
     },
   });
 
@@ -92,11 +96,18 @@ export default function ProfileSettingsScreen() {
   const [emailSent, setEmailSent] = useState(false);
 
   const { execute: changeEmail, isLoading: isSendingEmail } = useChangeEmail({
-    onSuccess: (uuid) => { setEmailUuid(uuid ?? null); setEmailSent(true); },
+    onSuccess: (uuid) => {
+      setEmailUuid(uuid ?? null);
+      setEmailSent(true);
+    },
   });
 
   const { execute: verifyEmail, isLoading: isVerifyingEmail } = useVerifyEmailChange({
-    onSuccess: () => { setEmailSent(false); setEmailUuid(null); setNewEmail(''); },
+    onSuccess: () => {
+      setEmailSent(false);
+      setEmailUuid(null);
+      setNewEmail('');
+    },
   });
 
   // ── Danger zone ───────────────────────────────────────────────────────────────
@@ -106,7 +117,10 @@ export default function ProfileSettingsScreen() {
   const [deleteStep, setDeleteStep] = useState<'idle' | 'confirm'>('idle');
 
   const { execute: requestDelete, isLoading: isRequestingDelete } = useDeleteAccountRequest({
-    onSuccess: (uuid) => { setDeleteUuid(uuid ?? null); setDeleteStep('confirm'); },
+    onSuccess: (uuid) => {
+      setDeleteUuid(uuid ?? null);
+      setDeleteStep('confirm');
+    },
   });
 
   const { execute: confirmDelete, isLoading: isConfirmingDelete } = useDeleteAccountConfirm({
@@ -118,20 +132,42 @@ export default function ProfileSettingsScreen() {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-          <Text size={TextType.b1} color={Colors.Primary}>← Kembali</Text>
+          <Text size={TextType.b1} color={Colors.Primary}>
+            ← Kembali
+          </Text>
         </TouchableOpacity>
-        <Text size={TextType.h3} fontWeight="bold">{TITLES[activeScreen]}</Text>
+        <Text size={TextType.h3} fontWeight="bold">
+          {TITLES[activeScreen]}
+        </Text>
       </View>
 
-      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
         <ScrollView contentContainerStyle={styles.body} keyboardShouldPersistTaps="handled">
           {/* ══ PROFILE SCREEN ══ */}
           {activeScreen === 'profile' && (
             <Section title="Informasi Akun">
               <Input title="Nama Lengkap" initialValue={name} bindChange={setName} />
-              <Input title="Nomor Telepon" initialValue={phone} variant="number" bindChange={setPhone} />
-              <Input title="Lokasi" initialValue={location} placeholder="e.g. Jakarta, Indonesia" bindChange={setLocation} />
-              <Input title="Bio" initialValue={bio} placeholder="Tell us about yourself" bindChange={setBio} />
+              <Input
+                title="Nomor Telepon"
+                initialValue={phone}
+                variant="number"
+                bindChange={setPhone}
+              />
+              <Input
+                title="Lokasi"
+                initialValue={location}
+                placeholder="e.g. Jakarta, Indonesia"
+                bindChange={setLocation}
+              />
+              <Input
+                title="Bio"
+                initialValue={bio}
+                placeholder="Tell us about yourself"
+                bindChange={setBio}
+              />
               <Button
                 disabled={isSavingProfile}
                 onPress={() => updateProfile({ name, phone, bio, location })}
@@ -171,7 +207,12 @@ export default function ProfileSettingsScreen() {
                     <Text size={TextType.b3} color={Colors.TextTertiary}>
                       Email saat ini: {profile?.email ?? '—'}
                     </Text>
-                    <Input title="Email baru" initialValue={newEmail} variant="email" bindChange={setNewEmail} />
+                    <Input
+                      title="Email baru"
+                      initialValue={newEmail}
+                      variant="email"
+                      bindChange={setNewEmail}
+                    />
                     <Button
                       disabled={isSendingEmail || !newEmail}
                       onPress={() => changeEmail({ new_email: newEmail })}
@@ -186,15 +227,24 @@ export default function ProfileSettingsScreen() {
                         Email verifikasi dikirim ke {newEmail}.
                       </Text>
                     </View>
-                    <Input title="Verification token" initialValue={emailToken} bindChange={setEmailToken} />
+                    <Input
+                      title="Verification token"
+                      initialValue={emailToken}
+                      bindChange={setEmailToken}
+                    />
                     <Button
                       disabled={isVerifyingEmail || !emailToken || !emailUuid}
                       onPress={() => verifyEmail({ uuid: emailUuid!, token: emailToken })}
                     >
                       {isVerifyingEmail ? <Loading size={20} color="#fff" /> : 'Verifikasi email'}
                     </Button>
-                    <TouchableOpacity onPress={() => setEmailSent(false)} style={{ alignItems: 'center' }}>
-                      <Text size={TextType.b3} color={Colors.TextTertiary}>← Gunakan email lainnya</Text>
+                    <TouchableOpacity
+                      onPress={() => setEmailSent(false)}
+                      style={{ alignItems: 'center' }}
+                    >
+                      <Text size={TextType.b3} color={Colors.TextTertiary}>
+                        ← Gunakan email lainnya
+                      </Text>
                     </TouchableOpacity>
                   </>
                 )}
@@ -218,7 +268,12 @@ export default function ProfileSettingsScreen() {
 
                 {deleteStep === 'idle' ? (
                   <>
-                    <Input title="Masukkan password Kamu" variant="password" initialValue={deletePw} bindChange={setDeletePw} />
+                    <Input
+                      title="Masukkan password Kamu"
+                      variant="password"
+                      initialValue={deletePw}
+                      bindChange={setDeletePw}
+                    />
                     <Button
                       disabled={isRequestingDelete || !deletePw}
                       onPress={() => requestDelete({ password: deletePw })}
@@ -230,18 +285,32 @@ export default function ProfileSettingsScreen() {
                   <>
                     <View style={styles.warnBanner}>
                       <Text size={TextType.b3} color="#92400E">
-                        Konfirmasi token telah dikirim ke email Kamu. Masukkan token di bawah untuk menghapus akun.
+                        Konfirmasi token telah dikirim ke email Kamu. Masukkan token di bawah untuk
+                        menghapus akun.
                       </Text>
                     </View>
-                    <Input title="Confirmation token" initialValue={deleteToken} bindChange={setDeleteToken} />
+                    <Input
+                      title="Confirmation token"
+                      initialValue={deleteToken}
+                      bindChange={setDeleteToken}
+                    />
                     <Button
                       disabled={isConfirmingDelete || !deleteToken || !deleteUuid}
                       onPress={() => confirmDelete({ uuid: deleteUuid!, token: deleteToken })}
                     >
-                      {isConfirmingDelete ? <Loading size={20} color="#fff" /> : 'Konfirmasi hapus akun'}
+                      {isConfirmingDelete ? (
+                        <Loading size={20} color="#fff" />
+                      ) : (
+                        'Konfirmasi hapus akun'
+                      )}
                     </Button>
-                    <TouchableOpacity onPress={() => setDeleteStep('idle')} style={{ alignItems: 'center', padding: 8 }}>
-                      <Text size={TextType.b3} color={Colors.TextTertiary}>Batalkan</Text>
+                    <TouchableOpacity
+                      onPress={() => setDeleteStep('idle')}
+                      style={{ alignItems: 'center', padding: 8 }}
+                    >
+                      <Text size={TextType.b3} color={Colors.TextTertiary}>
+                        Batalkan
+                      </Text>
                     </TouchableOpacity>
                   </>
                 )}

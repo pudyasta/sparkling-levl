@@ -1,7 +1,7 @@
-import hiMascot from './mascot-hi.png';
-import searchMascot from './mascot-search.png';
-import sadMascot from './sad.png';
-import docsMascot from './docs.svg';
-import lookMascot from './search.svg';
+const docsMascot = require('./docs.svg');
+const hiMascot = require('./mascot-hi.png');
+const searchMascot = require('./mascot-search.png');
+const sadMascot = require('./sad.png');
+const lookMascot = require('./search.svg');
 
 export { sadMascot, hiMascot, searchMascot, docsMascot, lookMascot };
