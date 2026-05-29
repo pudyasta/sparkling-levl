@@ -1,19 +1,26 @@
 import { useRef, useState } from 'react';
 import {
-  Image, ImageBackground, KeyboardAvoidingView, Platform,
-  ScrollView, StyleSheet, TouchableOpacity, View,
+  Image,
+  ImageBackground,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
 } from 'react-native';
-import { searchMascot } from '@/assets/images/mascot';
-import { loginBanner } from '@/assets/images/pages';
-import Input, { type InputRef } from '@/components/Input/Input';
-import { Loading } from '@/components/Loading/Loading';
-import { Modal, ModalTemplate } from '@/components/Modal/Modal.view';
-import Text from '@/components/Text';
-import { TextType } from '@/components/Text/types';
-import Button from '@/components/common/Button';
-import { Colors } from '@/constant/style';
-import { useNativeBridge } from '@/context/NativeBridgeProvider';
-import { useRegister } from '@/pages/Register/usecase/useRegister';
+
+import { searchMascot } from '../../src/assets/images/mascot';
+import { loginBanner } from '../../src/assets/images/pages';
+import Input, { type InputRef } from '../../src/components/Input/Input';
+import { Loading } from '../../src/components/Loading/Loading';
+import { Modal, ModalTemplate } from '../../src/components/Modal/Modal.view';
+import Text from '../../src/components/Text';
+import { TextType } from '../../src/components/Text/types';
+import Button from '../../src/components/common/Button';
+import { Colors } from '../../src/constant/style';
+import { useNativeBridge } from '../../src/context/NativeBridgeProvider';
+import { useRegister } from '../../src/pages/Register/usecase/useRegister';
 
 export default function RegisterScreen() {
   const emailRef = useRef<InputRef>(null);
@@ -39,8 +46,8 @@ export default function RegisterScreen() {
   });
 
   const registerUser = () => {
-    [emailRef, passwordRef, usernameRef, nameRef, confirmPasswordRef].forEach(
-      (r) => r.current?.setError(null)
+    [emailRef, passwordRef, usernameRef, nameRef, confirmPasswordRef].forEach((r) =>
+      r.current?.setError(null)
     );
     execute({
       email: emailRef.current?.getValue() || '',
@@ -52,7 +59,10 @@ export default function RegisterScreen() {
   };
 
   return (
-    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
       <ScrollView style={{ flex: 1 }} keyboardShouldPersistTaps="handled">
         <ImageBackground source={loginBanner} style={styles.banner} resizeMode="cover">
           <View style={styles.bannerContent}>
@@ -61,8 +71,12 @@ export default function RegisterScreen() {
               style={{ height: 56, width: 56 }}
               resizeMode="contain"
             />
-            <Text size={TextType.h1} color="white" fontWeight="bold">Welcome Explorer!</Text>
-            <Text size={TextType.b2} color="white">Discover a new world with Levl!</Text>
+            <Text size={TextType.h1} color="white" fontWeight="bold">
+              Welcome Explorer!
+            </Text>
+            <Text size={TextType.b2} color="white">
+              Discover a new world with Levl!
+            </Text>
           </View>
           <View style={{ alignSelf: 'flex-end' }}>
             <Image source={searchMascot} style={{ height: 120, width: 140 }} resizeMode="contain" />
@@ -83,7 +97,9 @@ export default function RegisterScreen() {
           <TouchableOpacity onPress={() => navigateTo('/(auth)/login', { replace: true })}>
             <Text typeof={TextType.b1} style={{ textAlign: 'center' }}>
               Udah punya akun?{' '}
-              <Text typeof={TextType.b1} style={{ color: Colors.Primary }}>Masuk disini</Text>
+              <Text typeof={TextType.b1} style={{ color: Colors.Primary }}>
+                Masuk disini
+              </Text>
             </Text>
           </TouchableOpacity>
         </View>
@@ -101,7 +117,13 @@ export default function RegisterScreen() {
 }
 
 const styles = StyleSheet.create({
-  banner: { minHeight: 280, flexDirection: 'column', justifyContent: 'flex-end', padding: 20, gap: 12 },
+  banner: {
+    minHeight: 280,
+    flexDirection: 'column',
+    justifyContent: 'flex-end',
+    padding: 20,
+    gap: 12,
+  },
   bannerContent: { alignItems: 'flex-start', gap: 10 },
   form: { padding: 20, gap: 16, paddingBottom: 40 },
 });

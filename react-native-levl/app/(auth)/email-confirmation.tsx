@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react';
-import { Image, StyleSheet, View } from 'react-native';
-import { docsMascot } from '@/assets/images/mascot';
-import { Loading } from '@/components/Loading/Loading';
-import Text from '@/components/Text';
-import { FontFamily, TextType } from '@/components/Text/types';
-import Button from '@/components/common/Button';
-import CustomImage from '@/components/common/CustomImage/CustomImage';
-import { Colors } from '@/constant/style';
-import { useNativeBridge } from '@/context/NativeBridgeProvider';
-import { useResendVerificationEmail } from '@/pages/EmailConfirmation/usecase/useResendVerificationEmail';
+import { StyleSheet, View } from 'react-native';
+
+import { docsMascot } from '../../src/assets/images/mascot';
+import { Loading } from '../../src/components/Loading/Loading';
+import Text from '../../src/components/Text';
+import { FontFamily, TextType } from '../../src/components/Text/types';
+import Button from '../../src/components/common/Button';
+import CustomImage from '../../src/components/common/CustomImage/CustomImage';
+import { Colors } from '../../src/constant/style';
+import { useNativeBridge } from '../../src/context/NativeBridgeProvider';
+import { useResendVerificationEmail } from '../../src/pages/EmailConfirmation/usecase/useResendVerificationEmail';
 
 export default function EmailConfirmationScreen() {
   const [timer, setTimer] = useState(59);
@@ -17,21 +18,31 @@ export default function EmailConfirmationScreen() {
   const { execute: resendVerificationEmail, isLoading } = useResendVerificationEmail();
 
   useEffect(() => {
-    if (timer <= 0) { setCanResend(true); return; }
+    if (timer <= 0) {
+      setCanResend(true);
+      return;
+    }
     const id = setInterval(() => setTimer((p) => p - 1), 1000);
     return () => clearInterval(id);
   }, [timer]);
 
   const handleResend = () => {
     if (!canResend) return;
-    resendVerificationEmail(() => { setTimer(59); setCanResend(false); });
+    resendVerificationEmail(() => {
+      setTimer(59);
+      setCanResend(false);
+    });
   };
 
   return (
     <View style={styles.container}>
       <CustomImage src={docsMascot} width={180} height={180} />
 
-      <Text size={TextType.h1} fontFamily={FontFamily.jakarta} style={{ marginTop: 24, textAlign: 'center' }}>
+      <Text
+        size={TextType.h1}
+        fontFamily={FontFamily.jakarta}
+        style={{ marginTop: 24, textAlign: 'center' }}
+      >
         Confirm Your Email!
       </Text>
       <Text size={TextType.b2} style={styles.description}>
@@ -57,9 +68,21 @@ export default function EmailConfirmationScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24, backgroundColor: '#fff' },
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 24,
+    backgroundColor: '#fff',
+  },
   description: { color: Colors.TextSecondary, textAlign: 'center', marginTop: 8 },
-  instruction: { color: Colors.TextTertiary, textAlign: 'center', marginTop: 8, fontSize: 13, paddingHorizontal: 16 },
+  instruction: {
+    color: Colors.TextTertiary,
+    textAlign: 'center',
+    marginTop: 8,
+    fontSize: 13,
+    paddingHorizontal: 16,
+  },
   footer: { width: '100%', marginTop: 32 },
   timer: { textAlign: 'center', color: Colors.TextTertiary },
 });

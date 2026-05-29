@@ -1,5 +1,6 @@
 import { Redirect } from 'expo-router';
-import { useNativeBridge } from '@/context/NativeBridgeProvider';
+
+import { useNativeBridge } from '../src/context/NativeBridgeProvider';
 
 export default function Index() {
   const { isAuthenticated } = useNativeBridge();

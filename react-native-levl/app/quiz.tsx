@@ -10,13 +10,13 @@ import {
   View,
 } from 'react-native';
 
-import Button from '@/components/common/Button';
-import { Loading } from '@/components/Loading/Loading';
-import Text from '@/components/Text';
-import { TextType } from '@/components/Text/types';
-import { Colors } from '@/constant/style';
-import { htmlToPlainText } from '@/lib/helper/htmlToText';
-import { useQuizRepository } from '@/pages/Quiz/repository/QuizRepository';
+import { Loading } from '../src/components/Loading/Loading';
+import Text from '../src/components/Text';
+import { TextType } from '../src/components/Text/types';
+import Button from '../src/components/common/Button';
+import { Colors } from '../src/constant/style';
+import { htmlToPlainText } from '../src/lib/helper/htmlToText';
+import { useQuizRepository } from '../src/pages/Quiz/repository/QuizRepository';
 
 type QuizPhase = 'starting' | 'quiz' | 'submitting' | 'done' | 'error';
 
@@ -47,14 +47,20 @@ export default function QuizScreen() {
   // Start quiz and get first question
   useEffect(() => {
     if (!quizId) return;
-    repo.startQuizApi(parseInt(quizId)).then((res: any) => {
-      const sid = res?.data?.id ?? res?.data?.submission_id;
-      if (!sid) { setPhase('error'); return; }
-      setSubmissionId(sid);
-      const duration = res?.data?.time_limit_minutes;
-      if (duration) setTimeLeft(duration * 60);
-      loadQuestion(sid, 1);
-    }).catch(() => setPhase('error'));
+    repo
+      .startQuizApi(parseInt(quizId))
+      .then((res: any) => {
+        const sid = res?.data?.id ?? res?.data?.submission_id;
+        if (!sid) {
+          setPhase('error');
+          return;
+        }
+        setSubmissionId(sid);
+        const duration = res?.data?.time_limit_minutes;
+        if (duration) setTimeLeft(duration * 60);
+        loadQuestion(sid, 1);
+      })
+      .catch(() => setPhase('error'));
   }, [quizId]);
 
   // Timer
@@ -70,7 +76,9 @@ export default function QuizScreen() {
         return t - 1;
       });
     }, 1000);
-    return () => { if (timerRef.current) clearInterval(timerRef.current); };
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
   }, [timeLeft, phase]);
 
   const loadQuestion = async (sid: number, page: number) => {
@@ -86,7 +94,9 @@ export default function QuizScreen() {
 
     // Restore saved answer
     if (a?.selected_options) {
-      setSelectedOptions(Array.isArray(a.selected_options) ? a.selected_options : [a.selected_options]);
+      setSelectedOptions(
+        Array.isArray(a.selected_options) ? a.selected_options : [a.selected_options]
+      );
     } else {
       setSelectedOptions([]);
     }
@@ -102,7 +112,9 @@ export default function QuizScreen() {
         content: isEssay ? essayText : undefined,
         selected_options: !isEssay ? selectedOptions : undefined,
       });
-    } catch { /* ok */ }
+    } catch {
+      /* ok */
+    }
     setIsSaving(false);
   };
 
@@ -117,7 +129,10 @@ export default function QuizScreen() {
     setPhase('submitting');
     try {
       await repo.submitQuizApi(submissionId);
-      router.replace({ pathname: '/quiz-result', params: { submissionId: submissionId.toString() } });
+      router.replace({
+        pathname: '/quiz-result',
+        params: { submissionId: submissionId.toString() },
+      });
     } catch {
       setPhase('error');
     }
@@ -134,9 +149,14 @@ export default function QuizScreen() {
     }
   };
 
-  const timerColor = timeLeft >= 0
-    ? timeLeft <= 60 ? Colors.Error : timeLeft <= 300 ? Colors.Warning : Colors.Primary
-    : Colors.Primary;
+  const timerColor =
+    timeLeft >= 0
+      ? timeLeft <= 60
+        ? Colors.Error
+        : timeLeft <= 300
+          ? Colors.Warning
+          : Colors.Primary
+      : Colors.Primary;
 
   if (phase === 'starting' || phase === 'submitting') {
     return (
@@ -152,10 +172,16 @@ export default function QuizScreen() {
   if (phase === 'error') {
     return (
       <View style={styles.center}>
-        <Text size={TextType.h2} style={{ marginBottom: 8 }}>❌</Text>
-        <Text size={TextType.b2} color={Colors.Error}>Terjadi kesalahan</Text>
+        <Text size={TextType.h2} style={{ marginBottom: 8 }}>
+          ❌
+        </Text>
+        <Text size={TextType.b2} color={Colors.Error}>
+          Terjadi kesalahan
+        </Text>
         <TouchableOpacity onPress={() => router.back()} style={{ marginTop: 16 }}>
-          <Text size={TextType.b1} color={Colors.Primary}>← Kembali</Text>
+          <Text size={TextType.b1} color={Colors.Primary}>
+            ← Kembali
+          </Text>
         </TouchableOpacity>
       </View>
     );
@@ -163,8 +189,12 @@ export default function QuizScreen() {
 
   const options: string[] = (() => {
     if (!question?.options) return [];
-    if (Array.isArray(question.options)) return question.options.map((o: any) => typeof o === 'string' ? o : o.text ?? String(o));
-    if (typeof question.options === 'object') return Object.values(question.options).map((v: any) => typeof v === 'string' ? v : v.text ?? String(v));
+    if (Array.isArray(question.options))
+      return question.options.map((o: any) => (typeof o === 'string' ? o : (o.text ?? String(o))));
+    if (typeof question.options === 'object')
+      return Object.values(question.options).map((v: any) =>
+        typeof v === 'string' ? v : (v.text ?? String(v))
+      );
     return [];
   })();
 
@@ -175,7 +205,9 @@ export default function QuizScreen() {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-          <Text size={TextType.b1} color={Colors.TextSecondary}>← Keluar</Text>
+          <Text size={TextType.b1} color={Colors.TextSecondary}>
+            ← Keluar
+          </Text>
         </TouchableOpacity>
         <View style={{ flex: 1, alignItems: 'center' }}>
           <Text size={TextType.b2} fontWeight="bold">
@@ -193,13 +225,25 @@ export default function QuizScreen() {
 
       {/* Progress dots */}
       <View style={styles.progressBar}>
-        <View style={[styles.progressFill, { width: `${((meta?.current_order ?? 1) / (meta?.total_questions ?? 1)) * 100}%` as any }]} />
+        <View
+          style={[
+            styles.progressFill,
+            {
+              width: `${((meta?.current_order ?? 1) / (meta?.total_questions ?? 1)) * 100}%` as any,
+            },
+          ]}
+        />
       </View>
 
       <ScrollView contentContainerStyle={styles.content}>
         {/* Question */}
         <View style={styles.questionCard}>
-          <Text size={TextType.b2} fontWeight="bold" color={Colors.TextPrimary} style={{ lineHeight: 24 }}>
+          <Text
+            size={TextType.b2}
+            fontWeight="bold"
+            color={Colors.TextPrimary}
+            style={{ lineHeight: 24 }}
+          >
             {htmlToPlainText(question?.content ?? '')}
           </Text>
         </View>
@@ -256,11 +300,7 @@ export default function QuizScreen() {
           Sebelumnya
         </Button>
         {meta?.has_next ? (
-          <Button
-            onPress={() => goToPage(currentPage + 1)}
-            disabled={isSaving}
-            style={{ flex: 1 }}
-          >
+          <Button onPress={() => goToPage(currentPage + 1)} disabled={isSaving} style={{ flex: 1 }}>
             {isSaving ? <Loading size={18} color="#fff" /> : 'Selanjutnya'}
           </Button>
         ) : (
@@ -281,7 +321,11 @@ export default function QuizScreen() {
             <Text size={TextType.h2} fontWeight="bold" style={{ textAlign: 'center' }}>
               Kumpulkan Jawaban?
             </Text>
-            <Text size={TextType.b2} color={Colors.TextSecondary} style={{ textAlign: 'center', marginTop: 8 }}>
+            <Text
+              size={TextType.b2}
+              color={Colors.TextSecondary}
+              style={{ textAlign: 'center', marginTop: 8 }}
+            >
               Pastikan kamu sudah menjawab semua soal sebelum mengumpulkan.
             </Text>
             <View style={{ flexDirection: 'row', gap: 10, marginTop: 20 }}>
@@ -293,7 +337,13 @@ export default function QuizScreen() {
               >
                 Batal
               </Button>
-              <Button onPress={() => { setShowConfirmSubmit(false); handleSubmit(); }} style={{ flex: 1 }}>
+              <Button
+                onPress={() => {
+                  setShowConfirmSubmit(false);
+                  handleSubmit();
+                }}
+                style={{ flex: 1 }}
+              >
                 Kumpulkan
               </Button>
             </View>
@@ -340,9 +390,13 @@ const styles = StyleSheet.create({
   },
   optionSelected: { borderColor: Colors.Primary, backgroundColor: Colors.InfoBg },
   optionCircle: {
-    width: 22, height: 22, borderRadius: 11,
-    borderWidth: 2, borderColor: Colors.N300,
-    alignItems: 'center', justifyContent: 'center',
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    borderWidth: 2,
+    borderColor: Colors.N300,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   optionCircleSelected: { borderColor: Colors.Primary },
   optionDot: { width: 10, height: 10, borderRadius: 5, backgroundColor: Colors.Primary },

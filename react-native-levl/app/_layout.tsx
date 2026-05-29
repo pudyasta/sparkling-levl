@@ -1,11 +1,12 @@
-import '../src/global.css';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
-import Toast from 'react-native-toast-message';
-import { AppProvider } from '@/context/AppProvider';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import Toast from 'react-native-toast-message';
+
+import { AppProvider } from '../src/context/AppProvider';
+import '../src/global.css';
 
 SplashScreen.preventAutoHideAsync();
 
