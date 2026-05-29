@@ -4,9 +4,15 @@
 
 @layer utilities {
   @keyframes press-bounce {
-    0% { transform: scale(1); }
-    50% { transform: scale(0.95); }
-    100% { transform: scale(1); }
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(0.95);
+    }
+    100% {
+      transform: scale(1);
+    }
   }
 
   .animate-press-bounce {
@@ -16,12 +22,14 @@
 
 @font-face {
   font-family: inter;
+  font-weight: 100 900;
   src: url('../assets/fonts/inter.ttf');
 }
 
 @font-face {
   font-family: jakarta;
   src: url('../assets/fonts/Jakarta.ttf');
+  font-weight: 200 800;
 }
 
 :root {
@@ -147,23 +155,55 @@ page {
 }
 
 /* Font utilities */
-.font-inter { font-family: var(--font-inter); }
-.font-jakarta { font-family: var(--font-jakarta); }
+.font-inter {
+  font-family: var(--font-inter);
+}
+.font-jakarta {
+  font-family: var(--font-jakarta);
+}
 
 /* Color utilities */
-.text-primary { color: var(--primary); }
-.text-secondary { color: var(--secondary); }
-.text-muted { color: var(--text-tertiary); }
-.text-subtle { color: var(--text-secondary); }
-.text-error { color: var(--error); }
-.text-success { color: var(--success); }
+.text-primary {
+  color: var(--primary);
+}
+.text-secondary {
+  color: var(--secondary);
+}
+.text-muted {
+  color: var(--text-tertiary);
+}
+.text-subtle {
+  color: var(--text-secondary);
+}
+.text-error {
+  color: var(--error);
+}
+.text-success {
+  color: var(--success);
+}
 
-.bg-primary { background-color: var(--primary); }
-.bg-secondary { background-color: var(--secondary); }
-.bg-canvas { background-color: var(--canvas); }
-.bg-surface { background-color: var(--surface); }
+.bg-primary {
+  background-color: var(--primary);
+}
+.bg-secondary {
+  background-color: var(--secondary);
+}
+.bg-canvas {
+  background-color: var(--canvas);
+}
+.bg-surface {
+  background-color: var(--surface);
+}
 
-.border-primary { border-color: var(--primary); }
-.border-secondary { border-color: var(--secondary); }
-.border-neutral { border-color: var(--neutral); }
-.border-default { border-color: var(--border); }
+.border-primary {
+  border-color: var(--primary);
+}
+.border-secondary {
+  border-color: var(--secondary);
+}
+.border-neutral {
+  border-color: var(--neutral);
+}
+.border-default {
+  border-color: var(--border);
+}
