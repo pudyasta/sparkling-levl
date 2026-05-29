@@ -7,50 +7,97 @@
 #import <Lynx/LynxPropsProcessor.h>
 #import <Lynx/LynxUIOwner.h>
 
+@interface NativeSVGView ()
+@property (nonatomic, copy) NSString *svgContent;
+@property (nonatomic, copy) NSString *remoteURL;
+@end
+
 @implementation NativeSVGView
 
 - (WKWebView *)createView {
     WKWebViewConfiguration *config = [[WKWebViewConfiguration alloc] init];
     WKWebView *webView = [[WKWebView alloc] initWithFrame:CGRectZero configuration:config];
     webView.scrollView.scrollEnabled = NO;
+    webView.scrollView.bounces = NO;
     webView.backgroundColor = [UIColor clearColor];
     webView.opaque = NO;
     webView.scrollView.backgroundColor = [UIColor clearColor];
+    // Prevent UIKit from adjusting scroll insets which can offset the SVG content
+    webView.scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
     return webView;
+}
+
+// Build an HTML page whose viewport exactly matches `size` so the SVG
+// renders at the right dimensions without zooming or cropping.
+- (NSString *)htmlForSVGContent:(NSString *)svgContent size:(CGSize)size {
+    int w = (int)ceil(size.width);
+    int h = (int)ceil(size.height);
+    return [NSString stringWithFormat:
+        @"<!DOCTYPE html><html><head>"
+         "<meta name='viewport' content='width=%d,height=%d,initial-scale=1,user-scalable=no'>"
+         "<style>"
+         "html,body{margin:0;padding:0;width:%dpx;height:%dpx;overflow:hidden;background:transparent;}"
+         "svg{display:block;width:%dpx;height:%dpx;}"
+         "</style>"
+         "</head><body>%@</body></html>",
+        w, h, w, h, w, h, svgContent];
+}
+
+// Same for a remote SVG URL — load it via <img> so object-fit applies correctly.
+- (NSString *)htmlForRemoteURL:(NSString *)url size:(CGSize)size {
+    int w = (int)ceil(size.width);
+    int h = (int)ceil(size.height);
+    return [NSString stringWithFormat:
+        @"<!DOCTYPE html><html><head>"
+         "<meta name='viewport' content='width=%d,height=%d,initial-scale=1,user-scalable=no'>"
+         "<style>"
+         "html,body{margin:0;padding:0;width:%dpx;height:%dpx;overflow:hidden;background:transparent;}"
+         "img{display:block;width:%dpx;height:%dpx;object-fit:cover;}"
+         "</style>"
+         "</head><body><img src='%@'/></body></html>",
+        w, h, w, h, w, h, url];
+}
+
+- (void)reloadContent {
+    CGSize size = self.view.frame.size;
+    if (size.width <= 0 || size.height <= 0) return;
+
+    if (self.svgContent) {
+        [self.view loadHTMLString:[self htmlForSVGContent:self.svgContent size:size]
+                         baseURL:nil];
+    } else if (self.remoteURL) {
+        [self.view loadHTMLString:[self htmlForRemoteURL:self.remoteURL size:size]
+                         baseURL:nil];
+    }
 }
 
 LYNX_PROP_SETTER("src", setSrc, NSString *) {
     if (!value || [value length] == 0) return;
 
-    NSString *svgContent = nil;
+    self.svgContent = nil;
+    self.remoteURL = nil;
 
     if ([value hasPrefix:@"data:image/svg+xml;base64,"]) {
         NSString *base64 = [value substringFromIndex:[@"data:image/svg+xml;base64," length]];
         NSData *decoded = [[NSData alloc] initWithBase64EncodedString:base64
                                                              options:NSDataBase64DecodingIgnoreUnknownCharacters];
-        svgContent = [[NSString alloc] initWithData:decoded encoding:NSUTF8StringEncoding];
+        self.svgContent = [[NSString alloc] initWithData:decoded encoding:NSUTF8StringEncoding];
     } else if ([value hasPrefix:@"<svg"] || [value hasPrefix:@"<?xml"]) {
-        svgContent = value;
+        self.svgContent = value;
     } else if ([value hasPrefix:@"http://"] || [value hasPrefix:@"https://"]) {
-        NSURL *url = [NSURL URLWithString:value];
-        if (url) {
-            [self.view loadRequest:[NSURLRequest requestWithURL:url]];
-        }
-        return;
+        self.remoteURL = value;
     }
 
-    if (svgContent) {
-        NSString *html = [NSString stringWithFormat:
-            @"<!DOCTYPE html><html><head>"
-             "<meta name='viewport' content='width=device-width,initial-scale=1'>"
-             "<style>"
-             "html,body{margin:0;padding:0;background:transparent;width:100%%;height:100%%;overflow:hidden;}"
-             "svg{display:block;width:100%%;height:100%%;}"
-             "</style>"
-             "</head><body>%@</body></html>",
-            svgContent];
-        [self.view loadHTMLString:html baseURL:nil];
-    }
+    // Try immediate load; Lynx may have already applied layout by this point.
+    [self reloadContent];
+
+    // Deferred reload as a safety net: Lynx layout sometimes settles after
+    // props are applied, so the frame can be zero on the first call.
+    __weak typeof(self) weakSelf = self;
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.05 * NSEC_PER_SEC)),
+                   dispatch_get_main_queue(), ^{
+        [weakSelf reloadContent];
+    });
 }
 
 @end
