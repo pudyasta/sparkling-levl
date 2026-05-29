@@ -1,13 +1,14 @@
+import { router } from 'expo-router';
 import { useRef, useState } from 'react';
 import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, View } from 'react-native';
-import { router } from 'expo-router';
-import Input, { type InputRef } from '@/components/Input/Input';
-import { Loading } from '@/components/Loading/Loading';
-import Text from '@/components/Text';
-import { TextType } from '@/components/Text/types';
-import Button from '@/components/common/Button';
-import { Colors } from '@/constant/style';
-import { guestAPIClient } from '@/lib/api/core';
+
+import Input, { type InputRef } from '../../src/components/Input/Input';
+import { Loading } from '../../src/components/Loading/Loading';
+import Text from '../../src/components/Text';
+import { TextType } from '../../src/components/Text/types';
+import Button from '../../src/components/common/Button';
+import { Colors } from '../../src/constant/style';
+import { guestAPIClient } from '../../src/lib/api/core';
 
 export default function ForgotPasswordScreen() {
   const emailRef = useRef<InputRef>(null);
@@ -16,7 +17,10 @@ export default function ForgotPasswordScreen() {
 
   const handleSubmit = async () => {
     const email = emailRef.current?.getValue() || '';
-    if (!email) { emailRef.current?.setError('Please enter your email'); return; }
+    if (!email) {
+      emailRef.current?.setError('Please enter your email');
+      return;
+    }
     setIsLoading(true);
     try {
       await guestAPIClient('/auth/forgot-password', { method: 'POST', data: { email } });
@@ -29,9 +33,14 @@ export default function ForgotPasswordScreen() {
   };
 
   return (
-    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
       <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-        <Text size={TextType.h1} fontWeight="bold" style={{ marginBottom: 8 }}>Lupa Password</Text>
+        <Text size={TextType.h1} fontWeight="bold" style={{ marginBottom: 8 }}>
+          Lupa Password
+        </Text>
         <Text size={TextType.b2} color={Colors.TextSecondary} style={{ marginBottom: 32 }}>
           Masukkan email kamu untuk mendapatkan link reset password.
         </Text>
@@ -66,5 +75,10 @@ export default function ForgotPasswordScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 24, paddingTop: 60, backgroundColor: '#fff' },
-  successBox: { backgroundColor: Colors.SuccessBg, padding: 16, borderRadius: 12, marginBottom: 16 },
+  successBox: {
+    backgroundColor: Colors.SuccessBg,
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 16,
+  },
 });

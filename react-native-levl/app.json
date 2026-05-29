@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Levl",
+    "name": "Levl React",
     "slug": "levl",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -9,7 +9,7 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
-      "image": "./src/assets/images/icon.png",
+      "image": "./src/assets/images/foreground.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -19,7 +19,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./src/assets/images/icon.png",
+        "foregroundImage": "./src/assets/images/foreground.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.levl.app"
@@ -27,7 +27,7 @@
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./src/assets/images/icon.png"
+      "favicon": "./src/assets/images/foreground.png"
     },
     "plugins": [
       "expo-router",

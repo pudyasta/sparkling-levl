@@ -10,12 +10,12 @@ import {
   View,
 } from 'react-native';
 
-import CourseCard from '@/components/CoursesCard/CoursesCard';
-import Text from '@/components/Text';
-import { TextType } from '@/components/Text/types';
-import { Colors } from '@/constant/style';
-import type { Category, Course } from '@/pages/main/repository/type/course';
-import { useGetAllCourses } from '@/pages/main/usecase/useGetAllCourses';
+import CourseCard from '../../src/components/CoursesCard/CoursesCard';
+import Text from '../../src/components/Text';
+import { TextType } from '../../src/components/Text/types';
+import { Colors } from '../../src/constant/style';
+import type { Category, Course } from '../../src/pages/main/repository/type/course';
+import { useGetAllCourses } from '../../src/pages/main/usecase/useGetAllCourses';
 
 const LEVEL_TAGS = [
   { label: 'Dasar', value: 'DASAR' },
@@ -112,15 +112,16 @@ export default function CoursesScreen() {
         </View>
 
         {/* Level filter chips */}
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ gap: 8 }}
+        >
           {LEVEL_TAGS.map((tag) => (
             <TouchableOpacity
               key={tag.value}
               onPress={() => setLevelTag(levelTag === tag.value ? '' : tag.value)}
-              style={[
-                styles.filterChip,
-                levelTag === tag.value && styles.filterChipActive,
-              ]}
+              style={[styles.filterChip, levelTag === tag.value && styles.filterChipActive]}
             >
               <Text
                 size={TextType.b3}
@@ -132,10 +133,7 @@ export default function CoursesScreen() {
             </TouchableOpacity>
           ))}
           {levelTag ? (
-            <TouchableOpacity
-              onPress={() => setLevelTag('')}
-              style={styles.clearChip}
-            >
+            <TouchableOpacity onPress={() => setLevelTag('')} style={styles.clearChip}>
               <Text size={TextType.b3} fontWeight="bold" color="#fca5a5">
                 ✕ Clear
               </Text>
@@ -147,12 +145,20 @@ export default function CoursesScreen() {
       {/* Category tabs */}
       {categories.length > 0 && (
         <View style={styles.categoryBar}>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8, paddingHorizontal: 16 }}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{ gap: 8, paddingHorizontal: 16 }}
+          >
             <TouchableOpacity
               onPress={() => setActiveCategory(null)}
               style={[styles.catChip, !activeCategory && styles.catChipActive]}
             >
-              <Text size={TextType.b3} fontWeight="600" color={!activeCategory ? Colors.Primary : Colors.TextSecondary}>
+              <Text
+                size={TextType.b3}
+                fontWeight="600"
+                color={!activeCategory ? Colors.Primary : Colors.TextSecondary}
+              >
                 Semua
               </Text>
             </TouchableOpacity>
@@ -162,7 +168,11 @@ export default function CoursesScreen() {
                 onPress={() => setActiveCategory(cat.id === activeCategory?.id ? null : cat)}
                 style={[styles.catChip, cat.id === activeCategory?.id && styles.catChipActive]}
               >
-                <Text size={TextType.b3} fontWeight="600" color={cat.id === activeCategory?.id ? Colors.Primary : Colors.TextSecondary}>
+                <Text
+                  size={TextType.b3}
+                  fontWeight="600"
+                  color={cat.id === activeCategory?.id ? Colors.Primary : Colors.TextSecondary}
+                >
                   {cat.name}
                 </Text>
               </TouchableOpacity>
@@ -178,8 +188,12 @@ export default function CoursesScreen() {
         </View>
       ) : courses.length === 0 ? (
         <View style={styles.center}>
-          <Text size={TextType.h2} style={{ marginBottom: 8 }}>🔍</Text>
-          <Text size={TextType.b2} color={Colors.TextTertiary}>Tidak ada kursus yang ditemukan.</Text>
+          <Text size={TextType.h2} style={{ marginBottom: 8 }}>
+            🔍
+          </Text>
+          <Text size={TextType.b2} color={Colors.TextTertiary}>
+            Tidak ada kursus yang ditemukan.
+          </Text>
         </View>
       ) : (
         <FlatList
@@ -239,7 +253,12 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     backgroundColor: 'rgba(239,68,68,0.3)',
   },
-  categoryBar: { paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: Colors.Border, backgroundColor: Colors.Surface },
+  categoryBar: {
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.Border,
+    backgroundColor: Colors.Surface,
+  },
   catChip: {
     borderRadius: 999,
     paddingHorizontal: 14,
