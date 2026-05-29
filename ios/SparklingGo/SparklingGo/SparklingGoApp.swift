@@ -5,6 +5,7 @@
 import SwiftUI
 import Lynx
 import Sparkling
+import Sparkling_Router
 import SDWebImage
 import SDWebImageWebPCoder
 import SparklingMethod
@@ -40,6 +41,51 @@ struct SparklingGoApp: App {
     var body: some Scene {
         WindowGroup {
             DemoVC()
+                .onOpenURL { url in
+                    Self.handleDeepLink(url)
+                }
+        }
+    }
+
+    // MARK: - Deep link: levl://verify?userId=...&email=...&uuid=...&token=...
+
+    private static func handleDeepLink(_ url: URL) {
+        guard url.scheme == "levl", url.host == "verify" else { return }
+
+        let queryItems = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems ?? []
+        let params = queryItems.reduce(into: [String: String]()) { $0[$1.name] = $1.value ?? "" }
+
+        let userId = params["userId"] ?? ""
+        let email  = params["email"]  ?? ""
+        let uuid   = params["uuid"]   ?? ""
+        let token  = params["token"]  ?? ""
+
+        DeepLinkHolder.shared.set(userId: userId, email: email, uuid: uuid, token: token)
+
+        var components = URLComponents()
+        components.scheme = "hybrid"
+        components.host = "lynxview_page"
+        components.queryItems = [
+            URLQueryItem(name: "bundle",             value: "verify.lynx.bundle"),
+            URLQueryItem(name: "hide_nav_bar",        value: "1"),
+            URLQueryItem(name: "screen_orientation",  value: "portrait"),
+            URLQueryItem(name: "userId",              value: userId),
+            URLQueryItem(name: "email",               value: email),
+            URLQueryItem(name: "uuid",                value: uuid),
+            URLQueryItem(name: "token",               value: token),
+        ]
+
+        guard let sparklingURL = components.url?.absoluteString else { return }
+
+        let context = SPKContext()
+        context.customUIElements = [
+            SparklingLynxElement(lynxElementName: "input",        lynxElementClassName: LynxInput.self),
+            SparklingLynxElement(lynxElementName: "native-svg",   lynxElementClassName: NativeSVGView.self),
+            SparklingLynxElement(lynxElementName: "video-player", lynxElementClassName: VideoPlayerView.self),
+        ]
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            SPKRouter.open(withURL: sparklingURL, context: context)
         }
     }
 }
