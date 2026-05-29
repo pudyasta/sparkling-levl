@@ -1,8 +1,8 @@
-import handleFontSize from './utils/handleFontSize';
-import handleLineHeight from './utils/handleLineHeight';
-import handleLetterSpacing from './utils/handleLetterSpacing';
-import handleColor from './utils/handleColor';
 import { FontFamily, TextType, type TypographyProps } from './types';
+import handleColor from './utils/handleColor';
+import handleFontSize from './utils/handleFontSize';
+import handleLetterSpacing from './utils/handleLetterSpacing';
+import handleLineHeight from './utils/handleLineHeight';
 
 const HEADING_SIZES = new Set([TextType.display, TextType.h1, TextType.h2, TextType.h3]);
 
@@ -41,7 +41,7 @@ const Text = ({
         fontFamily: resolvedFamily,
         display: link || asSpan ? 'linear' : 'block',
         position: 'relative',
-        fontWeight: fontWeight,
+        fontWeight: '400',
         fontSize: `${handleFontSize({ size })}px`,
         color: handleColor({ color, link, tag, main, disabled }),
         lineHeight: `${handleLineHeight({ size })}px`,

@@ -1,7 +1,6 @@
 import { useState } from '@lynx-js/react';
 
 import CustomImage from '../CustomImage/CustomImage';
-import styles from './Tabs.module.css';
 
 interface TabItem {
   key?: string;

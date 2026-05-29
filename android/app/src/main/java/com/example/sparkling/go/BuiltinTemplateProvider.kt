@@ -41,7 +41,7 @@ class BuiltinTemplateProvider(context: Context) : AbsTemplateProvider() {
             // Not in local assets — fetch from remote
             val remoteUrl = "$REMOTE_BASE_URL/$uri"
             Log.d(TAG, "Asset not found locally, falling back to remote: $remoteUrl")
-            loadRemote(remoteUrl, callback)
+            loadRemote(uri, callback)
         }
     }
 

@@ -18,7 +18,7 @@ const DASHBOARD_RECOMMENDED_COURSES_ENDPOINT =
 const DASHBOARD_RECENT_ACHIEVEMENTS_ENDPOINT = '/dashboard/recent-achievements';
 
 // Course route
-const COURSE_DETAIL_ENDPOINT = '/courses/SLUG?include=units,category,elements,tags';
+const COURSE_DETAIL_ENDPOINT = '/courses/SLUG?include=units,category,elements,tags&lang=id';
 const LESSON_DETAIL_ENDPOINT = '/courses/COURSE_SLUG/units/UNIT_SLUG/lessons/LESSON_SLUG';
 const LESSON_MARK_AS_DONE_ENDPOINT = 'lessons/LESSON_SLUG/complete';
 
