@@ -1,4 +1,4 @@
-import { useEffect } from '@lynx-js/react';
+import { useEffect, useMemo } from '@lynx-js/react';
 
 import { useNativeBridge } from '@/context/NativeBridgeProvider';
 
@@ -22,40 +22,28 @@ interface Props {}
 
 const MainPage: React.FC<Props> = ({}) => {
   const { isAuthenticated, navigateTo, hydrate, isRefreshing, accessToken } = useNativeBridge();
-  const pages = [
-    {
-      label: {
-        text: 'Home',
-        srcActive: homeActive,
-        srcInactive: homeInactive,
+  // Memoized so JSX element objects are never recreated across MainPage renders.
+  const pages = useMemo(
+    () => [
+      {
+        label: { text: 'Home', srcActive: homeActive, srcInactive: homeInactive },
+        content: <Home />,
       },
-      content: <Home />,
-    },
-    {
-      label: {
-        text: 'Courses',
-        srcActive: booksvg,
-        srcInactive: bookInactive,
+      {
+        label: { text: 'Courses', srcActive: booksvg, srcInactive: bookInactive },
+        content: <Courses />,
       },
-      content: <Courses />,
-    },
-    {
-      label: {
-        text: 'Ranking',
-        srcActive: rankingActive,
-        srcInactive: rankingInactive,
+      {
+        label: { text: 'Ranking', srcActive: rankingActive, srcInactive: rankingInactive },
+        content: <Leaderboard />,
       },
-      content: <Leaderboard />,
-    },
-    {
-      label: {
-        text: 'Profile',
-        srcActive: userActive,
-        srcInactive: userInactive,
+      {
+        label: { text: 'Profile', srcActive: userActive, srcInactive: userInactive },
+        content: <ProfileScreen />,
       },
-      content: <ProfileScreen />,
-    },
-  ];
+    ],
+    [],
+  );
 
   useEffect(() => {
     if (isRefreshing) return;
