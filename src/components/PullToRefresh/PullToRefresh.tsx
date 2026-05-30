@@ -19,12 +19,12 @@ interface Visual {
   transitioning: boolean;
 }
 
-const THRESHOLD          = 80;
-const INDICATOR_HEIGHT   = 60;
-const TRANSITION_MS      = 300;
-const RESISTANCE         = 0.4;
-const DIRECTION_DEADZONE = 8;   // px before we commit to a PTR gesture
-const SPINNER_DOTS       = Array.from({ length: 8 });
+const THRESHOLD        = 80;
+const INDICATOR_HEIGHT = 60;
+const TRANSITION_MS    = 300;
+const RESISTANCE       = 0.4;
+const DEADZONE         = 8;   // px of movement before intent is decided
+const SPINNER_DOTS     = Array.from({ length: 8 });
 
 export const PullToRefresh = ({
   onRefresh,
@@ -37,17 +37,20 @@ export const PullToRefresh = ({
     transitioning: false,
   });
 
-  // ── Refs (never cause re-renders) ─────────────────────────────────────────
   const startY          = useRef(0);
-  const isDragging      = useRef(false);  // true only once confirmed downward gesture
+  const isDragging      = useRef(false);
   const isRefreshing    = useRef(false);
-  const scrollTopRef    = useRef(0);      // exact scrollTop from bindscroll
+  // Exact scrollTop, updated ONLY from bindscroll — never from bindscrolltoupper.
+  // bindscrolltoupper fires at Lynx's default upper-threshold (~50 px), which is
+  // far too early; trusting it zeroes scrollTopRef while the user is still mid-page.
+  const scrollTopRef    = useRef(0);
+  // Once set true for a gesture, PTR will NOT arm for the remainder of that gesture.
+  const gestureLocked   = useRef(false);
   const rafPending      = useRef(false);
   const nextDistance    = useRef(0);
   const nextState       = useRef<PullState>('idle');
   const refreshTimeout  = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // ── Visual commit (called by RAF, max once per frame) ─────────────────────
   const commitVisual = () => {
     rafPending.current = false;
     if (!isDragging.current) return;
@@ -59,15 +62,15 @@ export const PullToRefresh = ({
     });
   };
 
-  const cancel = () => {
-    isDragging.current    = false;
-    nextDistance.current  = 0;
-    nextState.current     = 'idle';
+  const resetDrag = () => {
+    isDragging.current   = false;
+    nextDistance.current = 0;
+    nextState.current    = 'idle';
   };
 
   const snapBack = () => {
     isRefreshing.current = false;
-    cancel();
+    resetDrag();
     setVisual({ distance: 0, state: 'idle', transitioning: true });
     setTimeout(
       () => setVisual((p) => ({ ...p, transitioning: false })),
@@ -75,72 +78,86 @@ export const PullToRefresh = ({
     );
   };
 
-  // ── Scroll event handlers — passed to the inner scroll-view ───────────────
+  // ── Scroll handlers ────────────────────────────────────────────────────────
+
   const bindscrolltoupper = () => {
-    // Lynx fires this when scrollTop < upper-threshold (default 50 px).
-    // Do NOT use this to gate PTR — it fires too early.
-    // Only use it to zero out scrollTopRef when we know we hit the absolute top.
-    scrollTopRef.current = 0;
+    // Intentionally empty.
+    // Lynx fires this at scrollTop ≤ upper-threshold (default ~50 px), which is
+    // NOT the true top. Updating scrollTopRef here would make it stale (0) while
+    // the user is still mid-page. bindscroll below has the accurate value.
   };
 
   const bindscroll = (e: any) => {
     const top = e?.detail?.scrollTop ?? 0;
     scrollTopRef.current = top;
 
-    // If the user scrolled away from the top mid-gesture, kill the PTR
+    // Kill an active pull if the scroll-view moved away from the top
     if (isDragging.current && top > 4) {
-      cancel();
+      resetDrag();
       setVisual({ distance: 0, state: 'idle', transitioning: false });
     }
   };
 
-  // ── Touch handlers on the outer wrapper ───────────────────────────────────
+  // ── Touch handlers ─────────────────────────────────────────────────────────
+
   const handleTouchStart = (e: any) => {
     if (isRefreshing.current) return;
-    // Record start Y but do NOT arm isDragging yet.
-    // We only arm once we confirm a downward gesture while at scrollTop = 0
-    // (see handleTouchMove). This prevents false-arms on upward scroll gestures
-    // that momentarily report scrollTop = 0 via bindscrolltoupper.
-    startY.current = e.touches?.[0]?.clientY ?? 0;
-    isDragging.current = false;
+    startY.current      = e.touches?.[0]?.clientY ?? 0;
+    isDragging.current  = false;
+    gestureLocked.current = false;  // reset per-gesture lock
   };
 
   const handleTouchMove = (e: any) => {
     if (isRefreshing.current) return;
+    // Once this gesture was identified as a normal scroll, ignore every move
+    if (gestureLocked.current) return;
 
-    const touchY = e.touches?.[0]?.clientY ?? 0;
-    const delta  = touchY - startY.current;
+    const delta = (e.touches?.[0]?.clientY ?? 0) - startY.current;
 
-    // ── Lazy arm: decide PTR intent on first meaningful movement ──────────
     if (!isDragging.current) {
-      if (scrollTopRef.current > 0) return;           // not at top — ignore
-      if (delta > DIRECTION_DEADZONE) {
-        // Clear downward pull at scrollTop=0 → arm PTR
+      // ── Intent detection: decide what kind of gesture this is ──────────
+      if (scrollTopRef.current > 0) {
+        // Not at top — lock as scroll for the entire gesture
+        gestureLocked.current = true;
+        return;
+      }
+      if (delta >= DEADZONE) {
+        // Clearly pulling down at scrollTop=0 → arm PTR
         isDragging.current = true;
+      } else if (delta <= -DEADZONE) {
+        // Clearly scrolling up → lock as scroll
+        gestureLocked.current = true;
+        return;
       } else {
-        // Upward or ambiguous movement — this gesture belongs to the scroll-view
+        // Still in the deadzone — wait for more movement
         return;
       }
     }
 
-    // ── We are in a confirmed PTR drag ─────────────────────────────────────
+    // ── Active PTR drag ────────────────────────────────────────────────────
+    // Extra guard: abort if scroll-view crept away from top
     if (scrollTopRef.current > 4) {
-      // Guard: the scroll-view somehow advanced while we were pulling
-      cancel();
+      resetDrag();
       return;
     }
 
     if (delta <= 0) {
-      if (nextDistance.current === 0) return;
-      nextDistance.current = 0;
-      nextState.current    = 'idle';
-    } else {
-      const d = delta < threshold
-        ? delta
-        : threshold + (delta - threshold) * RESISTANCE;
-      nextDistance.current = d;
-      nextState.current    = d >= threshold ? 'ready' : 'pulling';
+      if (nextDistance.current !== 0) {
+        nextDistance.current = 0;
+        nextState.current    = 'idle';
+        if (!rafPending.current) {
+          rafPending.current = true;
+          requestAnimationFrame(commitVisual);
+        }
+      }
+      return;
     }
+
+    const d = delta < threshold
+      ? delta
+      : threshold + (delta - threshold) * RESISTANCE;
+    nextDistance.current = d;
+    nextState.current    = d >= threshold ? 'ready' : 'pulling';
 
     if (!rafPending.current) {
       rafPending.current = true;
@@ -149,6 +166,8 @@ export const PullToRefresh = ({
   };
 
   const handleTouchEnd = async () => {
+    gestureLocked.current = false;
+
     if (!isDragging.current) return;
     isDragging.current = false;
 
@@ -190,7 +209,7 @@ export const PullToRefresh = ({
       bindtouchmove={handleTouchMove}
       bindtouchend={handleTouchEnd}
     >
-      {/* Indicator slides in from above */}
+      {/* Indicator slides down from above */}
       <view
         className="items-center absolute left-0 right-0 justify-center"
         style={{
