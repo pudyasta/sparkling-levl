@@ -1,5 +1,3 @@
-import { useEffect } from '@lynx-js/react';
-
 import { trophy } from '@/assets/images/icon';
 import Text from '@/components/Text';
 import { FontFamily, TextType } from '@/components/Text/types';
@@ -11,52 +9,33 @@ import { useNativeBridge } from '@/context/NativeBridgeProvider';
 import type { LeaderboardEntry } from '../../repository/type/leaderboard';
 import { useGetLeaderboard, useGetUserRank } from '../../usecase/useGetLeaderboards';
 import styles from './Leaderboard.module.css';
-import './Leaderboard.module.css';
 import LeaderboardItem from './LeaderboardItem/LeaderboardItem';
 import LeaderboardLoader from './loader';
 
 type Variant = 'second' | 'first' | 'third';
 
-enum Variants {
-  first = 'first',
-  second = 'second',
-  third = 'third',
-}
+const rankMapping = [
+  { badge: '2', variant: 'second' as Variant },
+  { badge: '1', variant: 'first'  as Variant },
+  { badge: '3', variant: 'third'  as Variant },
+];
 
 const variantClassMap: Record<Variant, string> = {
-  first: styles.lbCardHighlight,
+  first:  styles.lbCardHighlight,
   second: styles.lbCardSecond,
-  third: styles.lbCardThird,
+  third:  styles.lbCardThird,
 };
-
-const rankMapping = [
-  { badge: '2', variant: Variants.second },
-  { badge: '1', variant: Variants.first },
-  { badge: '3', variant: Variants.third },
-];
 
 function Leaderboard() {
   const { topThree, restRank, isLoading } = useGetLeaderboard();
   const { userRank, isLoading: isUserLoading } = useGetUserRank();
-  const user = useNativeBridge();
-
-  useEffect(() => {}, [userRank]);
+  const { user } = useNativeBridge();
 
   return (
-    <view
-      style={{
-        width: '100%',
-        paddingBottom: '70px',
-      }}
-    >
-      <view
-        style={{
-          background: 'linear-gradient(180deg, #1a73e8 0%, #1557b0 100%)',
-          padding: '1.5rem',
-          display: 'flex',
-          gap: '1rem',
-          alignItems: 'center',
-        }}
+    <scroll-view className="flex-1" scroll-orientation="vertical">
+      {/* Header */}
+      <view className="flex-row items-center gap-4 px-6 py-6 flex"
+        style={{ background: 'linear-gradient(180deg, #1a73e8 0%, #1557b0 100%)' }}
       >
         <IconWithBackground image={trophy} />
         <view>
@@ -69,33 +48,25 @@ function Leaderboard() {
         </view>
       </view>
 
-      {isUserLoading || isLoading ? (
+      {isLoading || isUserLoading ? (
         <LeaderboardLoader />
       ) : (
-        <view className="animate-fade-in">
-          <view
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-around',
-              paddingTop: '12px',
-              borderBottomWidth: '1px',
-              borderBottomColor: '#e5e7eb',
-              display: 'flex',
-            }}
-          >
+        <view className="animate-fade-in pb-[70px]">
+          {/* Podium top 3 */}
+          <view className="border-b border-gray-200">
             <view className={styles.lbRow}>
-              {topThree.map((user: LeaderboardEntry, idx: number) => (
+              {topThree.map((entry: LeaderboardEntry, idx: number) => (
                 <view
-                  key={user.user.name}
-                  className={`${styles.lbCard} ${variantClassMap[rankMapping[idx].variant as Variant]}`}
+                  key={entry.user.name}
+                  className={`${styles.lbCard} ${variantClassMap[rankMapping[idx].variant]}`}
                 >
                   <view className={styles.lbAvatarWrapper}>
                     <view className={styles.lbAvatar}>
-                      {user.user.avatar_url ? (
-                        <CustomImage src={user.user.avatar_url} className={styles.avatarSvg} />
+                      {entry.user.avatar_url ? (
+                        <CustomImage src={entry.user.avatar_url} className={styles.avatarSvg} />
                       ) : (
                         <Text color="white" className={styles.lbAvatarText}>
-                          {user.user.name.slice(0, 2)}
+                          {entry.user.name.slice(0, 2)}
                         </Text>
                       )}
                     </view>
@@ -103,18 +74,19 @@ function Leaderboard() {
                       <Text className={styles.lbBadgeText}>{rankMapping[idx].badge}</Text>
                     </view>
                   </view>
+
                   <view className={styles.lbInfo}>
                     <Text size={TextType.b1} fontWeight="bold" style={{ textAlign: 'center' }}>
-                      {user.user.name.split(' ')[0] +
+                      {entry.user.name.split(' ')[0] +
                         ' ' +
-                        (user.user.name.split(' ')[1]?.[0] || '')}
+                        (entry.user.name.split(' ')[1]?.[0] ?? '')}
                     </Text>
-                    <view className={styles.xpRow} style={{ textAlign: 'center' }}>
+                    <view className={styles.xpRow}>
                       <Text className={styles.xpIcon}>⚡</Text>
                       <Text
-                        color={rankMapping[idx].variant === Variants.first ? Colors.Secondary : ''}
+                        color={rankMapping[idx].variant === 'first' ? Colors.Secondary : ''}
                       >
-                        {`${user.total_xp} XP`}
+                        {`${entry.total_xp} XP`}
                       </Text>
                     </view>
                   </view>
@@ -124,35 +96,31 @@ function Leaderboard() {
           </view>
 
           {/* Full list */}
-          <view
-            style={{
-              padding: '12px',
-              display: 'flex',
-              flexDirection: 'column',
-            }}
-          >
-            {restRank.map((l: LeaderboardEntry, idx: number) => (
+          <view className="flex-col gap-2 p-3 flex">
+            {restRank.map((entry: LeaderboardEntry, idx: number) => (
               <LeaderboardItem
+                key={entry.user.name}
                 rank={idx + 4}
-                initials={l.user.avatar_url ? '' : l.user.name.slice(0, 2)}
-                name={l.user.name}
-                avatar={l.user.avatar_url}
-                xp={`${l.total_xp} XP`}
+                initials={entry.user.avatar_url ? '' : entry.user.name.slice(0, 2)}
+                name={entry.user.name}
+                avatar={entry.user.avatar_url}
+                xp={`${entry.total_xp} XP`}
               />
             ))}
+
+            {/* Current user row */}
             <LeaderboardItem
-              /* @ts-ignore */
-              rank={userRank?.rank || 0}
-              initials={user!.user!.avatar_url ? '' : user!.user!.name.slice(0, 2)}
-              name={user!.user!.name}
-              avatar={user!.user!.avatar_url}
-              /* @ts-ignore */
-              xp={`${userRank?.total_xp || 0} XP`}
+              rank={(userRank as any)?.rank ?? 0}
+              initials={user?.avatar_url ? '' : (user?.name?.slice(0, 2) ?? '')}
+              name={user?.name ?? ''}
+              avatar={user?.avatar_url ?? ''}
+              xp={`${(userRank as any)?.total_xp ?? 0} XP`}
             />
           </view>
         </view>
       )}
-    </view>
+    </scroll-view>
   );
 }
+
 export default Leaderboard;
