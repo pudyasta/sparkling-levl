@@ -1,7 +1,6 @@
 import { useEffect } from '@lynx-js/react';
 
-import { thropy } from '@/assets/images/icon';
-import { loginBanner } from '@/assets/images/pages';
+import { trophy } from '@/assets/images/icon';
 import Text from '@/components/Text';
 import { FontFamily, TextType } from '@/components/Text/types';
 import CustomImage from '@/components/common/CustomImage/CustomImage';
@@ -59,7 +58,7 @@ function Leaderboard() {
           alignItems: 'center',
         }}
       >
-        <IconWithBackground image={thropy} />
+        <IconWithBackground image={trophy} />
         <view>
           <Text size={TextType.h1} fontWeight="bold" color="white" fontFamily={FontFamily.jakarta}>
             Ranking

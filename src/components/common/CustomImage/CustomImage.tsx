@@ -10,7 +10,7 @@ const SVG_REGEX = /\.svg(?:\?.*)?$/i;
 const SVG_MIME_REGEX = /^image\/svg(?:\+xml)?$/i;
 const SVG_DATA_URI_REGEX = /^data:image\/svg\+xml/i;
 
-const CustomImage: FC<CustomImage> = ({ src, className }) => {
+const CustomImage: FC<CustomImage> = ({ src, className, style }) => {
   const isSvg =
     src.startsWith('<svg') ||
     src.startsWith('<?xml') ||
@@ -21,7 +21,7 @@ const CustomImage: FC<CustomImage> = ({ src, className }) => {
   if (isSvg) {
     return (
       // @ts-expect-error
-      <native-svg src={src} className={className} />
+      <native-svg src={src} className={className} style={style} />
     );
   }
 

@@ -6,11 +6,11 @@ export const useLessonsRepository = () => {
 
   return {
     getLessonApi: (coursSlug: string, unitSlug: string, lessonSlug: string) =>
-      api(`/courses/${coursSlug}/units/${unitSlug}/lessons/${lessonSlug}`, { method: GET_METHOD })
-        .then((r: any) => r?.data),
+      api(`/courses/${coursSlug}/units/${unitSlug}/lessons/${lessonSlug}`, {
+        method: GET_METHOD,
+      }).then((r: any) => r?.data),
 
     markAsDoneApi: (lessonSlug: string) =>
-      api(`/lessons/${lessonSlug}/complete`, { method: POST_METHOD })
-        .then((r: any) => r?.data),
+      api(`/lessons/${lessonSlug}/complete`, { method: POST_METHOD }).then((r: any) => r?.data),
   };
 };
