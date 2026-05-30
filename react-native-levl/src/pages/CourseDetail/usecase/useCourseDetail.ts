@@ -20,10 +20,7 @@ export const useGetCourseDetail = (slug: string) => {
   return { ...query, course: query.data };
 };
 
-export const useEnrollCourse = (callbacks?: {
-  onSuccess?: () => void;
-  onError?: () => void;
-}) => {
+export const useEnrollCourse = (callbacks?: { onSuccess?: () => void; onError?: () => void }) => {
   const { enrollCourseApi } = useCourseDetailRepository();
 
   const mutation = useMutation({
@@ -40,5 +37,5 @@ export const useEnrollCourse = (callbacks?: {
     },
   });
 
-  return { enroll: mutation.mutate, isLoading: mutation.isPending };
+  return { enroll: mutation.mutate, isLoading: mutation.isPending, error: mutation.error };
 };
