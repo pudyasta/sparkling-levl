@@ -185,6 +185,10 @@ function UnitRow({
       router.push({ pathname: '/quiz', params: { quizId: element.id.toString() } });
       return;
     }
+    if (element.type === 'assignment') {
+      router.push({ pathname: '/assignment', params: { assignmentId: element.id.toString() } });
+      return;
+    }
     router.push({
       pathname: '/lessons',
       params: {
@@ -234,7 +238,7 @@ function UnitRow({
             >
               <View style={styles.lessonIcon}>
                 <Text size={TextType.p}>
-                  {el.is_completed ? '✅' : el.is_locked ? '🔒' : el.type === 'quiz' ? '📝' : '📖'}
+                  {el.is_completed ? '✅' : el.is_locked ? '🔒' : el.type === 'quiz' ? '📝' : el.type === 'assignment' ? '📋' : '📖'}
                 </Text>
               </View>
               <View style={{ flex: 1 }}>

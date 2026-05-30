@@ -30,11 +30,24 @@ export interface UserRankData {
   total_xp: number;
   level: number;
   badges_count: number;
+  surrounding: RankEntry[];
+}
+
+export interface RankEntry {
+  rank: number;
+  user: User;
+  total_xp: number;
+  level: number;
+  badges_count: number;
+  is_current_user?: boolean;
 }
 
 export interface UserRank {
   rank: number;
   total_xp: number;
+  level: number;
+  badges_count: number;
+  surrounding: RankEntry[];
 }
 
 export interface Pagination {

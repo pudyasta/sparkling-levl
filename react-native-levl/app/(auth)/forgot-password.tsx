@@ -8,6 +8,7 @@ import Text from '../../src/components/Text';
 import { TextType } from '../../src/components/Text/types';
 import Button from '../../src/components/common/Button';
 import { Colors } from '../../src/constant/style';
+import { AUTH_FORGOT_PASSWORD_ENDPOINT } from '../../src/constant/route';
 import { guestAPIClient } from '../../src/lib/api/core';
 
 export default function ForgotPasswordScreen() {
@@ -23,7 +24,7 @@ export default function ForgotPasswordScreen() {
     }
     setIsLoading(true);
     try {
-      await guestAPIClient('/auth/forgot-password', { method: 'POST', data: { email } });
+      await guestAPIClient(AUTH_FORGOT_PASSWORD_ENDPOINT, { method: 'POST', data: { email } });
       setSent(true);
     } catch {
       emailRef.current?.setError('Failed to send reset email. Please try again.');
