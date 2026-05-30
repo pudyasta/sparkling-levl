@@ -6,11 +6,15 @@ export const useCourseDetailRepository = () => {
 
   return {
     getCourseDetailApi: (slug: string) =>
-      api(`/courses/${slug}?include=units,units.elements,units.progress,progress,category,tags`, {
+      api(`/courses/${slug}?include=units,category,elements,tags&lang=id`, {
         method: GET_METHOD,
-      }).then((r: any) => r?.data),
+      }).then((r: any) => {
+        return r?.data;
+      }),
 
     enrollCourseApi: (slug: string, payload?: { enrollment_key?: string }) =>
-      api(`/courses/${slug}/enroll`, { method: POST_METHOD, data: payload ?? {} }).then((r: any) => r?.data),
+      api(`/courses/${slug}/enroll`, { method: POST_METHOD, data: payload ?? {} }).then(
+        (r: any) => r?.data
+      ),
   };
 };

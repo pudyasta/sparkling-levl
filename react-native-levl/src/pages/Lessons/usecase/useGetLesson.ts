@@ -9,7 +9,7 @@ export const useGetLesson = (
   courseSlug: string,
   unitSlug: string,
   lessonSlug: string,
-  enabled = true,
+  enabled = true
 ) => {
   const { getLessonApi } = useLessonsRepository();
 
