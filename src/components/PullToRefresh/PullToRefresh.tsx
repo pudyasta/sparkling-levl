@@ -7,7 +7,6 @@ export interface PTRScrollProps {
 
 interface PullToRefreshProps {
   onRefresh: () => Promise<void>;
-  /** Render prop — wire the returned handlers onto your inner scroll-view */
   children: (scrollProps: PTRScrollProps) => React.ReactNode;
   threshold?: number;
 }
@@ -20,11 +19,12 @@ interface Visual {
   transitioning: boolean;
 }
 
-const THRESHOLD = 80;
-const INDICATOR_HEIGHT = 60;
-const TRANSITION_DURATION = 300;
-const RESISTANCE = 0.4;
-const SPINNER_DOTS = Array.from({ length: 8 });
+const THRESHOLD          = 80;
+const INDICATOR_HEIGHT   = 60;
+const TRANSITION_MS      = 300;
+const RESISTANCE         = 0.4;
+const DIRECTION_DEADZONE = 8;   // px before we commit to a PTR gesture
+const SPINNER_DOTS       = Array.from({ length: 8 });
 
 export const PullToRefresh = ({
   onRefresh,
@@ -37,19 +37,20 @@ export const PullToRefresh = ({
     transitioning: false,
   });
 
-  const startY = useRef(0);
-  const isDragging = useRef(false);
-  const isRefreshing = useRef(false);
-  const isAtTop = useRef(true);
-  const rafPending = useRef(false);
-  const nextDistance = useRef(0);
-  const nextState = useRef<PullState>('idle');
-  const refreshTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // ── Refs (never cause re-renders) ─────────────────────────────────────────
+  const startY          = useRef(0);
+  const isDragging      = useRef(false);  // true only once confirmed downward gesture
+  const isRefreshing    = useRef(false);
+  const scrollTopRef    = useRef(0);      // exact scrollTop from bindscroll
+  const rafPending      = useRef(false);
+  const nextDistance    = useRef(0);
+  const nextState       = useRef<PullState>('idle');
+  const refreshTimeout  = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // ── Visual commit (called by RAF, max once per frame) ────────────────────
+  // ── Visual commit (called by RAF, max once per frame) ─────────────────────
   const commitVisual = () => {
     rafPending.current = false;
-    if (!isDragging.current) return; // stale RAF after touchEnd — ignore
+    if (!isDragging.current) return;
     setVisual((prev) => {
       const d = nextDistance.current;
       const s = nextState.current;
@@ -58,44 +59,87 @@ export const PullToRefresh = ({
     });
   };
 
-  const snapBack = () => {
-    isRefreshing.current = false;
-    nextDistance.current = 0;
-    nextState.current = 'idle';
-    setVisual({ distance: 0, state: 'idle', transitioning: true });
-    setTimeout(() => setVisual((prev) => ({ ...prev, transitioning: false })), TRANSITION_DURATION);
+  const cancel = () => {
+    isDragging.current    = false;
+    nextDistance.current  = 0;
+    nextState.current     = 'idle';
   };
 
-  // ── Scroll event handlers — pass these to the inner scroll-view ──────────
+  const snapBack = () => {
+    isRefreshing.current = false;
+    cancel();
+    setVisual({ distance: 0, state: 'idle', transitioning: true });
+    setTimeout(
+      () => setVisual((p) => ({ ...p, transitioning: false })),
+      TRANSITION_MS,
+    );
+  };
+
+  // ── Scroll event handlers — passed to the inner scroll-view ───────────────
   const bindscrolltoupper = () => {
-    isAtTop.current = true;
+    // Lynx fires this when scrollTop < upper-threshold (default 50 px).
+    // Do NOT use this to gate PTR — it fires too early.
+    // Only use it to zero out scrollTopRef when we know we hit the absolute top.
+    scrollTopRef.current = 0;
   };
 
   const bindscroll = (e: any) => {
-    isAtTop.current = (e?.detail?.scrollTop ?? 0) <= 0;
+    const top = e?.detail?.scrollTop ?? 0;
+    scrollTopRef.current = top;
+
+    // If the user scrolled away from the top mid-gesture, kill the PTR
+    if (isDragging.current && top > 4) {
+      cancel();
+      setVisual({ distance: 0, state: 'idle', transitioning: false });
+    }
   };
 
-  // ── Touch handlers on the outer wrapper ──────────────────────────────────
+  // ── Touch handlers on the outer wrapper ───────────────────────────────────
   const handleTouchStart = (e: any) => {
-    if (isRefreshing.current || !isAtTop.current) return;
+    if (isRefreshing.current) return;
+    // Record start Y but do NOT arm isDragging yet.
+    // We only arm once we confirm a downward gesture while at scrollTop = 0
+    // (see handleTouchMove). This prevents false-arms on upward scroll gestures
+    // that momentarily report scrollTop = 0 via bindscrolltoupper.
     startY.current = e.touches?.[0]?.clientY ?? 0;
-    isDragging.current = true;
+    isDragging.current = false;
   };
 
   const handleTouchMove = (e: any) => {
-    if (!isDragging.current || isRefreshing.current) return;
+    if (isRefreshing.current) return;
 
-    const delta = (e.touches?.[0]?.clientY ?? 0) - startY.current;
+    const touchY = e.touches?.[0]?.clientY ?? 0;
+    const delta  = touchY - startY.current;
+
+    // ── Lazy arm: decide PTR intent on first meaningful movement ──────────
+    if (!isDragging.current) {
+      if (scrollTopRef.current > 0) return;           // not at top — ignore
+      if (delta > DIRECTION_DEADZONE) {
+        // Clear downward pull at scrollTop=0 → arm PTR
+        isDragging.current = true;
+      } else {
+        // Upward or ambiguous movement — this gesture belongs to the scroll-view
+        return;
+      }
+    }
+
+    // ── We are in a confirmed PTR drag ─────────────────────────────────────
+    if (scrollTopRef.current > 4) {
+      // Guard: the scroll-view somehow advanced while we were pulling
+      cancel();
+      return;
+    }
 
     if (delta <= 0) {
-      // Hot path during normal scroll — bail with zero allocations
       if (nextDistance.current === 0) return;
       nextDistance.current = 0;
-      nextState.current = 'idle';
+      nextState.current    = 'idle';
     } else {
-      const d = delta < threshold ? delta : threshold + (delta - threshold) * RESISTANCE;
+      const d = delta < threshold
+        ? delta
+        : threshold + (delta - threshold) * RESISTANCE;
       nextDistance.current = d;
-      nextState.current = d >= threshold ? 'ready' : 'pulling';
+      nextState.current    = d >= threshold ? 'ready' : 'pulling';
     }
 
     if (!rafPending.current) {
@@ -105,6 +149,7 @@ export const PullToRefresh = ({
   };
 
   const handleTouchEnd = async () => {
+    if (!isDragging.current) return;
     isDragging.current = false;
 
     if (nextState.current !== 'ready') {
@@ -114,7 +159,10 @@ export const PullToRefresh = ({
 
     isRefreshing.current = true;
     setVisual({ distance: threshold, state: 'refreshing', transitioning: true });
-    setTimeout(() => setVisual((prev) => ({ ...prev, transitioning: false })), TRANSITION_DURATION);
+    setTimeout(
+      () => setVisual((p) => ({ ...p, transitioning: false })),
+      TRANSITION_MS,
+    );
 
     const minDisplay = new Promise<void>((r) => {
       refreshTimeout.current = setTimeout(r, 600);
@@ -128,8 +176,8 @@ export const PullToRefresh = ({
     }
   };
 
+  // ── Render ─────────────────────────────────────────────────────────────────
   const { distance, state, transitioning } = visual;
-  // Indicator slides in from above: -INDICATOR_HEIGHT (hidden) → 0 (fully visible)
   const indicatorTranslate =
     state === 'refreshing' ? 0 : Math.min(distance, threshold) - INDICATOR_HEIGHT;
   const pullProgress = Math.min(distance / threshold, 1);
@@ -142,7 +190,7 @@ export const PullToRefresh = ({
       bindtouchmove={handleTouchMove}
       bindtouchend={handleTouchEnd}
     >
-      {/* Indicator overlays from top — content never shifts */}
+      {/* Indicator slides in from above */}
       <view
         className="items-center absolute left-0 right-0 justify-center"
         style={{
@@ -150,7 +198,7 @@ export const PullToRefresh = ({
           top: 0,
           zIndex: 100,
           transform: `translateY(${indicatorTranslate}px)`,
-          transition: transitioning ? `transform ${TRANSITION_DURATION}ms ease-out` : 'none',
+          transition: transitioning ? `transform ${TRANSITION_MS}ms ease-out` : 'none',
         }}
       >
         <view className="h-10 w-10 items-center rounded-full bg-white justify-center shadow-md">
@@ -182,7 +230,6 @@ export const PullToRefresh = ({
         </view>
       </view>
 
-      {/* Content: scroll-view scrolls natively, untouched by PTR transforms */}
       {children({ bindscrolltoupper, bindscroll })}
     </view>
   );
