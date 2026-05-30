@@ -2,8 +2,8 @@ import { GET_METHOD } from '@/constant/api';
 import { useApiClient } from '@/lib/api/core';
 
 const PROFILE_ENDPOINT = '/profile';
-const GAMIFICATION_STATS_ENDPOINT = '/gamification/stats';
-const ACHIEVEMENTS_ENDPOINT = '/achievements';
+const GAMIFICATION_STATS_ENDPOINT = '/user/gamification-summary';
+const ACHIEVEMENTS_ENDPOINT = '/user/badges';
 
 export const useProfileRepository = () => {
   const { api } = useApiClient();

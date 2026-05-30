@@ -7,6 +7,10 @@ dist/
 # Test coverage
 coverage/
 
+# Profiling results
+profiling/results/
+profiling/screenshots/
+
 # TypeScript
 *.tsbuildinfo
 

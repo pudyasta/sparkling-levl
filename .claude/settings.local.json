@@ -12,7 +12,16 @@
       "Bash(Get-ChildItem -Path \"F:\\\\TA\\\\sparkling-levl\" -Directory)",
       "Bash(Select-Object Name)",
       "Bash(awk '{print $5, $9}')",
-      "PowerShell(Remove-Item *)"
+      "PowerShell(Remove-Item *)",
+      "Bash(npm --version)",
+      "PowerShell(Get-Process *)",
+      "PowerShell(Test-Path *)",
+      "Bash(Get-ChildItem -Path \"F:\\\\TA\\\\sparkling-levl\\\\src\\\\lib\\\\api\" -Recurse)",
+      "Bash(Select-Object FullName)",
+      "Bash(npx expo *)",
+      "Bash(Get-ChildItem -Path \"F:\\\\TA\\\\sparkling-levl\\\\android\" -Recurse -Include \"*.kt\", \"*.java\", \"*.gradle\", \"*.kts\", \"*.py\", \"*.sh\")",
+      "Bash(Select-Object -ExpandProperty FullName)",
+      "Bash(Sort-Object)"
     ]
   }
 }
