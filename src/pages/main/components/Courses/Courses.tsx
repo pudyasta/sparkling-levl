@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from '@lynx-js/react';
+import { useCallback, useMemo, useRef, useState } from '@lynx-js/react';
 
 import { searchIcon } from '@/assets/images/icon';
 import CourseCard from '@/components/CoursesCard/CoursesCard';
@@ -34,7 +34,6 @@ const Courses: React.FC = () => {
   const [levelTag, setLevelTag] = useState('');
   const [sort, setSort] = useState('');
   const [showFilters, setShowFilters] = useState(false);
-  const [categories, setCategories] = useState<Category[]>([]);
 
   const { courses, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage, refetch } =
     useGetAllCourses({
@@ -50,25 +49,21 @@ const Courses: React.FC = () => {
     debouncedSetSearch(e);
   };
 
-  const handleScroll = (e: any) => {
+  const handleScroll = useCallback((e: any) => {
     const { scrollTop, scrollHeight, clientHeight } = e.detail;
     const nearBottom = scrollHeight - scrollTop - clientHeight < 200;
     if (nearBottom && hasNextPage && !isFetchingNextPage) {
       fetchNextPage();
     }
-  };
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   const hasActiveFilters = levelTag || sort;
-  useEffect(() => {
-    if (courses.length > 0) {
-      courses.map((course) => {
-        const category = categories.find((cat) => cat.id === course.id);
 
-        if (!category) {
-          setCategories([...categories, course.category]);
-        }
-      });
-    }
+  const categories = useMemo<Category[]>(() => {
+    const seen = new Set<number>();
+    return courses
+      .map((course) => course.category)
+      .filter((cat): cat is Category => !!cat && !seen.has(cat.id) && !!seen.add(cat.id));
   }, [courses]);
 
   return (
@@ -97,7 +92,7 @@ const Courses: React.FC = () => {
 
             {/* Filter toggle button */}
             <view
-              bindtap={handleSearchInput}
+              bindtap={() => setShowFilters(!showFilters)}
               className={`z-50 h-full w-12 items-center rounded-2xl p-2 absolute right-2 justify-center ${
                 hasActiveFilters ? 'bg-[#1a73e8]' : 'bg-white/20'
               }`}

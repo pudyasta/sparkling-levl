@@ -1,3 +1,5 @@
+import { memo } from '@lynx-js/react';
+
 import { Colors } from '../../../../../constant/style';
 
 interface LabelProps {
@@ -5,7 +7,7 @@ interface LabelProps {
   bindTap: (e: any) => void;
   category: string;
 }
-const CategoryLabel: React.FC<LabelProps> = ({
+const CategoryLabel = memo<LabelProps>(({
   isActive,
   category,
   bindTap,
@@ -30,5 +32,5 @@ const CategoryLabel: React.FC<LabelProps> = ({
       </text>
     </view>
   );
-};
+});
 export default CategoryLabel;

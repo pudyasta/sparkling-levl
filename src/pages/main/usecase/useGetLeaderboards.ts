@@ -3,6 +3,7 @@ import {
   useQueryClient,
   type UseQueryOptions,
 } from '@tanstack/react-query';
+import { useMemo } from '@lynx-js/react';
 import type {
   LeaderboardResponse,
   MyRankResponse,
@@ -30,12 +31,14 @@ export const useGetLeaderboard = <T = LeaderboardResponse>(
     ...options,
   });
 
-  const leaderboardEntries = (query.data as any) || [];
-  let topThree = leaderboardEntries.slice(0, 3);
-  if (topThree.length >= 2) {
-    [topThree[0], topThree[1]] = [topThree[1], topThree[0]];
-  }
-  const restRank = leaderboardEntries.slice(3, -1);
+  const { topThree, restRank } = useMemo(() => {
+    const entries = (query.data as any) || [];
+    const top = entries.slice(0, 3);
+    if (top.length >= 2) {
+      [top[0], top[1]] = [top[1], top[0]];
+    }
+    return { topThree: top, restRank: entries.slice(3, -1) };
+  }, [query.data]);
 
   return {
     ...query,

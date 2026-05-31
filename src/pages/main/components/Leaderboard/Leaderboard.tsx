@@ -57,7 +57,7 @@ function Leaderboard() {
             <view className={styles.lbRow}>
               {topThree.map((entry: LeaderboardEntry, idx: number) => (
                 <view
-                  key={entry.user.name}
+                  key={entry.user.id}
                   className={`${styles.lbCard} ${variantClassMap[rankMapping[idx].variant]}`}
                 >
                   <view className={styles.lbAvatarWrapper}>
@@ -99,7 +99,7 @@ function Leaderboard() {
           <view className="flex-col gap-2 p-3 flex">
             {restRank.map((entry: LeaderboardEntry, idx: number) => (
               <LeaderboardItem
-                key={entry.user.name}
+                key={entry.user.id}
                 rank={idx + 4}
                 initials={entry.user.avatar_url ? '' : entry.user.name.slice(0, 2)}
                 name={entry.user.name}
