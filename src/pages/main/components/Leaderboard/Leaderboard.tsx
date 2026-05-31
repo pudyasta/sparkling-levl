@@ -16,14 +16,14 @@ type Variant = 'second' | 'first' | 'third';
 
 const rankMapping = [
   { badge: '2', variant: 'second' as Variant },
-  { badge: '1', variant: 'first'  as Variant },
-  { badge: '3', variant: 'third'  as Variant },
+  { badge: '1', variant: 'first' as Variant },
+  { badge: '3', variant: 'third' as Variant },
 ];
 
 const variantClassMap: Record<Variant, string> = {
-  first:  styles.lbCardHighlight,
+  first: styles.lbCardHighlight,
   second: styles.lbCardSecond,
-  third:  styles.lbCardThird,
+  third: styles.lbCardThird,
 };
 
 function Leaderboard() {
@@ -34,7 +34,8 @@ function Leaderboard() {
   return (
     <scroll-view className="flex-1" scroll-orientation="vertical">
       {/* Header */}
-      <view className="flex-row items-center gap-4 px-6 py-6 flex"
+      <view
+        className="flex-row items-center gap-4 px-6 py-6 flex"
         style={{ background: 'linear-gradient(180deg, #1a73e8 0%, #1557b0 100%)' }}
       >
         <IconWithBackground image={trophy} />
@@ -83,9 +84,7 @@ function Leaderboard() {
                     </Text>
                     <view className={styles.xpRow}>
                       <Text className={styles.xpIcon}>⚡</Text>
-                      <Text
-                        color={rankMapping[idx].variant === 'first' ? Colors.Secondary : ''}
-                      >
+                      <Text color={rankMapping[idx].variant === 'first' ? Colors.Secondary : ''}>
                         {`${entry.total_xp} XP`}
                       </Text>
                     </view>

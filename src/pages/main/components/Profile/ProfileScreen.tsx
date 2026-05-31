@@ -37,7 +37,7 @@ export const ProfileScreen: FC = () => {
 
   if (isLoading || isLoadingAchievements || profileLoading) {
     return (
-      <view className="h-full items-center flex justify-center">
+      <view className="h-[100vh] items-center flex justify-center">
         <Loading size={32} />
       </view>
     );
@@ -53,7 +53,7 @@ export const ProfileScreen: FC = () => {
     <PullToRefresh onRefresh={async () => refetchAll()}>
       {(scrollProps) => (
         <scroll-view
-          className={`${styles.container} animate-fade-in`}
+          className={`${styles.container} h-[100vh] animate-fade-in`}
           bindscrolltoupper={scrollProps.bindscrolltoupper}
           bindscroll={scrollProps.bindscroll}
         >
