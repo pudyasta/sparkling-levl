@@ -50,6 +50,7 @@ export default function CoursesScreen() {
   });
 
   React.useEffect(() => {
+    console.log(courses);
     if (courses.length > 0) {
       courses.forEach((course) => {
         if (course.category) {
@@ -80,10 +81,10 @@ export default function CoursesScreen() {
       course={{
         id: item.id.toString(),
         title: item.title,
-        description: item.description ?? '',
+        description: item.short_desc ?? '',
         level: item.difficulty_level,
         category: item.category?.name || '',
-        image: item.thumbnail_url ?? '',
+        image: item.thumbnail ?? '',
         lessons: item.units?.length || item.total_units || 0,
       }}
     />
@@ -110,36 +111,6 @@ export default function CoursesScreen() {
             }}
           />
         </View>
-
-        {/* Level filter chips */}
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ gap: 8 }}
-        >
-          {LEVEL_TAGS.map((tag) => (
-            <TouchableOpacity
-              key={tag.value}
-              onPress={() => setLevelTag(levelTag === tag.value ? '' : tag.value)}
-              style={[styles.filterChip, levelTag === tag.value && styles.filterChipActive]}
-            >
-              <Text
-                size={TextType.b3}
-                fontWeight="bold"
-                color={levelTag === tag.value ? 'white' : 'rgba(255,255,255,0.8)'}
-              >
-                {tag.label.toUpperCase()}
-              </Text>
-            </TouchableOpacity>
-          ))}
-          {levelTag ? (
-            <TouchableOpacity onPress={() => setLevelTag('')} style={styles.clearChip}>
-              <Text size={TextType.b3} fontWeight="bold" color="#fca5a5">
-                ✕ Clear
-              </Text>
-            </TouchableOpacity>
-          ) : null}
-        </ScrollView>
       </View>
 
       {/* Category tabs */}
