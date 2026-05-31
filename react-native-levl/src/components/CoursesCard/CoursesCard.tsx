@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+
 import Text from '@/components/Text';
 import { TextType } from '@/components/Text/types';
 import Badge from '@/components/common/Badge/Badge';
@@ -31,18 +32,14 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, bindTap }) => {
     ? htmlToPlainText(course.description).split(' ').slice(0, 30).join(' ') + '...'
     : '';
 
+  useEffect(() => {
+    console.log(course);
+  }, [course]);
+
   return (
-    <TouchableOpacity
-      onPress={bindTap}
-      activeOpacity={0.8}
-      style={styles.card}
-    >
+    <TouchableOpacity onPress={bindTap} activeOpacity={0.8} style={styles.card}>
       {course.image ? (
-        <Image
-          source={{ uri: course.image }}
-          style={styles.banner}
-          resizeMode="cover"
-        />
+        <Image source={{ uri: course.image }} style={styles.banner} resizeMode="cover" />
       ) : (
         <View style={[styles.banner, { backgroundColor: Colors.N100 }]} />
       )}
