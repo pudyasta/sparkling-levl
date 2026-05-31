@@ -1,9 +1,7 @@
 /* Container & Layout */
 .container {
   background-color: #f9fafb;
-  height: 100%;
   width: 100%;
-  padding-bottom: 20px;
 }
 
 .content {

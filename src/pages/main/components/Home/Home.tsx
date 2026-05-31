@@ -136,7 +136,7 @@ export default function LearningDashboard() {
       <PullToRefresh onRefresh={async () => refetchAll()}>
         {(scrollProps) => (
           <scroll-view
-            className="flex-1 animate-fade-in bg-slate-50 pb-[80px]"
+            className="h-[100vh] flex-1 animate-fade-in bg-slate-50"
             bindscrolltoupper={scrollProps.bindscrolltoupper}
             bindscroll={scrollProps.bindscroll}
           >

@@ -1,4 +1,4 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider, hydrate } from '@tanstack/react-query';
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -10,3 +10,10 @@ export const queryClient = new QueryClient({
     },
   },
 });
+
+try {
+  const cachedState = (lynx.__globalProps as any)?._queryCache;
+  if (cachedState) {
+    hydrate(queryClient, cachedState);
+  }
+} catch {}

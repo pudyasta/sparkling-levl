@@ -49,13 +49,16 @@ const Courses: React.FC = () => {
     debouncedSetSearch(e);
   };
 
-  const handleScroll = useCallback((e: any) => {
-    const { scrollTop, scrollHeight, clientHeight } = e.detail;
-    const nearBottom = scrollHeight - scrollTop - clientHeight < 200;
-    if (nearBottom && hasNextPage && !isFetchingNextPage) {
-      fetchNextPage();
-    }
-  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+  const handleScroll = useCallback(
+    (e: any) => {
+      const { scrollTop, scrollHeight, clientHeight } = e.detail;
+      const nearBottom = scrollHeight - scrollTop - clientHeight < 200;
+      if (nearBottom && hasNextPage && !isFetchingNextPage) {
+        fetchNextPage();
+      }
+    },
+    [hasNextPage, isFetchingNextPage, fetchNextPage]
+  );
 
   const hasActiveFilters = levelTag || sort;
 
@@ -81,7 +84,7 @@ const Courses: React.FC = () => {
           </Text>
 
           {/* Search + filter trigger row */}
-          <view className="mt-2 flex-row gap-3 rounded-2xl bg-white flex relative overflow-hidden">
+          <view className="mt-2 h-12 gap-3 rounded-2xl bg-white relative overflow-hidden">
             <Input
               title=""
               placeholder="Search courses"
