@@ -1,5 +1,3 @@
-import { useEffect } from '@lynx-js/react';
-
 import { fireSvg, xpFilled } from '@/assets/images/icon';
 import CourseCard from '@/components/CoursesCard/CoursesCard';
 import { PullToRefresh } from '@/components/PullToRefresh/PullToRefresh';
@@ -19,6 +17,13 @@ import {
 } from '../../usecase/useGetAllDashboard';
 import { useGetAchievements } from '../../usecase/useGetProfile';
 import style from './Home.module.css';
+
+const GRADIENTS = {
+  pagi: 'linear-gradient(180deg, #E3F2FD 0%, #FFE0B2 40%, #FFF9C4 100%)',
+  siang: 'linear-gradient(180deg, #E3F4FF 0%, #B3E5FC 50%, #FFFFFF 100%)',
+  sore: 'linear-gradient(180deg, #FF9E80 0%, #F48FB1 40%, #CE93D8 80%, #5C6BC0 100%)',
+  malam: 'linear-gradient(180deg, #1A237E 0%, #283593 50%, #3F51B5 100%)',
+};
 
 function HomeShimmer() {
   return (
@@ -118,13 +123,6 @@ export default function LearningDashboard() {
     return <HomeShimmer />;
   }
 
-  const gradients = {
-    pagi: 'linear-gradient(180deg, #E3F2FD 0%, #FFE0B2 40%, #FFF9C4 100%)',
-    siang: 'linear-gradient(180deg, #E3F4FF 0%, #B3E5FC 50%, #FFFFFF 100%)',
-    sore: 'linear-gradient(180deg, #FF9E80 0%, #F48FB1 40%, #CE93D8 80%, #5C6BC0 100%)',
-    malam: 'linear-gradient(180deg, #1A237E 0%, #283593 50%, #3F51B5 100%)',
-  };
-
   const refetchAll = () => {
     refetchGetDashboardSummary();
     refetchGetDashboardRecentLearning();
@@ -132,10 +130,6 @@ export default function LearningDashboard() {
     refetchGetRecommendedCourses();
   };
   const timeOfDay = getTimeOfDay();
-
-  useEffect(() => {
-    // console.log(JSON.stringify(recentLearning, null, 2));
-  }, [recentLearning]);
 
   return (
     recommendedCourses && (
@@ -149,7 +143,7 @@ export default function LearningDashboard() {
             {/* Header Section */}
             <view
               className="min-h-[20vh] flex-col px-4 pb-10 pt-8 flex"
-              style={{ background: gradients[timeOfDay] || gradients.pagi }}
+              style={{ background: GRADIENTS[timeOfDay] || GRADIENTS.pagi }}
             >
               <view className="w-full flex-col gap-2.5 flex">
                 <view className="flex-row items-center flex justify-between">

@@ -1,4 +1,4 @@
-import { useEffect, useState, type FC } from '@lynx-js/react';
+import { memo, type FC } from '@lynx-js/react';
 import styles from './Leaderboarditem.module.css';
 import Card from '@/components/common/Card/Card';
 import CustomImage from '@/components/common/CustomImage/CustomImage';
@@ -23,7 +23,7 @@ interface LeaderboardItemProps {
   xp: string; // e.g. "10,540 XP"
   avatar: string;
 }
-const LeaderboardItem: FC<LeaderboardItemProps> = ({ rank, initials, name, xp, avatar }) => {
+const LeaderboardItem: FC<LeaderboardItemProps> = memo(({ rank, initials, name, xp, avatar }) => {
   return (
     <Card className={styles.card}>
       <view className={styles.rankCircle}>
@@ -47,5 +47,5 @@ const LeaderboardItem: FC<LeaderboardItemProps> = ({ rank, initials, name, xp, a
       </view>
     </Card>
   );
-};
+});
 export default LeaderboardItem;
