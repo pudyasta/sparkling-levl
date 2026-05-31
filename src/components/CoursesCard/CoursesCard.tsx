@@ -1,3 +1,5 @@
+import { memo, useMemo } from '@lynx-js/react';
+
 import { Colors } from '@/constant/style';
 import { htmlToPlainText } from '@/lib/helper/htmlToLynx';
 
@@ -24,11 +26,15 @@ interface CourseCardProps {
   bindTap: () => void;
 }
 
-const CourseCard: React.FC<CourseCardProps> = ({ course, bindTap }) => {
+const CourseCard = memo<CourseCardProps>(({ course, bindTap }) => {
   const levelVariant = LEVEL_VARIANT[course.level?.toUpperCase()] ?? 'neutral';
-  const excerpt = course.description
-    ? htmlToPlainText(course.description).split(' ').slice(0, 30).join(' ') + '...'
-    : '';
+  const excerpt = useMemo(
+    () =>
+      course.description
+        ? htmlToPlainText(course.description).split(' ').slice(0, 30).join(' ') + '...'
+        : '',
+    [course.description],
+  );
 
   return (
     <view
@@ -98,6 +104,6 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, bindTap }) => {
       </view>
     </view>
   );
-};
+});
 
 export default CourseCard;

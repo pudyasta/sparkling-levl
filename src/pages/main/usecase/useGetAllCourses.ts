@@ -1,4 +1,5 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
+import { useMemo } from '@lynx-js/react';
 
 import { useMainRepository } from '../repository/MainRepository';
 import type { CourseData, CourseQueryParams } from '../repository/type/course';
@@ -26,8 +27,10 @@ export const useGetAllCourses = (filters: Omit<CourseQueryParams, 'page'>, optio
     initialPageParam: 1,
   });
 
-  const courses: CourseData[] =
-    query.data?.pages.flatMap((page) => (page?.data as CourseData[]) ?? []) ?? [];
+  const courses = useMemo<CourseData[]>(
+    () => query.data?.pages.flatMap((page) => (page?.data as CourseData[]) ?? []) ?? [],
+    [query.data],
+  );
 
   return {
     courses,

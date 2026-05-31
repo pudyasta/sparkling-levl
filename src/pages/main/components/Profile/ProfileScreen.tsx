@@ -1,4 +1,4 @@
-import { type FC, useEffect } from '@lynx-js/react';
+import { type FC } from '@lynx-js/react';
 
 import {
   courses,
@@ -42,8 +42,6 @@ export const ProfileScreen: FC = () => {
       </view>
     );
   }
-
-  useEffect(() => {}, [stats, achievements]);
 
   const refetchAll = () => {
     refetchProfile();
