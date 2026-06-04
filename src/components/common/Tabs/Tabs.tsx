@@ -1,3 +1,4 @@
+import { ScrollView } from '@lynx-js/lynx-ui';
 import { memo, useCallback, useRef, useState } from '@lynx-js/react';
 
 import CustomImage from '../CustomImage/CustomImage';
@@ -76,7 +77,7 @@ export const Tabs = memo(function Tabs({
           but React keeps their state and TanStack Query keeps their cache.
           Each panel fills the full remaining height; its own scroll-view
           handles scrolling — no outer scroll-view wrapper here.          ── */}
-      <scroll-view className="flex-1" scroll-orientation="vertical">
+      <ScrollView className="flex-1" scroll-orientation="vertical">
         <view className="flex-1">
           {items.map((item, i) => (
             <view
@@ -91,7 +92,7 @@ export const Tabs = memo(function Tabs({
             </view>
           ))}
         </view>
-      </scroll-view>
+      </ScrollView>
 
       {/* ── Tab bar ─────────────────────────────────────────────────────── */}
       <view className="w-full flex-row border-t border-[#eeeeee] bg-white px-4 flex">

@@ -1,3 +1,4 @@
+import { ScrollView } from '@lynx-js/lynx-ui';
 import { useRef, useState } from '@lynx-js/react';
 
 import { logo } from '@/assets/images/icon';
@@ -48,9 +49,8 @@ export default function LoginPage() {
   };
 
   return (
-    <scroll-view
+    <ScrollView
       scroll-orientation="vertical"
-      id="panel"
       className="h-full w-full flex-1"
       style={{ paddingBottom: kbHeight > 0 ? '10vh' : '0px' }}
     >
@@ -121,6 +121,6 @@ export default function LoginPage() {
         body="We're sorry, something went wrong. Please try again."
         template={ModalTemplate.Sad}
       />
-    </scroll-view>
+    </ScrollView>
   );
 }

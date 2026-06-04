@@ -1,3 +1,5 @@
+import { ScrollView } from '@lynx-js/lynx-ui';
+
 import { fireSvg, xpFilled } from '@/assets/images/icon';
 import CourseCard from '@/components/CoursesCard/CoursesCard';
 import { PullToRefresh } from '@/components/PullToRefresh/PullToRefresh';
@@ -27,7 +29,7 @@ const GRADIENTS = {
 
 function HomeShimmer() {
   return (
-    <scroll-view className="flex-1 bg-slate-50 pb-[80px]">
+    <ScrollView scrollOrientation="vertical" className="flex-1 bg-slate-50 pb-[80px]">
       {/* Header skeleton */}
       <view className="min-h-[20vh] flex-col bg-[#E3F2FD] px-4 pb-10 pt-8 flex">
         <view className="w-full flex-col gap-2.5 flex">
@@ -102,7 +104,7 @@ function HomeShimmer() {
           ))}
         </view>
       </view>
-    </scroll-view>
+    </ScrollView>
   );
 }
 
@@ -135,10 +137,10 @@ export default function LearningDashboard() {
     recommendedCourses && (
       <PullToRefresh onRefresh={async () => refetchAll()}>
         {(scrollProps) => (
-          <scroll-view
+          <ScrollView
             className="h-[100vh] flex-1 animate-fade-in bg-slate-50"
-            bindscrolltoupper={scrollProps.bindscrolltoupper}
-            bindscroll={scrollProps.bindscroll}
+            onScrollToUpper={scrollProps.bindscrolltoupper}
+            onScroll={scrollProps.bindscroll}
           >
             {/* Header Section */}
             <view
@@ -261,7 +263,7 @@ export default function LearningDashboard() {
               {achievements && achievements.length > 0 && (
                 <view className="flex-col gap-1 flex">
                   <SectionHeader title="Pencapaian Terbaru" />
-                  <scroll-view scroll-x className="flex-row py-1 flex">
+                  <ScrollView scrollOrientation="horizontal" className="flex-row py-1 flex">
                     {achievements?.map((i, idx) => {
                       return (
                         <view key={idx} className="mr-4 w-[80px] flex-col items-center flex">
@@ -274,7 +276,7 @@ export default function LearningDashboard() {
                         </view>
                       );
                     })}
-                  </scroll-view>
+                  </ScrollView>
                 </view>
               )}
 
@@ -303,7 +305,7 @@ export default function LearningDashboard() {
                 ))}
               </view>
             </view>
-          </scroll-view>
+          </ScrollView>
         )}
       </PullToRefresh>
     )

@@ -53,9 +53,11 @@ export const UnitSection = ({
           >
             {unit.title}
           </Text>
-          <Text className="mt-0.5 text-sm text-slate-400">
-            {unit.progress?.completed_items} / {unit.progress?.total_items} Completed Lessons
-          </Text>
+          {unit.progress?.total_items && (
+            <Text className="mt-0.5 text-sm text-slate-400">
+              {unit.progress?.completed_items} / {unit.progress?.total_items} materi selesai
+            </Text>
+          )}
         </view>
 
         {/* Arrow / lock */}
