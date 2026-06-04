@@ -2,8 +2,11 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 package com.example.sparkling.go
+import android.app.Activity
+import android.net.Uri
 
 import android.content.Context
+import android.util.Log
 import com.tiktok.sparkling.Sparkling
 import com.tiktok.sparkling.SparklingContext
 import com.tiktok.sparkling.hybridkit.service.HybridActivityStackManager
@@ -22,7 +25,18 @@ class SparklingHostRouterDepend: IHostRouterDepend {
     ): Boolean {
         val sparklingContext = SparklingContext()
         sparklingContext.scheme = scheme
-        context?.let {  Sparkling.Companion.build(it, sparklingContext).navigate() }
+        Log.d("coba navigate", bridgeContext.toString())
+        Log.d("coba navigate", scheme)
+        Log.d("coba navigate", context.toString())
+
+        val shouldClearStack =  Uri.parse(scheme).getQueryParameter("hide_error")
+
+        context?.let { ctx ->
+            Sparkling.Companion.build(ctx, sparklingContext).navigate()
+            if (shouldClearStack =="0" && ctx is Activity) {
+                ctx.finishAffinity()
+            }
+        }
         return true
     }
 

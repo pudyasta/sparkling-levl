@@ -1,3 +1,5 @@
+import { ScrollView } from '@lynx-js/lynx-ui';
+
 import { trophy } from '@/assets/images/icon';
 import Text from '@/components/Text';
 import { FontFamily, TextType } from '@/components/Text/types';
@@ -32,7 +34,7 @@ function Leaderboard() {
   const { user } = useNativeBridge();
 
   return (
-    <scroll-view className="flex-1" scroll-orientation="vertical">
+    <ScrollView className="flex-1" scroll-orientation="vertical">
       {/* Header */}
       <view
         className="flex-row items-center gap-4 px-6 py-6 flex"
@@ -52,7 +54,7 @@ function Leaderboard() {
       {isLoading || isUserLoading ? (
         <LeaderboardLoader />
       ) : (
-        <view className="animate-fade-in pb-[70px]">
+        <view className="animate-fade-in">
           {/* Podium top 3 */}
           <view className="border-b border-gray-200">
             <view className={styles.lbRow}>
@@ -118,7 +120,7 @@ function Leaderboard() {
           </view>
         </view>
       )}
-    </scroll-view>
+    </ScrollView>
   );
 }
 

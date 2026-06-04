@@ -20,6 +20,19 @@ export interface MediaFile {
   tempFilePath: string;
   mimeType: string;
 }
+function parseToJson(str) {
+  // Remove curly braces
+  const inner = str.replace(/[{}]/g, '').trim();
+
+  // Split by comma, then by '='
+  const obj = {};
+  inner.split(',').forEach((pair) => {
+    const [key, ...rest] = pair.trim().split('=');
+    obj[key.trim()] = rest.join('=').trim();
+  });
+
+  return obj;
+}
 
 const AssignmentContent = ({
   data,
@@ -57,11 +70,15 @@ const AssignmentContent = ({
       return;
     }
     pickAnyFile('all', (res) => {
+      console.log('pick', JSON.stringify(res.data.tempFiles[0], null, 2));
+      console.log('pick', JSON.stringify(res.data.tempFiles[0].name, null, 2));
+      console.log('pick', parseToJson(res.data.tempFiles[0]));
       if (res.data?.tempFiles?.length > 0) {
         const mappedFile = res.data.tempFiles.map((m: any) => ({
-          ...m,
-          mimeType: m.name.split('.')[m.name.split('.').length - 1],
+          ...parseToJson(m),
+          mimeType: parseToJson(m).name.split('.')[parseToJson(m).name.split('.').length - 1],
         }));
+        console.log(mappedFile);
         setSelectedFiles(mappedFile);
         setIsFileEdited(true);
       }
@@ -319,6 +336,7 @@ const AssignmentContent = ({
                 variant="outlined"
                 color="primary"
                 onPress={() => setIsSubmitModalOpen(false)}
+                className="mt-2"
               >
                 Periksa lagi
               </Button>

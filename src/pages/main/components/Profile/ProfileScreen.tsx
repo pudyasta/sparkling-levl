@@ -1,3 +1,4 @@
+import { ScrollView } from '@lynx-js/lynx-ui';
 import { type FC } from '@lynx-js/react';
 
 import {
@@ -52,10 +53,10 @@ export const ProfileScreen: FC = () => {
   return (
     <PullToRefresh onRefresh={async () => refetchAll()}>
       {(scrollProps) => (
-        <scroll-view
+        <ScrollView
           className={`${styles.container} h-[100vh] animate-fade-in`}
-          bindscrolltoupper={scrollProps.bindscrolltoupper}
-          bindscroll={scrollProps.bindscroll}
+          onScrollToUpper={scrollProps.bindscrolltoupper}
+          onScroll={scrollProps.bindscroll}
         >
           <ProfileHeader
             name={profile?.name || ''}
@@ -155,12 +156,12 @@ export const ProfileScreen: FC = () => {
                     description: 'Ubah informasi profil Kamu',
                     screen: 'profile',
                   },
-                  {
-                    emoji: documentLock,
-                    label: 'Keamanan Akun',
-                    description: 'Ubah password dan email Kamu',
-                    screen: 'security',
-                  },
+                  // {
+                  //   emoji: documentLock,
+                  //   label: 'Keamanan Akun',
+                  //   description: 'Ubah password dan email Kamu',
+                  //   screen: 'security',
+                  // },
                   // {
                   //   emoji: privacy,
                   //   label: 'Privasi',
@@ -191,7 +192,7 @@ export const ProfileScreen: FC = () => {
               </view>
             </view>
           </view>
-        </scroll-view>
+        </ScrollView>
       )}
     </PullToRefresh>
   );

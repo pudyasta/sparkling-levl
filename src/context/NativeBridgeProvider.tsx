@@ -149,7 +149,7 @@ export const NativeBridgeProvider = ({ children }: { children: React.ReactNode }
       if (res.code !== 1) return;
       setItem({ key: PrefKey.User, data: {}, biz: BizKey.Authorization }, () => {});
     });
-    navigateTo('login');
+    navigateTo('login', { close: true, hide_error: 0 });
   };
 
   const setParams = (params: Record<string, any> | null) => {
@@ -196,6 +196,7 @@ export const NativeBridgeProvider = ({ children }: { children: React.ReactNode }
         },
       },
       (res) => {
+        console.log(JSON.stringify(res, null, 2));
         callback?.();
         setIsNavigating(false);
       }
