@@ -1,3 +1,4 @@
+import { Button as Btn } from '@lynx-js/lynx-ui';
 import { type ReactNode, useState } from '@lynx-js/react';
 
 import { Colors } from '@/constant/style';
@@ -149,8 +150,8 @@ const Button = ({
   const { backgroundColor, borderColor, color: textColor } = getStyles();
 
   return (
-    <text
-      bindtap={handleTap}
+    <Btn
+      onClick={handleTap}
       style={{
         display: 'block',
         width: '100%',
@@ -174,8 +175,31 @@ const Button = ({
       }}
       className={className}
     >
-      {isLoading ? <Loading size={32} /> : children}
-    </text>
+      {isLoading ? (
+        <view
+          style={{
+            width: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <Loading size={32} />
+        </view>
+      ) : (
+        <text
+          style={{
+            color: textColor,
+            textAlign: 'center',
+            width: '100%',
+            margin: 'auto',
+            fontWeight: 'bold',
+          }}
+        >
+          {children}
+        </text>
+      )}
+    </Btn>
   );
 };
 

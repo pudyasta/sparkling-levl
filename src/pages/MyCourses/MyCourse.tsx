@@ -1,3 +1,4 @@
+import { ScrollView } from '@lynx-js/lynx-ui';
 import { useEffect } from '@lynx-js/react';
 
 import { Loading } from '@/components/Loading/Loading';
@@ -19,7 +20,7 @@ const MyCourse: React.FC = () => {
   }
 
   return isLoading ? (
-    <view className="h-full items-center flex justify-center">
+    <view className="h-[100vh] items-center flex justify-center">
       <Loading size={32} />
     </view>
   ) : (
@@ -40,7 +41,7 @@ const MyCourse: React.FC = () => {
           </Text>
         </view>
       </view>
-      <scroll-view scroll-y className="h-full w-full animate-fade-in pt-5">
+      <ScrollView scrollOrientation="vertical" className="h-[100vh] w-full pb-24 pt-5">
         <view className="flex-col gap-1 px-4 flex">
           {myCourseData.data.map((item) => (
             <Card
@@ -80,7 +81,7 @@ const MyCourse: React.FC = () => {
             </Card>
           ))}
         </view>
-      </scroll-view>
+      </ScrollView>
     </>
   );
 };

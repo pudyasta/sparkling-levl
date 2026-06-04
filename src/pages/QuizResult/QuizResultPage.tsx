@@ -334,8 +334,8 @@ const QuizResultPage = () => {
           borderTopStyle: 'solid',
           borderTopColor: Colors.Border,
           backgroundColor: Colors.Surface,
-          padding: '20px',
-          paddingBottom: '36px',
+          margin: '0 20px',
+          padding: '24px 0',
         }}
       >
         <Button

@@ -3,7 +3,6 @@ import { useCallback, useMemo, useRef, useState } from '@lynx-js/react';
 import { searchIcon } from '@/assets/images/icon';
 import CourseCard from '@/components/CoursesCard/CoursesCard';
 import Input from '@/components/Input/Input';
-import { PullToRefresh } from '@/components/PullToRefresh/PullToRefresh';
 import Text from '@/components/Text';
 import { TextType } from '@/components/Text/types';
 import CustomImage from '@/components/common/CustomImage/CustomImage';
@@ -84,10 +83,10 @@ const Courses: React.FC = () => {
           </Text>
 
           {/* Search + filter trigger row */}
-          <view className="mt-2 h-12 gap-3 rounded-2xl bg-white relative overflow-hidden">
+          <view className="mt-2 h-12 gap-3 rounded-2xl bg-white flex overflow-hidden">
             <Input
               title=""
-              placeholder="Search courses"
+              placeholder="Cari kursus"
               bindChange={(val) => {
                 handleSearchInput(val);
               }}
@@ -96,7 +95,7 @@ const Courses: React.FC = () => {
             {/* Filter toggle button */}
             <view
               bindtap={() => setShowFilters(!showFilters)}
-              className={`z-50 h-full w-12 items-center rounded-2xl p-2 absolute right-2 justify-center ${
+              className={`h-full w-12 items-center rounded-2xl p-2 right-2 justify-center ${
                 hasActiveFilters ? 'bg-[#1a73e8]' : 'bg-white/20'
               }`}
             >

@@ -1,3 +1,4 @@
+import { ScrollView } from '@lynx-js/lynx-ui';
 import { type FC, useEffect, useLynxGlobalEventListener } from '@lynx-js/react';
 import { close } from 'sparkling-navigation';
 
@@ -41,7 +42,7 @@ export interface CourseDetailData {
   lessons: Lesson[];
 }
 const CourseDetailSkeleton = () => (
-  <scroll-view className="h-full w-full bg-slate-50" scroll-y>
+  <ScrollView className="h-full w-full bg-slate-50" scrollOrientation="vertical">
     {/* Hero Skeleton */}
     <view className="bg-[#c7c7c7] px-6 pb-[70px] pt-[50px]">
       {/* Back button */}
@@ -86,7 +87,7 @@ const CourseDetailSkeleton = () => (
         </view>
       ))}
     </view>
-  </scroll-view>
+  </ScrollView>
 );
 
 export const CourseDetail: FC = () => {
@@ -144,11 +145,11 @@ export const CourseDetail: FC = () => {
   ) : (
     <PullToRefresh onRefresh={async () => refetchAll()}>
       {(scrollProps) => (
-        <scroll-view
+        <ScrollView
           className="h-[100vh] animate-fade-in flex-col bg-slate-50 flex"
           scroll-y
-          bindscrolltoupper={scrollProps.bindscrolltoupper}
-          bindscroll={scrollProps.bindscroll}
+          onScrollToUpper={scrollProps.bindscrolltoupper}
+          onScroll={scrollProps.bindscroll}
         >
           {/* 1. Hero Header */}
           <view
@@ -266,7 +267,7 @@ export const CourseDetail: FC = () => {
               />
             ))}
           </view>
-        </scroll-view>
+        </ScrollView>
       )}
     </PullToRefresh>
   );

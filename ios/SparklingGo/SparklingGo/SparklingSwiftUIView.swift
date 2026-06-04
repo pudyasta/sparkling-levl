@@ -39,7 +39,7 @@ struct DemoView: View {
         GeometryReader { geo in
             SPKSwiftUIView(rect: geo.frame(in: .global))
         }
-        .navigationBarHidden(true)
+        // .navigationBarHidden(true)
         .statusBar(hidden: true)
     }
 }

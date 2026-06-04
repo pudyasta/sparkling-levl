@@ -9,6 +9,7 @@ import Button from '@/components/common/Button';
 import { Colors } from '@/constant/style';
 import { useNativeBridge } from '@/context/NativeBridgeProvider';
 import { BizKey, PrefKey } from '@/lib/helper/localStorage';
+import { callToast } from '@/lib/helper/showToast';
 import { useStartQuiz } from '@/pages/Quiz/usecase/useStartQuiz';
 
 import type { QuizStudentResponse } from '../../repository/type/quiz';
@@ -61,6 +62,9 @@ const QuizContent = ({ data }: { data: QuizStudentResponse }) => {
         if (res.data.submission_id) {
           setExistingID(res.data.submission_id);
           setIsModalOpen(true);
+        }
+        if (res.errors.quiz) {
+          callToast(res.errors.quiz[0], 'error');
         }
         return;
       }

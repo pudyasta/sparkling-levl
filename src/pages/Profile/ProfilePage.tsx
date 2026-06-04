@@ -262,13 +262,13 @@ const ProfilePage = () => {
               </Button>
             </Section>
 
-            {profile.avatar_url && (
+            {/* {profile.avatar_url && (
               <Section title="Avatar">
                 <Button className="h-12 w-full rounded-2xl border-2 border-red-200">
                   <text className="font-bold text-red-400">Hapus Avatar Kamu</text>
                 </Button>
               </Section>
-            )}
+            )} */}
             <view className="h-10" />
           </scroll-view>
         </view>
@@ -434,7 +434,7 @@ const ProfilePage = () => {
               <Button onPress={() => confirm(() => logout())}>Logout</Button>
             </Section>
 
-            <Section title="Hapus akun">
+            {/* <Section title="Hapus akun">
               <view className="rounded-xl bg-red-50 p-4">
                 <Text size={TextType.b3} className="text-red-500">
                   Menghapus akun ini akan menghapus seluruh data Kamu. Apakah Kamu yakin?
@@ -478,7 +478,7 @@ const ProfilePage = () => {
                   </view>
                 </>
               )}
-            </Section>
+            </Section> */}
 
             <view className="h-10" />
           </scroll-view>
