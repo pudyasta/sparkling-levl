@@ -29,8 +29,7 @@ interface EmailConfirmationProps {
 export const EmailConfirmation: FC<EmailConfirmationProps> = (props) => {
   const [timer, setTimer] = useState(59);
   const [canResend, setCanResend] = useState(false);
-  const { email } = props;
-  const { isAuthenticated, user, accessToken, hydrate, navigateTo } = useNativeBridge();
+  const { user, logout } = useNativeBridge();
   const { execute: resendVerificationEmail, isLoading } = useResendVerificationEmail();
 
   useEffect(() => {
@@ -84,6 +83,10 @@ export const EmailConfirmation: FC<EmailConfirmationProps> = (props) => {
 
         <Button disabled={!canResend} onPress={handleResend}>
           {isLoading ? <Loading size={32} /> : 'Resend'}
+        </Button>
+
+        <Button onPress={() => logout()} className="mt-2">
+          Kembali ke Login
         </Button>
       </view>
     </view>

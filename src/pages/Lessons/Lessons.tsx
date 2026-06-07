@@ -1,5 +1,5 @@
 import { useEffect, useState } from '@lynx-js/react';
-import * as router from 'sparkling-navigation';
+import pipe from 'sparkling-method';
 
 import { arrowBackBlack } from '@/assets/images/icon';
 import { BackInterceptor } from '@/components/BackInterceptor/BackInterceptor';
@@ -139,7 +139,7 @@ const LessonPage = () => {
         {/* Progress Trigger */}
         <view className="z-[110] w-full items-center gap-4 border-b border-[#f1f3f4] bg-white p-4 px-5 flex absolute top-0">
           <view
-            bindtap={() => confirm(() => router.close())}
+            bindtap={() => pipe.call('navigation.goBack', {}, () => {})}
             className="h-9 w-9 items-center rounded-full bg-slate-100 p-2 justify-center"
           >
             <CustomImage className="h-full w-full" src={arrowBackBlack} />

@@ -34,13 +34,12 @@ const Courses: React.FC = () => {
   const [sort, setSort] = useState('');
   const [showFilters, setShowFilters] = useState(false);
 
-  const { courses, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage, refetch } =
-    useGetAllCourses({
-      search: search || undefined,
-      'filter[level_tag]': levelTag || undefined,
-      'filter[category_id]': activeCategory ? (activeCategory.id as any) : undefined,
-      sort: sort || undefined,
-    });
+  const { courses, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage } = useGetAllCourses({
+    search: search || undefined,
+    'filter[level_tag]': levelTag || undefined,
+    'filter[category_id]': activeCategory ? (activeCategory.id as any) : undefined,
+    sort: sort || undefined,
+  });
 
   const debouncedSetSearch = useDebounce((val: string) => setSearch(val), 400);
 
@@ -61,11 +60,21 @@ const Courses: React.FC = () => {
 
   const hasActiveFilters = levelTag || sort;
 
+  const categoryRef = useRef<Category[]>([]);
+
   const categories = useMemo<Category[]>(() => {
+    if (categoryRef.current.length > 0) return categoryRef.current;
+
     const seen = new Set<number>();
-    return courses
+    const result = courses
       .map((course) => course.category)
       .filter((cat): cat is Category => !!cat && !seen.has(cat.id) && !!seen.add(cat.id));
+
+    if (result.length > 0) {
+      categoryRef.current = result;
+    }
+
+    return result;
   }, [courses]);
 
   return (
@@ -165,18 +174,33 @@ const Courses: React.FC = () => {
         </view>
 
         {/* Categories */}
-        <scroll-view scroll-x className="flex-1">
-          <view className={styles.categoryList}>
-            {categories.map((cat) => (
+        {categories && (
+          <scroll-view scroll-x className="flex-1">
+            <view className={styles.categoryList}>
               <CategoryLabel
-                key={cat.id}
-                isActive={cat.id === activeCategory?.id}
-                category={cat.name}
-                bindTap={() => setActiveCategory(cat)}
+                key="semua"
+                isActive={activeCategory === null}
+                category="Semua"
+                bindTap={() => setActiveCategory(null)}
               />
-            ))}
-          </view>
-        </scroll-view>
+              {categories.map((cat) => (
+                <CategoryLabel
+                  key={cat.id}
+                  isActive={cat.id === activeCategory?.id}
+                  category={cat.name}
+                  bindTap={() => {
+                    if (activeCategory?.id === cat.id) {
+                      setActiveCategory(null);
+                      return;
+                    }
+
+                    setActiveCategory(cat);
+                  }}
+                />
+              ))}
+            </view>
+          </scroll-view>
+        )}
 
         {/* Course list */}
         <view className={styles.courseList}>

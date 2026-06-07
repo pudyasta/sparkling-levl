@@ -21,7 +21,7 @@ import { ProfileScreen } from './components/Profile/ProfileScreen';
 interface Props {}
 
 const MainPage: React.FC<Props> = ({}) => {
-  const { isAuthenticated, navigateTo, hydrate, isRefreshing, accessToken } = useNativeBridge();
+  const { isAuthenticated, navigateTo, hydrate, isRefreshing, user } = useNativeBridge();
   // Memoized so JSX element objects are never recreated across MainPage renders.
   const pages = useMemo(
     () => [
@@ -42,14 +42,20 @@ const MainPage: React.FC<Props> = ({}) => {
         content: <ProfileScreen />,
       },
     ],
-    [],
+    []
   );
 
   useEffect(() => {
+    console.log(JSON.stringify(user));
     if (isRefreshing) return;
 
     if (!isAuthenticated) {
       navigateTo('login', { close: true });
+      return;
+    }
+    if (user.status !== 'active') {
+      navigateTo('emailConfirmation', { close: true });
+      return;
     }
   }, [isAuthenticated, isRefreshing]);
 

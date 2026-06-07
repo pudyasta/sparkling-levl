@@ -28,11 +28,11 @@ export const useBackInterceptor = ({
   }, [enabled]);
 
   useLynxGlobalEventListener('nativeBackPressed', () => {
-    if (enabled) onBackPressed();
+    onBackPressed();
   });
 
   const confirmBack = () => {
-    pipe.call('navigation.setBackInterceptor', { enabled: false }, () => {
+    pipe.call('navigation.setBackInterceptor', { enabled: false }, (res) => {
       pipe.call('navigation.goBack', {}, () => {});
     });
   };

@@ -1,16 +1,19 @@
-import { useApiClient } from '@/lib/api/core';
-import type { RegisterRequest } from './type';
-import { AUTH_REGISTER_ENDPOINT } from '@/constant/route';
 import { POST_METHOD } from '@/constant/api';
+import { AUTH_REGISTER_ENDPOINT } from '@/constant/route';
+import { useApiClient } from '@/lib/api/core';
+
+import type { RegisterRequest } from './type';
 
 export const useRegisterRepo = () => {
-  const { guestAPIClient } = useApiClient();
+  const { api } = useApiClient();
 
   const registerApi = (data: RegisterRequest) => {
-    return guestAPIClient(AUTH_REGISTER_ENDPOINT, {
+    const res = api(AUTH_REGISTER_ENDPOINT, {
       method: POST_METHOD,
       data,
     });
+    console.log(JSON.stringify(res, null, 2));
+    return res;
   };
 
   return { registerApi };

@@ -63,8 +63,8 @@ const QuizContent = ({ data }: { data: QuizStudentResponse }) => {
           setExistingID(res.data.submission_id);
           setIsModalOpen(true);
         }
-        if (res.errors.quiz) {
-          callToast(res.errors.quiz[0], 'error');
+        if (res?.errors?.quiz) {
+          callToast(res?.errors?.quiz[0], 'error');
         }
         return;
       }
@@ -98,10 +98,6 @@ const QuizContent = ({ data }: { data: QuizStudentResponse }) => {
     takeover(existingID);
     setIsModalOpen(false);
   };
-
-  useEffect(() => {
-    console.log(JSON.stringify(data, null, 2));
-  }, []);
 
   return (
     data && (
