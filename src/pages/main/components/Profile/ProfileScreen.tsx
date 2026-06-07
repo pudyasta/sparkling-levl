@@ -123,7 +123,6 @@ export const ProfileScreen: FC = () => {
                 <Text size={TextType.h2} fontWeight="bold" fontFamily={FontFamily.jakarta}>
                   Pencapaian
                 </Text>
-                <Text>Lihat Semua</Text>
               </view>
             )}
             <view className={styles.achievementRow}>

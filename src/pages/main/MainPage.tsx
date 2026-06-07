@@ -49,9 +49,11 @@ const MainPage: React.FC<Props> = ({}) => {
     if (isRefreshing) return;
 
     if (!isAuthenticated) {
+      navigateTo('login', { close: true });
       return;
     }
     if (user.status !== 'active') {
+      navigateTo('emailConfirmation', { close: true });
       return;
     }
   }, [isAuthenticated, isRefreshing]);
