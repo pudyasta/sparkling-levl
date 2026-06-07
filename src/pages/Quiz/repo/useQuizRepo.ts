@@ -1,4 +1,4 @@
-import { getItem, setItem } from 'sparkling-storage';
+import { setItem } from 'sparkling-storage';
 
 import { GET_METHOD, POST_METHOD } from '@/constant/api';
 import { QUIZ_OVERVIEW_ENDPOINT, TAKEOVER_QUIZ_ENDPOINT } from '@/constant/route';
@@ -32,7 +32,6 @@ export const useQuizRepo = () => {
     const res = await api(ENDPOINTS.START.replace('QUIZ_ID', String(quizId)), {
       method: POST_METHOD,
     });
-    console.log('startQuizApi', JSON.stringify(res, null, 2));
 
     return res?.data;
   };
@@ -51,7 +50,6 @@ export const useQuizRepo = () => {
         },
       }
     );
-    console.log('getQuestionApi', JSON.stringify(res, null, 2));
 
     return res?.data;
   };
@@ -76,7 +74,6 @@ export const useQuizRepo = () => {
       },
       (res) => {}
     );
-    console.log('saveAnswerApi', JSON.stringify(res, null, 2));
     return res?.data;
   };
 
@@ -90,7 +87,6 @@ export const useQuizRepo = () => {
         'X-Session-Token': sessionToken,
       },
     });
-    console.log('useSubmitQuiz error:', JSON.stringify(res, null, 2));
 
     return res?.data;
   };
@@ -100,7 +96,6 @@ export const useQuizRepo = () => {
       `${ENDPOINTS.RESULTS.replace('QUIZ_ID', String(quizId))}?include=answers,answers.question,quiz,quiz.questions`,
       { method: GET_METHOD }
     );
-    // console.log('getResultsApi', JSON.stringify(res, null, 2));
 
     return res?.data;
   };
@@ -109,7 +104,6 @@ export const useQuizRepo = () => {
     const res = await api(TAKEOVER_QUIZ_ENDPOINT.replace('SUBMISSION_ID', String(submissionId)), {
       method: POST_METHOD,
     });
-    console.log(JSON.stringify(res, null, 2));
 
     return res?.data;
   };

@@ -79,7 +79,6 @@ export function FileCard({ url, filename, filesize, onDownloadSuccess }: FileCar
         setDownloadState('done');
         onDownloadSuccess?.(res.data.localPath);
       } else {
-        console.log(JSON.stringify(res, null, 2));
         setDownloadState('error');
         setTimeout(() => setDownloadState('idle'), 2000);
       }

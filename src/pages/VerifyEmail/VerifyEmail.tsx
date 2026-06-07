@@ -42,7 +42,6 @@ const VerifyEmailPage = () => {
       }, 2000);
     },
     onError: (error) => {
-      console.log('data error', JSON.stringify(error, null, 2));
       setPhase('error');
       setMessage(error?.message ?? 'Verification failed. The link may have expired.');
     },

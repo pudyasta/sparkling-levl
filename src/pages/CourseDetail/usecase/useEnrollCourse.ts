@@ -29,7 +29,6 @@ export const useEnrollCourse = (options?: UseEnrollCourseOptions) => {
       options?.onSuccess?.(data);
     },
     onError: (error: any) => {
-      console.log('EnrollCourse error:', JSON.stringify(error, null, 2));
       options?.onError?.(error);
     },
   });

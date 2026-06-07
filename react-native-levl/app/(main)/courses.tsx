@@ -50,7 +50,6 @@ export default function CoursesScreen() {
   });
 
   React.useEffect(() => {
-    console.log(courses);
     if (courses.length > 0) {
       courses.forEach((course) => {
         if (course.category) {

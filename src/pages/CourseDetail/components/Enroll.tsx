@@ -70,10 +70,6 @@ export const Enroll = ({ courseSlug, status, enrollmentType, onEnrollSuccess }: 
     );
   }
 
-  useEffect(() => {
-    console.log(JSON.stringify(inputRef.current?.getValue(), null, 2));
-  }, [inputRef.current]);
-
   return (
     <>
       {enrollmentType === 'auto_accept' && (

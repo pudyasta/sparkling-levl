@@ -46,15 +46,12 @@ const MainPage: React.FC<Props> = ({}) => {
   );
 
   useEffect(() => {
-    console.log(JSON.stringify(user));
     if (isRefreshing) return;
 
     if (!isAuthenticated) {
-      navigateTo('login', { close: true });
       return;
     }
     if (user.status !== 'active') {
-      navigateTo('emailConfirmation', { close: true });
       return;
     }
   }, [isAuthenticated, isRefreshing]);

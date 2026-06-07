@@ -1,12 +1,10 @@
-import { useEffect, useLynxGlobalEventListener, useRef, useState } from '@lynx-js/react';
-import pipe from 'sparkling-method';
+import { useEffect, useRef, useState } from '@lynx-js/react';
 import { getItem } from 'sparkling-storage';
 
 import { BackInterceptor } from '@/components/BackInterceptor/BackInterceptor';
 import { useConfirmation } from '@/components/ConfirmationModal/ConfitmationModal';
 import Input, { type InputRef } from '@/components/Input/Input';
 import { Loading } from '@/components/Loading/Loading';
-import { Modal, ModalTemplate } from '@/components/Modal/Modal.view';
 import Text from '@/components/Text';
 import { TextType } from '@/components/Text/types';
 import Button from '@/components/common/Button';
@@ -45,7 +43,6 @@ const QuizPage = () => {
   const [currentAnswer, setCurrentAnswer] = useState<any>(null);
   const [answeredQuestions, setAnsweredQuestions] = useState<number[]>([]);
   const [flaggedQuestions, setFlaggedQuestions] = useState<number[]>([]);
-  const [isBackModalOpen, setIsBackModalOpen] = useState(false);
   const { confirm, ConfirmationModal } = useConfirmation();
 
   const [isSaving, setIsSaving] = useState(false);
@@ -144,13 +141,14 @@ const QuizPage = () => {
 
   const { execute: saveAnswer } = useSaveAnswer({
     sessionToken: submission.current?.sessionToken || '',
-    onError: (e) => console.log('Save answer failed silently:', e),
+    onError: (e) => {
+      callToast('Gagal menyimpan jawaban. Coba lagi.', 'error');
+    },
   });
 
   const { execute: submitQuiz } = useSubmitQuiz({
     sessionToken: submission.current?.sessionToken || '',
     onSuccess: (data) => {
-      console.log('SUBMIT', JSON.stringify(data, null, 2));
       stopTimer();
       callToast('Jawaban berhasil di kirim.', 'success');
       setTimeout(() => {
@@ -319,7 +317,6 @@ const QuizPage = () => {
         prev.includes(optionId) ? prev.filter((id: string) => id !== optionId) : [...prev, optionId]
       );
     } else {
-      console.log(optionId);
       setCurrentAnswer(optionId);
     }
   };
@@ -333,11 +330,6 @@ const QuizPage = () => {
 
   const isNextDisabled = () =>
     isSaving || phase === 'submitting' || timeLeft === 0 || !currentQuestion;
-
-  useEffect(() => {
-    console.log(JSON.stringify(routerParams, null, 2));
-    // console.log(JSON.stringify(currentParams, null, 2));
-  }, [routerParams]);
 
   const progressWidth = totalQuestions > 0 ? (currentPage / totalQuestions) * 100 : 0;
   const options = Array.isArray(currentQuestion?.options) ? currentQuestion!.options : [];

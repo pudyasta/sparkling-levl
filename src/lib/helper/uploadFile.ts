@@ -21,7 +21,6 @@ export const uploadFiles = (
     },
     (res) => {
       callback?.(res);
-      console.log('Upload result:', JSON.stringify(res, null, 2));
     }
   );
 };
@@ -74,18 +73,15 @@ const submitFiles = (params: SubmitParams) => {
     },
     (res) => {
       params.callback?.(res);
-      console.log('Files submission result:', JSON.stringify(res, null, 2));
     }
   );
 };
 
 // Mixed — both answerText and files required
 const submitMixed = (params: SubmitParams) => {
-  console.log(JSON.stringify(params, null, 2));
   if (!params.answerText?.trim()) {
     return;
   }
-  console.log(JSON.stringify(params, null, 2));
 
   pipe.call(
     'FileUploader.uploadFile',
@@ -98,7 +94,6 @@ const submitMixed = (params: SubmitParams) => {
     },
     (res) => {
       params.callback?.(res);
-      console.log('Mixed submission result:', JSON.stringify(res, null, 2));
     }
   );
 };

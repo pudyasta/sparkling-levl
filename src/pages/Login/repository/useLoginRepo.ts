@@ -5,7 +5,7 @@ import { useApiClient } from '@/lib/api/core';
 import type { LoginRequest } from './type';
 
 export const useLoginRepo = () => {
-  const { guestAPIClient, api } = useApiClient();
+  const { api } = useApiClient();
 
   const loginApi = (data: LoginRequest) => {
     const res = api(AUTH_LOGIN_ENDPOINT, {

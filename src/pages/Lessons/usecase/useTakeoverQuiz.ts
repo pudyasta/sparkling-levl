@@ -22,7 +22,6 @@ export const useTakeoverQuiz = (options?: Options) => {
       options?.onSuccess?.(res.data);
     },
     onError: (error: any) => {
-      console.log('useTakeoverQuiz error:', JSON.stringify(error, null, 2));
       options?.onError?.(error);
     },
   });

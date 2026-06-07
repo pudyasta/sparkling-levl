@@ -16,7 +16,6 @@ export const useEnrollCourseRepo = () => {
       method: POST_METHOD,
       data: payload,
     });
-    console.log('RESP', JSON.stringify(response, null, 2));
     return response?.data;
   };
 

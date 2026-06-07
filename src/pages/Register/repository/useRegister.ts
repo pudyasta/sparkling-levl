@@ -12,7 +12,6 @@ export const useRegisterRepo = () => {
       method: POST_METHOD,
       data,
     });
-    console.log(JSON.stringify(res, null, 2));
     return res;
   };
 

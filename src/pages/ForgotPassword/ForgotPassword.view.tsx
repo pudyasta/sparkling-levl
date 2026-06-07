@@ -98,12 +98,7 @@ export default function ForgotPasswordPageß() {
         </Button>
 
         {/* Signup */}
-        <Text
-          typeof={TextType.b1}
-          onClick={() => {
-            console.log('object');
-          }}
-        >
+        <Text typeof={TextType.b1}>
           Udah punya akun?{' '}
           <Text typeof={TextType.b1} style={{ color: Colors.Primary }}>
             Daftar disini

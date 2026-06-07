@@ -72,7 +72,6 @@ export const useSubmitAssignmentRepo = () => {
         mimeType: m.mimeType,
       };
     });
-    console.log(request.method);
 
     const res = submitAssignmentNative({
       url,
@@ -84,7 +83,6 @@ export const useSubmitAssignmentRepo = () => {
       method: request.method,
       callback(res) {
         setIsLoading(false);
-        console.log(JSON.stringify(res, null, 2));
         if (res.code == 1) {
           callToast('Tugas berhasil disimpan sebagai draft.', 'success');
           return;

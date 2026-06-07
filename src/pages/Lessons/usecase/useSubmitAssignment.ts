@@ -31,7 +31,6 @@ export const useSubmitAssignment = (options?: UseSubmitAssigmentProps) => {
       options?.onSuccess?.(data);
     },
     onError: (error: any) => {
-      console.log('ERRRR', JSON.stringify(error, null, 2));
       callToast('Tugas gagal disimpan sebagai draft, coba lagi ya!', 'error');
     },
   });

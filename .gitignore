@@ -47,3 +47,6 @@ ios/SparklingGo/SparklingGo/Resources/Assets/
 # Ruby / Bundler (used by CocoaPods)
 vendor/bundle/
 .bundle/
+
+.agents/
+.claude/

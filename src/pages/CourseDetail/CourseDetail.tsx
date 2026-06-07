@@ -97,12 +97,10 @@ export const CourseDetail: FC = () => {
   });
 
   useLynxGlobalEventListener('nativePageResumed', (res) => {
-    console.log('back from page');
     // refresh data here
   });
 
   const refetchAll = () => {
-    console.log(routerParams);
     refetch();
   };
 
@@ -136,9 +134,6 @@ export const CourseDetail: FC = () => {
       assignment_id: lesson.id,
     });
   };
-  useEffect(() => {
-    console.log(routerParams);
-  }, []);
 
   return isLoading ? (
     <CourseDetailSkeleton />

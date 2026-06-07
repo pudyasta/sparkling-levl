@@ -19,7 +19,6 @@ export const useMarkAsDone = (options?: UseMarkAsDoneOptions) => {
       options?.onSuccess?.(data);
     },
     onError: (error: any) => {
-      console.log('ERRRR', JSON.stringify(error, null, 2));
       options?.onError?.(error);
     },
   });

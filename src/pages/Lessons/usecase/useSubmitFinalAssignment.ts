@@ -20,7 +20,6 @@ export const useSubmitFinalAssignment = (options?: UseSubmitFinalAssignmentProps
     },
     onSuccess: (data) => {
       options?.onSuccess?.(data);
-      console.log(JSON.stringify(data, null, 2));
       callToast('Tugas berhasil dikumpulkan', 'success');
     },
     onError: (error: any) => {

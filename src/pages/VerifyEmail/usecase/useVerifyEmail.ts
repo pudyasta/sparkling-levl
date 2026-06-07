@@ -14,7 +14,6 @@ export const useVerifyEmail = (options?: Options) => {
   const mutation = useMutation({
     mutationFn: (payload: { uuid: string; token: string }) => verifyEmailApi(payload),
     onSuccess: (res: VerifyEmailResponse) => {
-      console.log('ress', JSON.stringify(res, null, 2));
       if (!res.success) {
         options?.onError?.(res.errors);
         return;
@@ -22,7 +21,6 @@ export const useVerifyEmail = (options?: Options) => {
       options?.onSuccess?.(res.data);
     },
     onError: (error: any) => {
-      console.log('useVerifyEmail error:', JSON.stringify(error, null, 2));
       options?.onError?.(error);
     },
   });
