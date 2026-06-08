@@ -11,7 +11,6 @@ export const pickAnyFile = (type: 'pdf' | 'image' | 'all', callback?: (res: any)
     },
     (res) => {
       callback?.(res);
-      console.log('File URI:', JSON.stringify(res, null, 2));
     }
   );
 };

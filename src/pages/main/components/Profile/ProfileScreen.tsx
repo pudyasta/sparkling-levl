@@ -66,7 +66,7 @@ export const ProfileScreen: FC = () => {
             initials={
               profile?.name
                 .split(' ')
-                .map((n) => n[0])
+                .map((n) => n[0].toUpperCase())
                 .join('') || ''
             }
             level={12}
@@ -123,7 +123,6 @@ export const ProfileScreen: FC = () => {
                 <Text size={TextType.h2} fontWeight="bold" fontFamily={FontFamily.jakarta}>
                   Pencapaian
                 </Text>
-                <Text>Lihat Semua</Text>
               </view>
             )}
             <view className={styles.achievementRow}>

@@ -29,9 +29,7 @@ export default function LoginPage() {
       if (errors.login) emailRef.current?.setError(errors.login);
       if (errors.password) passwordRef.current?.setError(errors.password);
     },
-    onSuccess: (res) => {
-      navigateTo('main', { hide_nav_bar: 1, close: true });
-    },
+    onSuccess: (res) => {},
     onError: (error) => {
       if (error.type !== 'VALIDATION_ERROR') {
         setIsModalOpen(true);

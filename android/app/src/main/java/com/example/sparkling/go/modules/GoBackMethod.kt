@@ -28,7 +28,6 @@ class GoBackMethod : AbsGoBackMethodIDL() {
         activity.runOnUiThread {
             // Disable the interceptor first so the dispatcher doesn't loop back
             // into the nativeBackPressed event — mirrors what JS does before calling goBack.
-            BackInterceptorMethod.isInterceptEnabled = false
             activity.onBackPressedDispatcher.onBackPressed()
         }
 

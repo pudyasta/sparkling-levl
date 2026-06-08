@@ -34,7 +34,8 @@ export const Enroll = ({ courseSlug, status, enrollmentType, onEnrollSuccess }: 
     onValidationError: (errors) => {
       setKeyError('Kode pendaftaran tidak valid. Coba lagi.');
     },
-    onError: () => {
+    onError: (err) => {
+      console.log(JSON.stringify(err, null, 2));
       callToast('Oops, permintaan kamu gagal dikirim. Coba lagi.', 'error');
     },
   });
@@ -69,10 +70,6 @@ export const Enroll = ({ courseSlug, status, enrollmentType, onEnrollSuccess }: 
       </view>
     );
   }
-
-  useEffect(() => {
-    console.log(JSON.stringify(inputRef.current?.getValue(), null, 2));
-  }, [inputRef.current]);
 
   return (
     <>

@@ -25,7 +25,6 @@ export const useGetLessonsRepo = () => {
     if (!response) {
       return null;
     }
-    console.log('getLessonons', JSON.stringify(response, null, 2));
 
     return response.data as ApiResponse<LessonData>;
   };

@@ -46,7 +46,6 @@ const errorMessages: Record<string, { title: string; description: string; emoji:
 const detectErrorType = (error?: Error | null): keyof typeof errorMessages => {
   if (!error) return 'unknown';
   const msg = error.message?.toLowerCase() ?? '';
-  console.log('ERROR', JSON.stringify(msg, null, 2));
   if (msg.includes('network') || msg.includes('fetch') || msg.includes('timeout')) return 'network';
   if (msg.includes('401') || msg.includes('unauthorized')) return 'unauthorized';
   if (msg.includes('403') || msg.includes('unauthorized')) return 'unauthorized';
@@ -104,10 +103,7 @@ export const ErrorPage = ({ error, onRetry }: ErrorPageProps) => {
         )}
 
         {/* Primary action */}
-        <Button
-          className="mb-3 h-14 w-full"
-          onPress={handlePrimary}
-        >
+        <Button className="mb-3 h-14 w-full" onPress={handlePrimary}>
           {isUnauthorized ? 'Log In Again' : 'Coba Lagi'}
         </Button>
 

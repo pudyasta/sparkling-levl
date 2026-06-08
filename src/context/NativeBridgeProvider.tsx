@@ -196,7 +196,6 @@ export const NativeBridgeProvider = ({ children }: { children: React.ReactNode }
         },
       },
       (res) => {
-        console.log(JSON.stringify(res, null, 2));
         callback?.();
         setIsNavigating(false);
       }

@@ -26,10 +26,11 @@ export const useEnrollCourse = (options?: UseEnrollCourseOptions) => {
         options?.onValidationError?.(data.errors);
         return;
       }
+      console.log('data', JSON.stringify(data, null, 2));
       options?.onSuccess?.(data);
     },
     onError: (error: any) => {
-      console.log('EnrollCourse error:', JSON.stringify(error, null, 2));
+      console.log('error', JSON.stringify(error, null, 2));
       options?.onError?.(error);
     },
   });

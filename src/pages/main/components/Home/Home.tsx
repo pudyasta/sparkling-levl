@@ -173,7 +173,10 @@ export default function LearningDashboard() {
                       />
                     ) : (
                       <Text color="white" size={TextType.h3} fontWeight="bold">
-                        {user?.name.split(' ')[0][0] + (user?.name.split(' ')[1][0] || '')}
+                        {user?.name.split(' ')[0][0].toUpperCase() +
+                          (user?.name.split(' ')[1]
+                            ? user?.name.split(' ')[1][0].toUpperCase()
+                            : '')}
                       </Text>
                     )}
                   </view>
@@ -262,7 +265,7 @@ export default function LearningDashboard() {
               {/* Recent Achievements */}
               {achievements && achievements.length > 0 && (
                 <view className="flex-col gap-1 flex">
-                  <SectionHeader title="Pencapaian Terbaru" />
+                  <SectionHeader title="Pencapaian Terbaru" isSeeAll={false} />
                   <ScrollView scrollOrientation="horizontal" className="flex-row py-1 flex">
                     {achievements?.map((i, idx) => {
                       return (

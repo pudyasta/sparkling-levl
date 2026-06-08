@@ -32,10 +32,6 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, bindTap }) => {
     ? htmlToPlainText(course.description).split(' ').slice(0, 30).join(' ') + '...'
     : '';
 
-  useEffect(() => {
-    console.log(course);
-  }, [course]);
-
   return (
     <TouchableOpacity onPress={bindTap} activeOpacity={0.8} style={styles.card}>
       {course.image ? (

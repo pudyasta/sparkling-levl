@@ -1,6 +1,8 @@
 import { useMutation } from '@tanstack/react-query';
+
 import { validateSafely } from '@/lib/helper/validate';
 import type { AuthResponse } from '@/pages/Login/repository/type';
+
 import { useResendVerificationEmailRepo } from '../repository/useResendVerificationEmailRepo';
 
 interface UseResendVerificationEmailOptions {
@@ -18,7 +20,6 @@ export const useResendVerificationEmail = (options?: UseResendVerificationEmailO
       return response.data;
     },
     onSuccess: (data) => {
-      console.log(data);
       //   if (data.message == 'messages.validation.failed') {
       //     const err = {
       //       email: data.errors.email?.[0] || null,
@@ -31,7 +32,6 @@ export const useResendVerificationEmail = (options?: UseResendVerificationEmailO
       //   } else {
       //     options?.onSuccess?.(data);
       //   }
-
       //   const response = await registerApi({
       //     name: rawValues.name,
       //     username: rawValues.username,
@@ -39,11 +39,9 @@ export const useResendVerificationEmail = (options?: UseResendVerificationEmailO
       //     password: rawValues.password,
       //     password_confirmation: rawValues.password_confirmation,
       //   });
-
       //   return response.data;
     },
     onError: (error: any) => {
-      console.log(error);
       if (error.type === 'VALIDATION_ERROR') {
         options?.onValidationError?.(error.errors);
       }

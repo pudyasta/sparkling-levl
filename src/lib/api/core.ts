@@ -1,7 +1,11 @@
 import axios, { type AxiosRequestConfig, type AxiosResponse } from 'axios';
 
 import { API_BASE_URL, POST_METHOD } from '@/constant/api';
-import { AUTH_REFRESH_ENDPOINT } from '@/constant/route';
+import {
+  AUTH_LOGIN_ENDPOINT,
+  AUTH_REFRESH_ENDPOINT,
+  AUTH_REGISTER_ENDPOINT,
+} from '@/constant/route';
 import { useNativeBridge } from '@/context/NativeBridgeProvider';
 import type { Token } from '@/pages/Login/repository/type';
 
@@ -21,7 +25,6 @@ const instance = axios.create({
 });
 
 export const refreshTokenApi = async (refreshToken: string): Promise<ApiResponse<Token>> => {
-  console.log('API', refreshToken);
   const response = await guestAPIClient(AUTH_REFRESH_ENDPOINT, {
     method: POST_METHOD,
     data: { refresh_token: refreshToken },
@@ -30,8 +33,6 @@ export const refreshTokenApi = async (refreshToken: string): Promise<ApiResponse
 };
 
 export const guestAPIClient = async (url: string, config: AxiosRequestConfig = {}) => {
-  console.log('response ini', JSON.stringify(config, null, 2));
-
   try {
     const response = await instance.request({
       url,
@@ -59,6 +60,7 @@ export const useApiClient = () => {
     let res;
     try {
       res = await instance.request({ url, ...config, headers, validateStatus: () => true });
+      console.log('APIII', JSON.stringify(res, null, 2));
     } catch (err) {
       if (isTimeout(err)) {
         callToast('Terjadi kendala dalam koneksi.', 'error');
@@ -68,10 +70,10 @@ export const useApiClient = () => {
     }
 
     // -------- If 401 & refresh token null → redirect to login
-    if (res.status !== 401) return res;
+    if (res.status !== 401 || url == AUTH_REGISTER_ENDPOINT || url == AUTH_LOGIN_ENDPOINT)
+      return res;
     // -------- Handle 401: If no refresh token, we can't proceed this request
     if (!accessToken?.refresh_token) {
-      console.log('Access token', JSON.stringify(accessToken, null, 2));
       navigateTo('login');
       return res;
     }

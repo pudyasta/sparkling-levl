@@ -87,7 +87,6 @@ export const UnitSection = ({
               key={lesson.id}
               className="flex-row items-center border border-slate-100 bg-white px-6 py-3 flex"
               bindtap={() => {
-                console.log(lesson);
                 if (lesson.is_locked) return;
                 navigateTo('lessons', {
                   lesson_slug: lesson.slug,

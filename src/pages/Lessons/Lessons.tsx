@@ -1,5 +1,5 @@
 import { useEffect, useState } from '@lynx-js/react';
-import * as router from 'sparkling-navigation';
+import pipe from 'sparkling-method';
 
 import { arrowBackBlack } from '@/assets/images/icon';
 import { BackInterceptor } from '@/components/BackInterceptor/BackInterceptor';
@@ -34,7 +34,7 @@ const LessonPage = () => {
   const [completedLessons, setCompletedLessons] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [totalLessons, setTotalLessons] = useState(0);
-  const { confirm, ConfirmationModal } = useConfirmation();
+  const { ConfirmationModal } = useConfirmation();
 
   let allLessons = routerParams?.all_lessons || [];
 
@@ -119,8 +119,8 @@ const LessonPage = () => {
   };
 
   return (
-    !isLoadingApi && (
-      <view className="h-screen w-full relative">
+    <view className="h-screen w-full relative">
+      {!isLoadingApi ? (
         <scroll-view className="h-full w-full" scroll-y>
           {isLoading ? (
             <view className="h-[100vh] items-center flex justify-center">
@@ -135,74 +135,78 @@ const LessonPage = () => {
             </view>
           )}
         </scroll-view>
-
-        {/* Progress Trigger */}
-        <view className="z-[110] w-full items-center gap-4 border-b border-[#f1f3f4] bg-white p-4 px-5 flex absolute top-0">
-          <view
-            bindtap={() => confirm(() => router.close())}
-            className="h-9 w-9 items-center rounded-full bg-slate-100 p-2 justify-center"
-          >
-            <CustomImage className="h-full w-full" src={arrowBackBlack} />
-          </view>
-          <view className="flex-1" bindtap={() => setIsSheetOpen(!isSheetOpen)}>
-            <view className="mb-2 flex-row flex justify-between">
-              <Text size={TextType.b1}>
-                Progres Kursus {completedLessons} / {totalLessons}
-              </Text>
-              <Text>{isSheetOpen ? '▼' : '▲'}</Text>
-            </view>
-            <view className="h-1.5 w-full rounded-full bg-[#f1f3f4]">
-              <view
-                className="h-full rounded-full transition duration-300 ease-in-out"
-                style={{ backgroundColor: Colors.Primary, width: `${progressPercentage}%` }}
-              />
-            </view>
-          </view>
+      ) : (
+        <view className="h-[100vh] items-center flex justify-center">
+          <Loading size={32} />
         </view>
+      )}
 
-        {/* Bottom Sheet List */}
+      {/* Progress Trigger */}
+      <view className="z-[110] w-full items-center gap-4 border-b border-[#f1f3f4] bg-white p-4 px-5 flex absolute top-0">
         <view
-          className={`z-[105] w-full rounded-b-3xl bg-white p-4 absolute top-0 overflow-hidden shadow-2xl transition-transform duration-[350ms] ease-[cubic-bezier(0.25,0.1,0.25,1)] ${isSheetOpen ? 'translate-y-[60px]' : '-translate-y-full'}`}
-          style={{ height: handleBottomSheetHeight(routerParams?.all_lessons?.length || 0) }}
+          bindtap={() => pipe.call('navigation.goBack', {}, () => {})}
+          className="h-9 w-9 items-center rounded-full bg-slate-100 p-2 justify-center"
         >
-          <scroll-view className="h-full w-full px-1" scroll-y>
-            {routerParams?.all_lessons?.map((item: any, i: number) => {
-              const isActive = item.id === currentParams.assignment_id;
-              return (
-                <view
-                  key={item.id}
-                  bindtap={() => {
-                    if (item.is_locked) return;
-                    handlePageChange(i);
-                  }}
-                  className={`mb-2 flex-row items-center rounded-xl border p-4 flex transition-all duration-200 ${isActive ? 'border-[#d1e3ff] bg-[#f0f7ff]' : 'border-transparent'} ${item.is_locked ? 'pointer-events-none opacity-50' : ''}`}
-                >
-                  <view className="mr-4">
-                    {item.is_completed ? (
-                      <view className="h-6 w-6 items-center rounded-full bg-[#34a853] flex justify-center">
-                        <text className="text-xs font-extrabold text-white">✓</text>
-                      </view>
-                    ) : (
-                      <view
-                        className={`h-[22px] w-[22px] rounded-full border-2 bg-white ${isActive ? 'border-[#1a73e8]' : 'border-[#dadce0]'}`}
-                      />
-                    )}
-                  </view>
-                  <text
-                    className={`text-base font-medium ${isActive ? 'font-bold text-[#1a73e8]' : 'text-[#3c4043]'}`}
-                  >
-                    {item.title}
-                  </text>
-                </view>
-              );
-            })}
-          </scroll-view>
+          <CustomImage className="h-full w-full" src={arrowBackBlack} />
         </view>
-
-        <ConfirmationModal />
-        <BackInterceptor />
+        <view className="flex-1" bindtap={() => setIsSheetOpen(!isSheetOpen)}>
+          <view className="mb-2 flex-row flex justify-between">
+            <Text size={TextType.b1}>
+              Progres Kursus {completedLessons} / {totalLessons}
+            </Text>
+            <Text>{isSheetOpen ? '▼' : '▲'}</Text>
+          </view>
+          <view className="h-1.5 w-full rounded-full bg-[#f1f3f4]">
+            <view
+              className="h-full rounded-full transition duration-300 ease-in-out"
+              style={{ backgroundColor: Colors.Primary, width: `${progressPercentage}%` }}
+            />
+          </view>
+        </view>
       </view>
-    )
+
+      {/* Bottom Sheet List */}
+      <view
+        className={`z-[105] w-full rounded-b-3xl bg-white p-4 absolute top-0 overflow-hidden shadow-2xl transition-transform duration-[350ms] ease-[cubic-bezier(0.25,0.1,0.25,1)] ${isSheetOpen ? 'translate-y-[60px]' : '-translate-y-full'}`}
+        style={{ height: handleBottomSheetHeight(routerParams?.all_lessons?.length || 0) }}
+      >
+        <scroll-view className="h-full w-full px-1" scroll-y>
+          {routerParams?.all_lessons?.map((item: any, i: number) => {
+            const isActive = item.id === currentParams.assignment_id;
+            return (
+              <view
+                key={item.id}
+                bindtap={() => {
+                  if (item.is_locked) return;
+                  handlePageChange(i);
+                }}
+                className={`mb-2 flex-row items-center rounded-xl border p-4 flex transition-all duration-200 ${isActive ? 'border-[#d1e3ff] bg-[#f0f7ff]' : 'border-transparent'} ${item.is_locked ? 'pointer-events-none opacity-50' : ''}`}
+              >
+                <view className="mr-4">
+                  {item.is_completed ? (
+                    <view className="h-6 w-6 items-center rounded-full bg-[#34a853] flex justify-center">
+                      <text className="text-xs font-extrabold text-white">✓</text>
+                    </view>
+                  ) : (
+                    <view
+                      className={`h-[22px] w-[22px] rounded-full border-2 bg-white ${isActive ? 'border-[#1a73e8]' : 'border-[#dadce0]'}`}
+                    />
+                  )}
+                </view>
+                <text
+                  className={`text-base font-medium ${isActive ? 'font-bold text-[#1a73e8]' : 'text-[#3c4043]'}`}
+                >
+                  {item.title}
+                </text>
+              </view>
+            );
+          })}
+        </scroll-view>
+      </view>
+
+      <ConfirmationModal />
+      <BackInterceptor />
+    </view>
   );
 };
 

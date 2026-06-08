@@ -182,14 +182,12 @@ const QuizResultPage = () => {
   });
 
   useEffect(() => {
-    console.log(JSON.stringify(routerParams, null, 2));
     const load = async () => {
       try {
         const res = await getResultsApi(submissionId);
         setSubmission(res.data);
         setPhase('done');
       } catch (e) {
-        console.log('QuizResultPage error:', e);
         setPhase('error');
       }
     };

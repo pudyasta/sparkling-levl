@@ -1,10 +1,12 @@
-import { registerSchema } from './registerValidation';
 import { useMutation } from '@tanstack/react-query';
+
+import { useNativeBridge } from '@/context/NativeBridgeProvider';
 import { validateSafely } from '@/lib/helper/validate';
+import type { AuthResponse } from '@/pages/Login/repository/type';
+
 import type { RegisterRequest } from '../repository/type';
 import { useRegisterRepo } from '../repository/useRegister';
-import type { AuthResponse } from '@/pages/Login/repository/type';
-import { useNativeBridge } from '@/context/NativeBridgeProvider';
+import { registerSchema } from './registerValidation';
 
 interface UseRegisterOptions {
   onValidationError?: (errors: any) => void;
@@ -34,7 +36,7 @@ export const useRegister = (options?: UseRegisterOptions) => {
       return response.data;
     },
     onSuccess: (data: AuthResponse) => {
-      if (data.message == 'messages.validation.failed') {
+      if (data.errors) {
         const err = {
           email: data.errors.email?.[0] || null,
           password: data.errors.password?.[0] || null,

@@ -19,7 +19,6 @@ export const useSaveAnswer = (options?: Options) => {
       options?.onSuccess?.(data);
     },
     onError: (error: any) => {
-      console.log('useSaveAnswer error:', JSON.stringify(error, null, 2));
       options?.onError?.(error);
     },
   });

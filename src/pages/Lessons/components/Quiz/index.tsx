@@ -63,8 +63,8 @@ const QuizContent = ({ data }: { data: QuizStudentResponse }) => {
           setExistingID(res.data.submission_id);
           setIsModalOpen(true);
         }
-        if (res.errors.quiz) {
-          callToast(res.errors.quiz[0], 'error');
+        if (res?.errors?.quiz) {
+          callToast(res?.errors?.quiz[0], 'error');
         }
         return;
       }
@@ -94,14 +94,14 @@ const QuizContent = ({ data }: { data: QuizStudentResponse }) => {
     onError: () => {},
   });
 
+  useEffect(() => {
+    console.log(JSON.stringify(data));
+  }, [data]);
+
   const handleTakeoverQuiz = () => {
     takeover(existingID);
     setIsModalOpen(false);
   };
-
-  useEffect(() => {
-    console.log(JSON.stringify(data, null, 2));
-  }, []);
 
   return (
     data && (
@@ -182,6 +182,7 @@ const QuizContent = ({ data }: { data: QuizStudentResponse }) => {
           onPress={() => {
             confirm(() => startQuiz(data?.id));
           }}
+          disabled={data.submission_status == 'submitted'}
         >
           Mulai Kerjakan Quiz
         </Button>
