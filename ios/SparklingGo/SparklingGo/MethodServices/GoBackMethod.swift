@@ -74,12 +74,20 @@ final class GoBackMethod: PipeMethod {
             topVC = presented
         }
 
-        if let navVC = topVC as? UINavigationController, navVC.viewControllers.count > 1 {
-            navVC.popViewController(animated: true)
-        } else if let navVC = topVC.navigationController, navVC.viewControllers.count > 1 {
+        // In a SwiftUI app the UINavigationController is a child of UIHostingController,
+        // not the window root, so we must search the child VC tree.
+        if let navVC = findNavigationController(in: topVC), navVC.viewControllers.count > 1 {
             navVC.popViewController(animated: true)
         } else {
             topVC.dismiss(animated: true)
         }
+    }
+
+    private func findNavigationController(in vc: UIViewController) -> UINavigationController? {
+        if let navVC = vc as? UINavigationController { return navVC }
+        for child in vc.children {
+            if let found = findNavigationController(in: child) { return found }
+        }
+        return nil
     }
 }
