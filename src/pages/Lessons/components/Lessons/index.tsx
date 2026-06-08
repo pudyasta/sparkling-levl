@@ -54,10 +54,14 @@ const LessonContent = ({
     });
   }, [downloadedPath]);
 
+  useEffect(() => {
+    console.log(JSON.stringify(data, null, 2));
+  }, []);
+
   const handleMarkAsDone = () => {
     setIsButtonLoading(true);
     execute(lessonSlug, {
-      onSuccess: () => {
+      onSuccess: (res) => {
         setIsButtonLoading(false);
         setIsModalOpen(true);
       },
@@ -125,12 +129,7 @@ const LessonContent = ({
 
         {/* Mark as done */}
         <view className="mt-8">
-          <Button
-            onPress={handleMarkAsDone}
-            disabled={data.is_completed}
-            className="h-14 w-full"
-            isLoading={isButtonLoading}
-          >
+          <Button onPress={handleMarkAsDone} className="h-14 w-full" isLoading={isButtonLoading}>
             {data.is_completed ? 'Selesai' : 'Tandai Sudah Selesai'}
           </Button>
         </view>

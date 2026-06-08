@@ -60,6 +60,7 @@ export const useApiClient = () => {
     let res;
     try {
       res = await instance.request({ url, ...config, headers, validateStatus: () => true });
+      console.log('APIII', JSON.stringify(res, null, 2));
     } catch (err) {
       if (isTimeout(err)) {
         callToast('Terjadi kendala dalam koneksi.', 'error');

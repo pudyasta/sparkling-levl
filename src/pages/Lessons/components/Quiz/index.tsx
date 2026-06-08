@@ -94,6 +94,10 @@ const QuizContent = ({ data }: { data: QuizStudentResponse }) => {
     onError: () => {},
   });
 
+  useEffect(() => {
+    console.log(JSON.stringify(data));
+  }, [data]);
+
   const handleTakeoverQuiz = () => {
     takeover(existingID);
     setIsModalOpen(false);
@@ -178,6 +182,7 @@ const QuizContent = ({ data }: { data: QuizStudentResponse }) => {
           onPress={() => {
             confirm(() => startQuiz(data?.id));
           }}
+          disabled={data.submission_status == 'submitted'}
         >
           Mulai Kerjakan Quiz
         </Button>

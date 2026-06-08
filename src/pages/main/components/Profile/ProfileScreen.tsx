@@ -66,7 +66,7 @@ export const ProfileScreen: FC = () => {
             initials={
               profile?.name
                 .split(' ')
-                .map((n) => n[0])
+                .map((n) => n[0].toUpperCase())
                 .join('') || ''
             }
             level={12}
