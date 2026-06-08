@@ -106,7 +106,7 @@ struct DemoVC: View {
         GeometryReader { geometry in
             SPKSwiftVC(state_frame: geometry.frame(in: .local))
         }
-        .ignoresSafeArea()
+        .ignoresSafeArea(.all, edges: [.bottom, .leading, .trailing])
         .foregroundStyle(.clear)
         .padding(.top, 0.2)
     }
