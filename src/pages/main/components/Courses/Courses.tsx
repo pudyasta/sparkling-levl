@@ -7,12 +7,37 @@ import Text from '@/components/Text';
 import { TextType } from '@/components/Text/types';
 import CustomImage from '@/components/common/CustomImage/CustomImage';
 import { useNativeBridge } from '@/context/NativeBridgeProvider';
+import { usePressBounce } from '@/lib/hooks/usePressBounce';
 import type { Category } from '@/pages/CourseDetail/repository/type';
 
 import { useGetAllCourses } from '../../usecase/useGetAllCourses';
 import styles from './Course.module.css';
 import CategoryLabel from './components/CategoryLabel';
 import { LEVEL_TAGS, SORT_OPTIONS } from './data/courses';
+
+// Single filter chip — own press state so it bounces independently. The inline
+// transition smooths the active/inactive color swap.
+const FilterPill: React.FC<{
+  active: boolean;
+  activeBg: string;
+  activeText: string;
+  label: string;
+  onTap: () => void;
+}> = ({ active, activeBg, activeText, label, onTap }) => {
+  const { trigger, className: bounce } = usePressBounce();
+  return (
+    <view
+      bindtap={() => {
+        trigger();
+        onTap();
+      }}
+      className={`rounded-full px-3 py-1 ${active ? activeBg : 'bg-white/20'} ${bounce}`}
+      style={{ transition: 'transform 0.15s ease, opacity 0.15s ease' }}
+    >
+      <text className={`text-xs font-bold ${active ? activeText : 'text-white/80'}`}>{label}</text>
+    </view>
+  );
+};
 
 // Debounce helper — avoids firing API on every keystroke
 const useDebounce = (fn: (...args: any[]) => void, delay: number) => {
@@ -118,42 +143,28 @@ const Courses: React.FC = () => {
               {/* Level tag */}
               <view className="flex-row flex-wrap gap-2 flex">
                 {LEVEL_TAGS.map((tag) => (
-                  <view
+                  <FilterPill
                     key={tag.value}
-                    bindtap={() => setLevelTag(levelTag === tag.value ? '' : tag.value)}
-                    className={`rounded-full px-3 py-1 ${
-                      levelTag === tag.value ? 'bg-[#1a73e8]' : 'bg-white/20'
-                    }`}
-                  >
-                    <Text
-                      className={`text-xs font-bold ${
-                        levelTag === tag.value ? 'text-white' : 'text-white/80'
-                      }`}
-                    >
-                      {tag.label.toUpperCase()}
-                    </Text>
-                  </view>
+                    active={levelTag === tag.value}
+                    activeBg="bg-[#1a73e8]"
+                    activeText="text-white"
+                    label={tag.label.toUpperCase()}
+                    onTap={() => setLevelTag(levelTag === tag.value ? '' : tag.value)}
+                  />
                 ))}
               </view>
 
               {/* Sort */}
               <view className="flex-row flex-wrap gap-2 flex">
                 {SORT_OPTIONS.map((opt) => (
-                  <view
+                  <FilterPill
                     key={opt.value}
-                    bindtap={() => setSort(sort === opt.value ? '' : opt.value)}
-                    className={`rounded-full px-3 py-1 ${
-                      sort === opt.value ? 'bg-yellow-400' : 'bg-white/20'
-                    }`}
-                  >
-                    <text
-                      className={`text-xs font-bold ${
-                        sort === opt.value ? 'text-yellow-900' : 'text-white/80'
-                      }`}
-                    >
-                      {opt.label}
-                    </text>
-                  </view>
+                    active={sort === opt.value}
+                    activeBg="bg-yellow-400"
+                    activeText="text-yellow-900"
+                    label={opt.label}
+                    onTap={() => setSort(sort === opt.value ? '' : opt.value)}
+                  />
                 ))}
               </view>
 

@@ -7,6 +7,7 @@ import CustomImage from '@/components/common/CustomImage/CustomImage';
 import IconWithBackground from '@/components/common/IconWithBackground/IconWithBackground';
 import { Colors } from '@/constant/style';
 import { useNativeBridge } from '@/context/NativeBridgeProvider';
+import { usePressBounce } from '@/lib/hooks/usePressBounce';
 
 import type { LeaderboardEntry } from '../../repository/type/leaderboard';
 import { useGetLeaderboard, useGetUserRank } from '../../usecase/useGetLeaderboards';
@@ -27,6 +28,44 @@ const variantClassMap: Record<Variant, string> = {
   second: styles.lbCardSecond,
   third: styles.lbCardThird,
 };
+
+// Podium card — bounces on press, like the other tappable rows.
+function PodiumCard({ entry, idx }: { entry: LeaderboardEntry; idx: number }) {
+  const { trigger, className: bounce } = usePressBounce();
+  return (
+    <view
+      bindtap={trigger}
+      className={`${styles.lbCard} ${variantClassMap[rankMapping[idx].variant]} ${bounce}`}
+    >
+      <view className={styles.lbAvatarWrapper}>
+        <view className={styles.lbAvatar}>
+          {entry.user.avatar_url ? (
+            <CustomImage src={entry.user.avatar_url} className={styles.avatarSvg} />
+          ) : (
+            <Text color="white" className={styles.lbAvatarText}>
+              {entry.user.name.slice(0, 2)}
+            </Text>
+          )}
+        </view>
+        <view className={styles.lbBadge}>
+          <Text className={styles.lbBadgeText}>{rankMapping[idx].badge}</Text>
+        </view>
+      </view>
+
+      <view className={styles.lbInfo}>
+        <Text size={TextType.b1} fontWeight="bold" style={{ textAlign: 'center' }}>
+          {entry.user.name.split(' ')[0] + ' ' + (entry.user.name.split(' ')[1]?.[0] ?? '')}
+        </Text>
+        <view className={styles.xpRow}>
+          <Text className={styles.xpIcon}>⚡</Text>
+          <Text color={rankMapping[idx].variant === 'first' ? Colors.Secondary : ''}>
+            {`${entry.total_xp} XP`}
+          </Text>
+        </view>
+      </view>
+    </view>
+  );
+}
 
 function Leaderboard() {
   const { topThree, restRank, isLoading } = useGetLeaderboard();
@@ -59,39 +98,7 @@ function Leaderboard() {
           <view className="border-b border-gray-200">
             <view className={styles.lbRow}>
               {topThree.map((entry: LeaderboardEntry, idx: number) => (
-                <view
-                  key={entry.user.id}
-                  className={`${styles.lbCard} ${variantClassMap[rankMapping[idx].variant]}`}
-                >
-                  <view className={styles.lbAvatarWrapper}>
-                    <view className={styles.lbAvatar}>
-                      {entry.user.avatar_url ? (
-                        <CustomImage src={entry.user.avatar_url} className={styles.avatarSvg} />
-                      ) : (
-                        <Text color="white" className={styles.lbAvatarText}>
-                          {entry.user.name.slice(0, 2)}
-                        </Text>
-                      )}
-                    </view>
-                    <view className={styles.lbBadge}>
-                      <Text className={styles.lbBadgeText}>{rankMapping[idx].badge}</Text>
-                    </view>
-                  </view>
-
-                  <view className={styles.lbInfo}>
-                    <Text size={TextType.b1} fontWeight="bold" style={{ textAlign: 'center' }}>
-                      {entry.user.name.split(' ')[0] +
-                        ' ' +
-                        (entry.user.name.split(' ')[1]?.[0] ?? '')}
-                    </Text>
-                    <view className={styles.xpRow}>
-                      <Text className={styles.xpIcon}>⚡</Text>
-                      <Text color={rankMapping[idx].variant === 'first' ? Colors.Secondary : ''}>
-                        {`${entry.total_xp} XP`}
-                      </Text>
-                    </view>
-                  </view>
-                </view>
+                <PodiumCard key={entry.user.id} entry={entry} idx={idx} />
               ))}
             </view>
           </view>

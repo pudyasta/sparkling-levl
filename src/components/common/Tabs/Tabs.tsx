@@ -1,5 +1,6 @@
-import { ScrollView } from '@lynx-js/lynx-ui';
 import { memo, useCallback, useRef, useState } from '@lynx-js/react';
+
+import { usePressBounce } from '@/lib/hooks/usePressBounce';
 
 import CustomImage from '../CustomImage/CustomImage';
 
@@ -10,7 +11,9 @@ interface TabItem {
     srcActive: string;
     srcInactive: string;
   };
-  content: React.ReactNode;
+  // Thunk so the panel's JSX (and any lazy chunk it contains) is only evaluated
+  // when the tab is actually rendered — see MainPage.
+  content: () => React.ReactNode;
 }
 
 // ── Tab bar button — stable identity prevents re-registering bindtap handlers ──
@@ -25,10 +28,18 @@ const TabButton = memo(function TabButton({
   isActive: boolean;
   onPress: (i: number) => void;
 }) {
+  // Brief toggle drives the reusable press-bounce animation on tap.
+  const { trigger, className: bounce } = usePressBounce();
+
+  const handleTap = useCallback(() => {
+    trigger();
+    onPress(index);
+  }, [index, onPress, trigger]);
+
   return (
     <view
-      bindtap={() => onPress(index)}
-      className="flex-1 flex-col items-center py-3 flex justify-center"
+      bindtap={handleTap}
+      className={`flex-1 flex-col items-center py-3 flex justify-center ${bounce}`}
     >
       <CustomImage
         src={isActive ? item.label.srcActive : item.label.srcInactive}
@@ -72,27 +83,26 @@ export const Tabs = memo(function Tabs({
     // Flex column fills the full screen height — no fixed positioning needed.
     <view className="h-full flex-col bg-[#f6f8fa] flex">
       {/* ── Content panels ───────────────────────────────────────────────────
-          All visited panels stay mounted. Only the active one is visible via
-          display:flex; the rest are display:none so they don't affect layout
-          but React keeps their state and TanStack Query keeps their cache.
-          Each panel fills the full remaining height; its own scroll-view
-          handles scrolling — no outer scroll-view wrapper here.          ── */}
-      <ScrollView className="flex-1" scroll-orientation="vertical">
-        <view className="flex-1">
-          {items.map((item, i) => (
-            <view
-              key={item.key ?? i}
-              style={{
-                display: i === active ? 'flex' : 'none',
-                flex: 1,
-                flexDirection: 'column',
-              }}
-            >
-              {visitedRef.current.has(i) ? item.content : null}
-            </view>
-          ))}
-        </view>
-      </ScrollView>
+          A view-based "router": every visited panel stays mounted and only the
+          active one is shown (display:flex) while the rest are display:none, so
+          React state, scroll position and TanStack Query cache survive switches.
+          No outer scroll-view — each tab screen owns its own scroll-view. The
+          active panel gets animate-fade-in for a cross-fade on switch.    ── */}
+      <view className="flex-1">
+        {items.map((item, i) => (
+          <view
+            key={item.key ?? i}
+            className={i === active ? 'animate-fade-in' : ''}
+            style={{
+              display: i === active ? 'flex' : 'none',
+              flex: 1,
+              flexDirection: 'column',
+            }}
+          >
+            {visitedRef.current.has(i) ? item.content() : null}
+          </view>
+        ))}
+      </view>
 
       {/* ── Tab bar ─────────────────────────────────────────────────────── */}
       <view className="w-full flex-row border-t border-[#eeeeee] bg-white px-4 flex">

@@ -1,5 +1,7 @@
 import { memo } from '@lynx-js/react';
 
+import { usePressBounce } from '@/lib/hooks/usePressBounce';
+
 import { Colors } from '../../../../../constant/style';
 
 interface LabelProps {
@@ -12,14 +14,19 @@ const CategoryLabel = memo<LabelProps>(({
   category,
   bindTap,
 }) => {
+  const { trigger, className: bounce } = usePressBounce();
   return (
     <view
-      className={`px-3 py-1.5 rounded-full border`}
+      className={`px-3 py-1.5 rounded-full border ${bounce}`}
       style={{
         backgroundColor: isActive ? Colors.Primary : Colors.Background,
         borderColor: isActive ? Colors.Primary : Colors.Background,
+        transition: 'transform 0.15s ease, opacity 0.15s ease',
       }}
-      bindtap={bindTap}
+      bindtap={(e: any) => {
+        trigger();
+        bindTap(e);
+      }}
     >
       <text
         className={

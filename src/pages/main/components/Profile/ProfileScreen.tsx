@@ -18,6 +18,7 @@ import { FontFamily, TextType } from '@/components/Text/types';
 import Card from '@/components/common/Card/Card';
 import CustomImage from '@/components/common/CustomImage/CustomImage';
 import { useNativeBridge } from '@/context/NativeBridgeProvider';
+import { usePressBounce } from '@/lib/hooks/usePressBounce';
 import { useGetProfile } from '@/pages/Profile/usecase/useGetProfile';
 
 import { useGetAchievements, useGetGamificationStats } from '../../usecase/useGetProfile';
@@ -25,6 +26,34 @@ import styles from './Profile.module.css';
 import AchievementItem from './components/Achievements';
 import { ProfileHeader } from './components/ProfileHeader';
 import StatsCard from './components/StatsCard';
+
+// Settings row — bounces on tap before navigating.
+const SettingsMenuItem: FC<{
+  emoji: string;
+  label: string;
+  description: string;
+  withBorder: boolean;
+  onTap: () => void;
+}> = ({ emoji, label, description, withBorder, onTap }) => {
+  const { trigger, className: bounce } = usePressBounce();
+  return (
+    <view
+      bindtap={() => {
+        trigger();
+        onTap();
+      }}
+      className={`flex-row items-center gap-4 bg-white px-5 py-4 flex ${bounce} ${withBorder ? 'border-b border-slate-100' : ''}`}
+    >
+      <view className="h-10 w-10 items-center rounded-full bg-slate-100 p-2 justify-center">
+        <CustomImage src={emoji} className="h-full w-full" />
+      </view>
+      <view className="flex-1 flex-col flex">
+        <Text size={TextType.b1}>{label}</Text>
+        <Text size={TextType.p}>{description}</Text>
+      </view>
+    </view>
+  );
+};
 
 export const ProfileScreen: FC = () => {
   const { navigateTo } = useNativeBridge();
@@ -174,19 +203,14 @@ export const ProfileScreen: FC = () => {
                     screen: 'danger',
                   },
                 ].map((item, idx, arr) => (
-                  <view
+                  <SettingsMenuItem
                     key={item.screen}
-                    bindtap={() => navigateTo('profile', { screen: item.screen })}
-                    className={`flex-row items-center gap-4 bg-white px-5 py-4 flex ${idx < arr.length - 1 ? 'border-b border-slate-100' : ''}`}
-                  >
-                    <view className="h-10 w-10 items-center rounded-full bg-slate-100 p-2 justify-center">
-                      <CustomImage src={item.emoji} className="h-full w-full" />
-                    </view>
-                    <view className="flex-1 flex-col flex">
-                      <Text size={TextType.b1}>{item.label}</Text>
-                      <Text size={TextType.p}>{item.description}</Text>
-                    </view>
-                  </view>
+                    emoji={item.emoji}
+                    label={item.label}
+                    description={item.description}
+                    withBorder={idx < arr.length - 1}
+                    onTap={() => navigateTo('profile', { screen: item.screen })}
+                  />
                 ))}
               </view>
             </view>
