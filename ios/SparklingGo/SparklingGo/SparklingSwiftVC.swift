@@ -17,54 +17,27 @@ class SparklingLynxElement: SPKLynxElement {
     }
 }
 
-
-// MARK: - Back-intercept coordinator
-
-/// Observes BackInterceptorMethod state changes and intercepts the interactive
-/// pop gesture when JS has registered a back handler. When intercepted it fires
-/// the `nativeBackPressed` event instead of navigating away.
 private class BackInterceptCoordinator: NSObject, UIGestureRecognizerDelegate {
 
     weak var navigationController: UINavigationController?
-    private var token: NSObjectProtocol?
 
     init(navigationController: UINavigationController) {
         self.navigationController = navigationController
         super.init()
-
-        token = NotificationCenter.default.addObserver(
-            forName: .backInterceptorStateChanged,
-            object: nil,
-            queue: .main
-        ) { [weak self] notification in
-            let enabled = notification.userInfo?["enabled"] as? Bool ?? false
-            self?.setInterceptEnabled(enabled)
-        }
+        navigationController.interactivePopGestureRecognizer?.delegate = self
     }
 
-    deinit {
-        if let token { NotificationCenter.default.removeObserver(token) }
-    }
-
-    private func setInterceptEnabled(_ enabled: Bool) {
-        navigationController?.interactivePopGestureRecognizer?.isEnabled = !enabled
-        if enabled {
-            navigationController?.interactivePopGestureRecognizer?.delegate = self
-        }
-    }
-
-    // UIGestureRecognizerDelegate — called when the swipe-from-left begins
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        guard let navVC = navigationController, navVC.viewControllers.count > 1 else {
+            return false
+        }
         if BackInterceptorMethod.isInterceptEnabled {
-            // Fire the JS event and swallow the gesture
             BackInterceptorMethod.dispatchNativeBackEvent()
             return false
         }
         return true
     }
 }
-
-// MARK: - SPKSwiftVC
 
 struct SPKSwiftVC: UIViewControllerRepresentable {
     @State private var state_frame: CGRect

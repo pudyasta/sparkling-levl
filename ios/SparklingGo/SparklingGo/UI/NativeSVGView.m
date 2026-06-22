@@ -24,6 +24,7 @@
     webView.scrollView.backgroundColor = [UIColor clearColor];
     // Prevent UIKit from adjusting scroll insets which can offset the SVG content
     webView.scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    webView.userInteractionEnabled = NO;
     return webView;
 }
 

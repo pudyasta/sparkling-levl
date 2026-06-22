@@ -1,6 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 
 import { useNativeBridge } from '@/context/NativeBridgeProvider';
+import { callToast } from '@/lib/helper/showToast';
 import { validateSafely } from '@/lib/helper/validate';
 import type { AuthResponse } from '@/pages/Login/repository/type';
 
@@ -72,6 +73,8 @@ export const useRegister = (options?: UseRegisterOptions) => {
       if (error.type === 'VALIDATION_ERROR') {
         options?.onValidationError?.(error.errors);
       }
+      console.log(error);
+      callToast('Terjadi kesalahan, silahkan coba lagi', 'error');
       options?.onError?.(error);
     },
   });
