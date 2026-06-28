@@ -192,7 +192,7 @@ const ProfilePage = () => {
   const { execute: updatePrivacy, isLoading: isSavingPrivacy } = useUpdatePrivacy({
     onSuccess: () => {
       setPrivacySaved(true);
-      setTimeout(() => setPrivacySaved(false), 2000);
+      setTimeout(() => setPrivacySaved(false));
     },
   });
 

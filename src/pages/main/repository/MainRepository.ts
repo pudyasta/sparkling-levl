@@ -21,7 +21,6 @@ export const getAllCoursesApi = async (data: GetAllCoursesRequest): Promise<Cour
 
   const response = await guestAPIClient(url, {
     method: GET_METHOD,
-    timeout: 5000,
   });
   return response?.data;
 };
@@ -46,7 +45,6 @@ export const useMainRepository = () => {
 
     const response = await api(`${GET_ALL_COURSES}?${query.toString()}`, {
       method: GET_METHOD,
-      timeout: 5000,
     });
 
     return response?.data;

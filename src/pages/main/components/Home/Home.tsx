@@ -1,4 +1,5 @@
 import { ScrollView } from '@lynx-js/lynx-ui';
+import { useEffect } from 'react';
 
 import { fireSvg, xpFilled } from '@/assets/images/icon';
 import CourseCard from '@/components/CoursesCard/CoursesCard';
@@ -112,8 +113,11 @@ export default function LearningDashboard() {
   const { user, navigateTo } = useNativeBridge();
 
   const { summary, refetch: refetchGetDashboardSummary } = useGetDashboardSummary();
-  const { recentLearning, refetch: refetchGetDashboardRecentLearning } =
-    useGetDashboardRecentLearning();
+  const {
+    recentLearning,
+    refetch: refetchGetDashboardRecentLearning,
+    error,
+  } = useGetDashboardRecentLearning();
   const { achievements, refetch: refetchGetAchievements } = useGetAchievements();
   const {
     recommendedCourses,
@@ -131,6 +135,11 @@ export default function LearningDashboard() {
     refetchGetAchievements();
     refetchGetRecommendedCourses();
   };
+
+  useEffect(() => {
+    console.log(JSON.stringify(error, null, 2));
+  }, [recentLearning]);
+
   const timeOfDay = getTimeOfDay();
 
   return (

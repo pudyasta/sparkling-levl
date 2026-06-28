@@ -1,18 +1,10 @@
-import {
-  useState,
-  useEffect,
-  useLynxGlobalEventListener,
-} from '@lynx-js/react';
+import { useEffect, useLynxGlobalEventListener, useState } from '@lynx-js/react';
 
 export const useKeyboardShift = (elementId: string) => {
   const [kbHeight, setKbHeight] = useState(0);
 
   const setNativeProps = (props: Record<string, unknown>) => {
-    lynx
-      .createSelectorQuery()
-      .select(`#${elementId}`)
-      .setNativeProps(props)
-      .exec();
+    lynx.createSelectorQuery().select(`#${elementId}`).setNativeProps(props).exec();
   };
 
   useEffect(() => {
@@ -29,13 +21,10 @@ export const useKeyboardShift = (elementId: string) => {
     }
   }, [kbHeight, elementId]);
 
-  useLynxGlobalEventListener(
-    'keyboardstatuschanged',
-    (status: unknown, height: unknown) => {
-      // @ts-ignore
-      setKbHeight(status === 'on' ? height : 0);
-    },
-  );
+  useLynxGlobalEventListener('keyboardstatuschanged', (status: unknown, height: unknown) => {
+    // @ts-ignore
+    setKbHeight(status === 'on' ? height : 0);
+  });
 
   return { kbHeight };
 };

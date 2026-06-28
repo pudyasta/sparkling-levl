@@ -51,7 +51,7 @@ export default function LoginPage() {
     <ScrollView
       scroll-orientation="vertical"
       className="h-full w-full flex-1"
-      style={{ paddingBottom: kbHeight > 0 ? '10vh' : '0px' }}
+      style={{ paddingBottom: kbHeight > 0 ? `${kbHeight - kbHeight / 2}px` : '0px' }}
     >
       {/* Banner Section */}
       <view

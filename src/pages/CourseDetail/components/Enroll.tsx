@@ -24,7 +24,7 @@ export const Enroll = ({ courseSlug, status, enrollmentType, onEnrollSuccess }: 
   const { execute, isLoading } = useEnrollCourse({
     onSuccess: (data) => {
       if (data.data.status === 'pending') {
-        callToast('Permintaan terkirim!', 'info');
+        callToast('Permintaan terkirim!', 'success');
         setShowPendingInfo(true);
         return;
       }

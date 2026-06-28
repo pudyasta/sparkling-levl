@@ -21,13 +21,14 @@ export interface SubmitAssignmentRequest {
 }
 
 export const useSubmitAssignment = (options?: UseSubmitAssigmentProps) => {
-  const { submitAssignment } = useSubmitAssignmentRepo();
+  const { submitAssignment, dataSubmit } = useSubmitAssignmentRepo();
 
   const mutation = useMutation({
     mutationFn: async (request: SubmitAssignmentRequest) => {
       return submitAssignment(request);
     },
     onSuccess: (data) => {
+      console.log(data);
       options?.onSuccess?.(data);
     },
     onError: (error: any) => {
@@ -40,5 +41,6 @@ export const useSubmitAssignment = (options?: UseSubmitAssigmentProps) => {
     isLoading: mutation.isPending,
     error: mutation.error,
     data: mutation.data,
+    dataSubmit,
   };
 };

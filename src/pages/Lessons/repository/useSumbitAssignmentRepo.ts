@@ -43,9 +43,48 @@ function extractErrorMessage(error: any): string {
   }
 }
 
+export interface SubmitAssignmentFile {
+  id: number;
+  name: string;
+  url: string;
+  size: number;
+  mime_type: string;
+}
+
+export interface SubmitAssignmentData {
+  id: number;
+  attempt_number: number;
+  status: string;
+  score: number | null;
+  submitted_at: string | null;
+  graded_at: string | null;
+  assignment: {
+    id: number;
+    title: string;
+  };
+  files: SubmitAssignmentFile[];
+}
+
+export interface SubmitAssignmentResponseBody {
+  success: boolean;
+  message: string;
+  data: SubmitAssignmentData;
+  meta: null;
+  errors: null;
+}
+
+export interface SubmitAssignmentResponse {
+  msg: string;
+  code: number;
+  data: {
+    responseBody: string; // JSON string, needs parsing
+  };
+}
+
 export const useSubmitAssignmentRepo = () => {
   const { accessToken } = useNativeBridge();
   const [isLoading, setIsLoading] = useState(false);
+  const [dataSubmit, setDataSubmit] = useState<SubmitAssignmentResponse>();
 
   const submitAssignment = (request: SubmitAssignmentRequest) => {
     setIsLoading(true);
@@ -85,15 +124,19 @@ export const useSubmitAssignmentRepo = () => {
         setIsLoading(false);
         if (res.code == 1) {
           callToast('Tugas berhasil disimpan sebagai draft.', 'success');
-          return;
+          console.log(JSON.stringify(res, null, 2));
+          setDataSubmit(res);
+        } else {
+          const msg = extractErrorMessage(res);
+          console.log(JSON.stringify(res, null, 2));
+          callToast(msg, 'error');
         }
-        const msg = extractErrorMessage(res);
-        callToast(msg, 'error');
       },
     });
-
+    console.log('object');
+    console.log('hahay');
     return res;
   };
 
-  return { submitAssignment, isLoading };
+  return { submitAssignment, isLoading, dataSubmit };
 };

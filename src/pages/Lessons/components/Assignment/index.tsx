@@ -11,6 +11,7 @@ import { pickAnyFile } from '@/lib/helper/filePicker';
 import { callToast } from '@/lib/helper/showToast';
 
 import type { AssignmentStudentResponse } from '../../repository/type/assignment';
+import type { SubmitAssignmentResponseBody } from '../../repository/useSumbitAssignmentRepo';
 import { useSubmitAssignment } from '../../usecase/useSubmitAssignment';
 import { useSubmitFinalAssignment } from '../../usecase/useSubmitFinalAssignment';
 
@@ -20,15 +21,14 @@ export interface MediaFile {
   tempFilePath: string;
   mimeType: string;
 }
+
 function parseToJson(str: string) {
   const inner = str.replace(/[{}]/g, '').trim();
-
   const obj: Record<string, string> = {};
   inner.split(',').forEach((pair) => {
     const [key, ...rest] = pair.trim().split('=');
     obj[key.trim()] = rest.join('=').trim();
   });
-
   return obj;
 }
 
@@ -43,15 +43,44 @@ const AssignmentContent = ({
   const [fileError, setFileError] = useState('');
   const [selectedFiles, setSelectedFiles] = useState<MediaFile[]>([]);
   const [answerInitialValue, setAnswerInitialValue] = useState('');
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const [isFileEdited, setIsFileEdited] = useState(false);
   const [isAnswerEdited, setIsAnswerEdited] = useState(false);
   const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
+  const [hasDraftSubmission, setHasDraftSubmission] = useState(data.submission_status === 'draft');
+
+  // Store submission ID locally so we don't depend on stale `data` prop
+  const [draftSubmissionId, setDraftSubmissionId] = useState<number | null>(
+    data.submissions.length > 0 ? (data.submissions[data.submissions.length - 1]?.id ?? null) : null
+  );
 
   const isGraded = data.submission_status === 'graded';
-  const { execute: submitAssignment, isLoading: isSubmitDraft } = useSubmitAssignment({
-    onSuccess: () => onDataChanged(),
+
+  const {
+    execute: submitAssignment,
+    isLoading: isSubmitDraft,
+    dataSubmit,
+  } = useSubmitAssignment({
+    onSuccess: (responseData) => {
+      setIsFileEdited(false);
+      setIsAnswerEdited(false);
+      setHasDraftSubmission(true);
+      // Cache the submission ID from the response immediately
+      console.log('INI', dataSubmit);
+      onDataChanged();
+      setRefreshKey((k) => k + 1);
+    },
   });
+
+  useEffect(() => {
+    if (dataSubmit?.code == 1) {
+      const parsed: SubmitAssignmentResponseBody = JSON.parse(dataSubmit.data.responseBody);
+      const submissionId = parsed.data.id;
+      setDraftSubmissionId(submissionId);
+    }
+    // setDraftSubmissionId(dataSubmit.data.responseB ?? responseData?.submission_id ?? null);
+  }, [dataSubmit]);
 
   const { execute: submitFinalAssignment, isLoading: isSubmittingFinal } = useSubmitFinalAssignment(
     {
@@ -82,6 +111,7 @@ const AssignmentContent = ({
   const validateAndSubmitDraft = () => {
     setFileError('');
     answerRef.current?.setError('');
+
     if (data.submission_type !== 'file' && !answerRef.current?.getValue()) {
       answerRef.current?.setError('Kolom tautan jawaban harus diisi');
       return;
@@ -110,22 +140,23 @@ const AssignmentContent = ({
   };
 
   const handleConfirmFinalSubmit = () => {
-    const submissionId = data.submissions[data.submissions.length - 1]?.id;
+    // Prefer locally cached ID over potentially stale data prop
+    const submissionId = draftSubmissionId ?? data.submissions[data.submissions.length - 1]?.id;
+
     if (!submissionId) {
       callToast('Submission tidak ditemukan', 'error');
       return;
     }
+    setHasDraftSubmission(false);
     submitFinalAssignment({ submission_id: submissionId });
   };
 
   useEffect(() => {
     if (data.submissions.length > 0) {
       if (data.submissions[data.submissions.length - 1]?.answer_text) {
-        setIsAnswerEdited(false);
         setAnswerInitialValue(data.submissions[data.submissions.length - 1]?.answer_text || '');
       }
       if (data.submissions[data.submissions.length - 1]?.files?.length > 0) {
-        setIsFileEdited(false);
         setSelectedFiles(
           data.submissions[data.submissions.length - 1].files?.map((f) => ({
             name: f.file_name,
@@ -136,7 +167,7 @@ const AssignmentContent = ({
         );
       }
     }
-  }, [data]);
+  }, [data, refreshKey]);
 
   return (
     data && (
@@ -227,7 +258,7 @@ const AssignmentContent = ({
         {/* 5. Upload Area */}
         {!data.is_completed && (
           <>
-            {(data.submission_type == 'text' || data.submission_type == 'mixed') && (
+            {(data.submission_type === 'text' || data.submission_type === 'mixed') && (
               <Input
                 title="Tautan ke berkas"
                 variant="text"
@@ -240,7 +271,7 @@ const AssignmentContent = ({
                 }}
               />
             )}
-            {(data.submission_type == 'file' || data.submission_type == 'mixed') && (
+            {(data.submission_type === 'file' || data.submission_type === 'mixed') && (
               <view className="mt-5 flex-col flex">
                 <Text size={TextType.b2} className="mb-2 font-bold">
                   Unggah Jawaban:
@@ -281,9 +312,11 @@ const AssignmentContent = ({
             )}
           </>
         )}
+
+        {/* 6. Action Buttons */}
         <view className="mt-8">
           <Button
-            disabled={data.submission_status == 'submitted' || data.submission_status == 'graded'}
+            disabled={data.submission_status === 'submitted' || data.submission_status === 'graded'}
             onPress={validateAndSubmitDraft}
             className="h-14 w-full"
             variant="outlined"
@@ -292,13 +325,18 @@ const AssignmentContent = ({
             Simpan sebagai Draft
           </Button>
           <Button
-            disabled={data.submission_status != 'draft' || isFileEdited || isAnswerEdited}
+            disabled={
+              (!hasDraftSubmission && data.submission_status !== 'draft') ||
+              isFileEdited ||
+              isAnswerEdited
+            }
             onPress={() => setIsSubmitModalOpen(true)}
             className="mt-2 h-14 w-full"
           >
             Kumpulkan Tugas
           </Button>
         </view>
+
         <Modal
           template={ModalTemplate.Custom}
           visible={isSubmitModalOpen}

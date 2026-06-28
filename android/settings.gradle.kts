@@ -26,9 +26,9 @@ include(":app:benchmark")
 
 // BEGIN SPARKLING AUTOLINK
 val sparklingAutolinkProjects = listOf<Pair<String, java.io.File>>(
-  "sparkling-navigation" to file("../node_modules/sparkling-navigation/android"),
   "sparkling-debug-tool" to file("../node_modules/sparkling-debug-tool/android"),
-  "sparkling-storage" to file("../node_modules/sparkling-storage/android")
+  "sparkling-storage" to file("../node_modules/sparkling-storage/android"),
+  "sparkling-navigation" to file("../node_modules/sparkling-navigation/android")
 )
 sparklingAutolinkProjects.forEach { (name, dir) ->
     include(":$name")
