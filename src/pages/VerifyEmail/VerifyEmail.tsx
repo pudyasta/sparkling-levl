@@ -1,5 +1,4 @@
 import { useEffect, useState } from '@lynx-js/react';
-import pipe from 'sparkling-method';
 
 import { docsMascot } from '@/assets/images/mascot';
 import Text from '@/components/Text';

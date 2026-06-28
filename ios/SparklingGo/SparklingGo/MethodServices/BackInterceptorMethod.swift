@@ -7,14 +7,6 @@ import UIKit
 import Lynx
 import SparklingMethod
 
-// MARK: - Shared notification posted when the intercept state changes.
-// SparklingSwiftVC (or any hosting VC) observes this to disable/enable
-// the interactive edge-swipe gesture when intercept is active.
-
-extension Notification.Name {
-    static let backInterceptorStateChanged = Notification.Name("SparklingBackInterceptorStateChanged")
-}
-
 // MARK: - Models
 
 @objc(BackInterceptorParamsModel)
@@ -62,17 +54,7 @@ final class BackInterceptorMethod: PipeMethod {
             return
         }
 
-        let enabled = params.enabled.boolValue
-        BackInterceptorMethod.isInterceptEnabled = enabled
-
-        // Notify the hosting view controller on the main thread
-        DispatchQueue.main.async {
-            NotificationCenter.default.post(
-                name: .backInterceptorStateChanged,
-                object: nil,
-                userInfo: ["enabled": enabled]
-            )
-        }
+        BackInterceptorMethod.isInterceptEnabled = params.enabled.boolValue
 
         let result = BackInterceptorResultModel()
         result.success = true

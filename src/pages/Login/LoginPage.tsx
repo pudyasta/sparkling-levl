@@ -1,5 +1,6 @@
 import { ScrollView } from '@lynx-js/lynx-ui';
 import { useRef, useState } from '@lynx-js/react';
+import { useEffect } from 'react';
 
 import { logo } from '@/assets/images/icon';
 import { hiMascot } from '@/assets/images/mascot';

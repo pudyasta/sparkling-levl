@@ -106,6 +106,7 @@ const AssignmentContent = ({
       type: data.submission_type,
       method: data.submission_status === 'draft' ? 'PUT' : 'POST',
     });
+    console.log(data.submission_status, isFileEdited, isAnswerEdited);
   };
 
   const handleConfirmFinalSubmit = () => {

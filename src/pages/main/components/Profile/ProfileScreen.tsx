@@ -36,7 +36,7 @@ export const ProfileScreen: FC = () => {
   } = useGetAchievements();
   const { profile, refetch: refetchProfile, isLoading: profileLoading } = useGetProfile();
 
-  if (isLoading || isLoadingAchievements || profileLoading) {
+  if (isLoading || isLoadingAchievements || profileLoading || isLoading) {
     return (
       <view className="h-[100vh] items-center flex justify-center">
         <Loading size={32} />
@@ -61,7 +61,7 @@ export const ProfileScreen: FC = () => {
           <ProfileHeader
             name={profile?.name || ''}
             email={profile?.email || ''}
-            streak={stats.activity.current_streak}
+            streak={stats?.activity.current_streak}
             bio={profile?.bio || ''}
             initials={
               profile?.name
@@ -106,13 +106,13 @@ export const ProfileScreen: FC = () => {
               <StatsCard label="Total XP" value={stats.xp.total} iconUrl={xp} />
               <StatsCard
                 label="Total Kursus"
-                value={stats.activity.total_course_enrolled}
+                value={stats?.activity.total_course_enrolled}
                 iconUrl={courses}
               />
               <StatsCard label="Total Jam Belajar" value={stats.xp.period} iconUrl={time} />
               <StatsCard
                 label="Streak Terpanjang"
-                value={stats.activity.longest_streak}
+                value={stats?.activity.longest_streak}
                 iconUrl={date}
               />
             </view>

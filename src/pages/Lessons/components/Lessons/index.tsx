@@ -54,10 +54,6 @@ const LessonContent = ({
     });
   }, [downloadedPath]);
 
-  useEffect(() => {
-    console.log(JSON.stringify(data, null, 2));
-  }, []);
-
   const handleMarkAsDone = () => {
     setIsButtonLoading(true);
     execute(lessonSlug, {

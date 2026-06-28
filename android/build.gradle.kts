@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.android.library) apply false
     alias(libs.plugins.kotlin.kapt) apply false
+    alias(libs.plugins.android.test) apply false
 }
 
 // Enforce a shared JDK version for all Android subprojects

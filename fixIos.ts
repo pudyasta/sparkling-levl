@@ -13,4 +13,3 @@ content = content.replace(
 );
 
 fs.writeFileSync(podfilePath, content);
-console.log('✓ Podfile patched: sparkling-media fixed');

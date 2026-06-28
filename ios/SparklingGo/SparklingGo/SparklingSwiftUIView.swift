@@ -21,10 +21,12 @@ struct SPKSwiftUIView: UIViewRepresentable {
         let context = SPKContext()
         
         let view = SPKContainerView(frame: rect)
+        let props: [String: Any] = [
+          "appTheme": "light",
+        ]
         
         let url = "hybrid://lynxview?bundle=.%2Fmain.lynx.bundle&hide_nav_bar=true&hide_status_bar=true"
-//        let url = "hybrid://lynxview?bundle=.%2Fsecond.lynx.bundle&hide_nav_bar=true&hide_status_bar=true"
-        
+        context.initialData = props
         view.load(withURL: url, context)
         return view
     }

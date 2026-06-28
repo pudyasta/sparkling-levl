@@ -103,7 +103,6 @@ const Courses: React.FC = () => {
 
             {/* Filter toggle button */}
             <view
-              bindtap={() => setShowFilters(!showFilters)}
               className={`h-full w-12 items-center rounded-2xl p-2 right-2 justify-center ${
                 hasActiveFilters ? 'bg-[#1a73e8]' : 'bg-white/20'
               }`}

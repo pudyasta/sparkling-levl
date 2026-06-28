@@ -73,6 +73,19 @@ LYNX_PROP_SETTER("text-color", setTextColor, NSString *) {
     [self.view setValue:placeholderColor forKeyPath:@"_placeholderLabel.textColor"];
   }
 }
+LYNX_PROP_SETTER("type", setType, NSString *) {
+  if ([value isEqualToString:@"password"]) {
+    self.view.secureTextEntry = YES;
+    self.view.keyboardType = UIKeyboardTypeDefault;
+  } else if ([value isEqualToString:@"number"]) {
+    self.view.secureTextEntry = NO;
+    self.view.keyboardType = UIKeyboardTypeNumberPad;
+  } else {
+    // Default to standard text type
+    self.view.secureTextEntry = NO;
+    self.view.keyboardType = UIKeyboardTypeDefault;
+  }
+}
 
 - (void)textFieldDidChange:(NSNotification *)notification {
   [self emitEvent:@"input"
