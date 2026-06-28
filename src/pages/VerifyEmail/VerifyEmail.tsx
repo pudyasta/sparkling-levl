@@ -1,5 +1,4 @@
 import { useEffect, useState } from '@lynx-js/react';
-import pipe from 'sparkling-method';
 
 import { docsMascot } from '@/assets/images/mascot';
 import Text from '@/components/Text';
@@ -38,20 +37,18 @@ const VerifyEmailPage = () => {
       setMessage('Your email has been verified. Redirecting you to the app...');
 
       setTimeout(() => {
-        // navigateTo('main', { close: true });
+        navigateTo('main', { close: true });
       }, 2000);
     },
     onError: (error) => {
-      console.log(JSON.stringify(error));
       setPhase('error');
       setMessage(error?.message ?? 'Verification failed. The link may have expired.');
     },
   });
 
   useEffect(() => {
-    console.log(uuid, token);
     if (!uuid || !token) {
-      setPhase('success');
+      setPhase('error');
       setMessage('Invalid verification link. Please request a new one.');
       return;
     }

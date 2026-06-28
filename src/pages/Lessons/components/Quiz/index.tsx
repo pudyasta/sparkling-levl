@@ -94,10 +94,6 @@ const QuizContent = ({ data }: { data: QuizStudentResponse }) => {
     onError: () => {},
   });
 
-  useEffect(() => {
-    console.log(JSON.stringify(data));
-  }, [data]);
-
   const handleTakeoverQuiz = () => {
     takeover(existingID);
     setIsModalOpen(false);

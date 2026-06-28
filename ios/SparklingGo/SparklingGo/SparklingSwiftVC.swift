@@ -40,14 +40,14 @@ private class BackInterceptCoordinator: NSObject, UIGestureRecognizerDelegate {
 }
 
 struct SPKSwiftVC: UIViewControllerRepresentable {
-    @State private var state_frame: CGRect
+    let state_frame: CGRect
     
     init(state_frame: CGRect = .zero) {
         self.state_frame = state_frame
     }
     
     func makeUIViewController(context: Context) -> some UIViewController {
-        let url = "hybrid://lynxview?bundle=main.lynx.bundle&hide_status_bar=0&hide_nav_bar=1"
+        let url = "hybrid://lynxview?bundle=login.lynx.bundle&hide_status_bar=0&hide_nav_bar=1"
         let spkContext = SPKContext()
         let elements: [SparklingLynxElement] = [
             SparklingLynxElement(lynxElementName: "input",        lynxElementClassName: LynxInput.self),
@@ -55,9 +55,12 @@ struct SPKSwiftVC: UIViewControllerRepresentable {
             SparklingLynxElement(lynxElementName: "video-player", lynxElementClassName: VideoPlayerView.self),
         ]
         spkContext.customUIElements = elements
+        spkContext.globalProps = ["test":"123"]
+    
         
         let vc = SPKRouter.create(withURL: url, context: spkContext, frame: self.state_frame)
         let naviVC = UINavigationController(rootViewController: vc)
+   
         
         let coordinator = BackInterceptCoordinator(navigationController: naviVC)
         objc_setAssociatedObject(naviVC, &AssociatedKeys.coordinator, coordinator, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
@@ -65,7 +68,7 @@ struct SPKSwiftVC: UIViewControllerRepresentable {
     }
     
     func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {
-
+       
     }
 }
 

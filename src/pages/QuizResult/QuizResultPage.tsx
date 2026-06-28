@@ -139,7 +139,7 @@ const AnswerReviewItem = ({ answer, index }: { answer: QuizAnswerResource; index
                   })()
                 : (answer.selected_options
                     ?.map((o) => {
-                      return answer.question?.options[Number(o)]?.text ?? o;
+                      return answer.question?.options[Number(o)] ?? o;
                     })
                     .join(', ') ?? '—')}
           </Text>

@@ -73,7 +73,6 @@ export const useRegister = (options?: UseRegisterOptions) => {
       if (error.type === 'VALIDATION_ERROR') {
         options?.onValidationError?.(error.errors);
       }
-      console.log(error);
       callToast('Terjadi kesalahan, silahkan coba lagi', 'error');
       options?.onError?.(error);
     },

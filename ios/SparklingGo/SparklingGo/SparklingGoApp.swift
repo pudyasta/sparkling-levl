@@ -31,6 +31,12 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         SPKKit.DIContainer.register(SPKTrackerService.self, scope: ServiceScope.transient) {
             SparklingGoTrackerService()
         }
+        
+        SPKKit.DIContainer.register(SPKViewRegisterService.self, name: String(SPKHybridEngineType.SPKHybridEngineTypeLynx.rawValue), scope: .transient) {
+            SPKLynxService()
+        }
+        
+    
         return true
     }
 }
@@ -61,6 +67,14 @@ struct SparklingGoApp: App {
         let token  = params["token"]  ?? ""
 
         DeepLinkHolder.shared.set(userId: userId, email: email, uuid: uuid, token: token)
+        let props: [String: Any] = [
+          "appTheme": "light",
+          "userId": userId,
+          "email": email,
+          "uuid": uuid,
+          "token": token
+        ]
+        
 
         var components = URLComponents()
         components.scheme = "hybrid"

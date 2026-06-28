@@ -114,13 +114,11 @@ const QuizPage = () => {
       setTotalQuestions(data.total_questions);
       setQuestions(data.questions);
 
-      // Seed local answer cache from server-provided answers
       data.questions.forEach((q) => {
         localAnswers.current[q.id] = q.answer
           ? { content: q.answer.content, selected_options: q.answer.selected_options }
           : { content: null, selected_options: null };
       });
-      // Initialize answered set from server summary
       const answered = data.summary.filter((s) => s.is_answered).map((s) => s.order - 1);
       setAnsweredQuestions(answered);
 
@@ -205,6 +203,22 @@ const QuizPage = () => {
 
   // ─── Helpers ──────────────────────────────────────────────────────────────
   const currentQuestion = questions[currentPage - 1] ?? null;
+  const shouldSaveAnswer = (payload: SaveAnswerPayload, questionId: number) => {
+    const isContentEmpty = !payload.content;
+    const isOptionsEmpty = !payload.selected_options || payload.selected_options.length === 0;
+    const isAnswerEmpty = isContentEmpty && isOptionsEmpty;
+
+    const previousAnswer = localAnswers.current[questionId];
+    const hasContentChanged = previousAnswer?.content !== payload.content;
+
+    const previousOptionsStr = JSON.stringify(previousAnswer?.selected_options?.map(String) ?? []);
+    const currentOptionsStr = JSON.stringify(payload.selected_options?.map(String) ?? []);
+    const hasOptionsChanged = previousOptionsStr !== currentOptionsStr;
+
+    const hasAnswerChanged = hasContentChanged || hasOptionsChanged;
+
+    return !isAnswerEmpty && hasAnswerChanged;
+  };
 
   const buildPayload = (): SaveAnswerPayload => {
     if (!currentQuestion) return {} as SaveAnswerPayload;
@@ -231,74 +245,122 @@ const QuizPage = () => {
 
   const persistAnswerLocally = (payload: SaveAnswerPayload) => {
     if (!currentQuestion) return;
-    localAnswers.current[currentQuestion.id] = {
-      content: payload.content,
-      selected_options: payload.selected_options?.map(String) ?? null,
-    };
-    setAnsweredQuestions((prev) =>
-      prev.includes(currentPage - 1) ? prev : [...prev, currentPage - 1]
-    );
+    let allowEdit = true;
+    if (!payload.selected_options && !payload.content) {
+      allowEdit = false;
+    }
+
+    if (allowEdit) {
+      localAnswers.current[currentQuestion.id] = {
+        content: payload.content,
+        selected_options: payload.selected_options?.map(String) ?? null,
+      };
+      setAnsweredQuestions((prev) =>
+        prev.includes(currentPage - 1) ? prev : [...prev, currentPage - 1]
+      );
+    }
   };
 
   const handleNext = async () => {
     if (!submission.current || !currentQuestion) return;
+
     const payload = buildPayload();
-    setIsSaving(true);
-    saveAnswer(
-      { submissionId: submission.current.submissionId, payload },
-      {
-        onSettled: () => {
-          persistAnswerLocally(payload);
-          setIsSaving(false);
-          if (currentPage < totalQuestions) {
-            setCurrentPage((p) => p + 1);
-          } else {
-            stopTimer();
-            confirm(() => {
-              if (!submission.current) {
-                callToast('Maaf sedang terjadi kendala. Coba beberapa saat lagi', 'error');
-                return;
-              }
-              submitQuiz(submission.current!.submissionId);
-            });
+    const isContentEmpty = !payload.content;
+    const isOptionsEmpty = !payload.selected_options || payload.selected_options.length === 0;
+    const isAnswerEmpty = isContentEmpty && isOptionsEmpty;
+    const previousAnswer = localAnswers.current[currentQuestion.id];
+    const hasContentChanged = previousAnswer?.content !== payload.content;
+    const previousOptionsStr = JSON.stringify(previousAnswer?.selected_options?.map(String) ?? []);
+    const currentOptionsStr = JSON.stringify(payload.selected_options?.map(String) ?? []);
+    const hasOptionsChanged = previousOptionsStr !== currentOptionsStr;
+    const hasAnswerChanged = hasContentChanged || hasOptionsChanged;
+
+    const proceedToNextStep = () => {
+      persistAnswerLocally(payload);
+      if (currentPage < totalQuestions) {
+        setCurrentPage((p) => p + 1);
+      } else {
+        stopTimer();
+        confirm(() => {
+          if (!submission.current) {
+            callToast('Maaf sedang terjadi kendala. Coba beberapa saat lagi', 'error');
+            return;
           }
-        },
+          submitQuiz(submission.current.submissionId);
+        });
       }
-    );
+    };
+
+    if (!isAnswerEmpty && hasAnswerChanged) {
+      setIsSaving(true);
+      saveAnswer(
+        { submissionId: submission.current.submissionId, payload },
+        {
+          onSettled: () => {
+            setIsSaving(false);
+            proceedToNextStep();
+          },
+        }
+      );
+    } else {
+      proceedToNextStep();
+    }
   };
 
   const handleBack = () => {
     if (!submission.current || !currentQuestion || currentPage <= 1) return;
     const payload = buildPayload();
     if (!payload) return;
-    setIsSaving(true);
-    saveAnswer(
-      { submissionId: submission.current.submissionId, payload },
-      {
-        onSettled: () => {
-          persistAnswerLocally(payload);
-          setIsSaving(false);
-          setCurrentPage((p) => p - 1);
-        },
-      }
-    );
+
+    const proceedBackwards = () => {
+      persistAnswerLocally(payload);
+      setCurrentPage((p) => p - 1);
+    };
+
+    // Only hit API if answer is not empty and has changed
+    if (shouldSaveAnswer(payload, currentQuestion.id)) {
+      setIsSaving(true);
+      saveAnswer(
+        { submissionId: submission.current.submissionId, payload },
+        {
+          onSettled: () => {
+            setIsSaving(false);
+            proceedBackwards();
+          },
+        }
+      );
+    } else {
+      // Skip network request, just navigate back
+      proceedBackwards();
+    }
   };
 
   const handleJumpTo = (index: number) => {
     closeNav();
     if (!submission.current || !currentQuestion) return;
     const payload = buildPayload();
-    setIsSaving(true);
-    saveAnswer(
-      { submissionId: submission.current.submissionId, payload },
-      {
-        onSettled: () => {
-          persistAnswerLocally(payload);
-          setIsSaving(false);
-          setTimeout(() => setCurrentPage(index + 1), 300);
-        },
-      }
-    );
+
+    const proceedToJump = () => {
+      persistAnswerLocally(payload);
+      setTimeout(() => setCurrentPage(index + 1), 300);
+    };
+
+    // Only hit API if answer is not empty and has changed
+    if (shouldSaveAnswer(payload, currentQuestion.id)) {
+      setIsSaving(true);
+      saveAnswer(
+        { submissionId: submission.current.submissionId, payload },
+        {
+          onSettled: () => {
+            setIsSaving(false);
+            proceedToJump();
+          },
+        }
+      );
+    } else {
+      // Skip network request, jump directly
+      proceedToJump();
+    }
   };
 
   const toggleFlag = () => {
